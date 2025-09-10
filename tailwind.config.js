@@ -6,9 +6,8 @@ const config = {
       colors: {
         "app-brown": "#685B4B",
         "app-background": "#FEECC4",
-        "primary": "#685B4B",
-        "secondary": "#FFC052",
-        "tertiary": "#CCAD98",
+        "app-yellow": "#FFC052",
+        "app-tan": "#CCAD98",
       },
     },
   },
