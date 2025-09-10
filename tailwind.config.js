@@ -5,6 +5,7 @@ const config = {
     extend: {
       colors: {
         "app-brown": "#685B4B",
+        "app-background": "#FEECC4",
       },
     },
   },
