@@ -7,7 +7,7 @@ export const LoadingScreen = () => {
         <div className="relative">
           <div className="bg-app-yellow h-80 w-80 rounded-full" />
           <Image
-            src="/images/meowth-cooking.png"
+            src="/images/meowth-cooking.webp"
             alt="Logo"
             width={300}
             height={300}
