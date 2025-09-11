@@ -54,8 +54,8 @@ export const LandingCarousel = () => {
           <button key={idx} onClick={() => setCarouselIndex(idx)}>
             <Circle
               className={cn(
-                `${currentIdx === idx ? "fill-app-yellow" : "fill-transparent"}`,
-                "text-app-yellow hover:fill-app-background hover:text-app-background h-4 w-4 transition-colors"
+                `${currentIdx === idx ? "text-app-yellow fill-app-yellow rounded-full" : "fill-white text-white"}`,
+                "hover:fill-app-yellow hover:text-app-yellow h-4 w-4 transition-colors"
               )}
             />
           </button>
