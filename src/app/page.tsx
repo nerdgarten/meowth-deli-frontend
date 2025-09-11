@@ -3,6 +3,7 @@ import { Spinner } from "@ui/shadcn-io/spinner";
 import { Skeleton } from "@ui/skeleton";
 
 export default function HomePage() {
+  // TODO: Fetch Data from API
   return (
     <main>
       <Toolbar />
