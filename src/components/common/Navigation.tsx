@@ -3,7 +3,7 @@ import { User, Menu } from "lucide-react";
 
 export const Navigation = () => {
   return (
-    <nav className="bg-app-brown fixed top-0 flex w-screen py-4">
+    <nav className="bg-app-brown fixed top-0 z-100 flex w-screen py-4">
       <div className="flex w-full items-center justify-end">
         <div className="mr-3 flex gap-x-6">
           <Link href="/profile">

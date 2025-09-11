@@ -1,3 +1,4 @@
+import { LandingCarousel } from "@/components/Landing/Carousel";
 import { Toolbar } from "@/components/Landing/Toolbar";
 import { Spinner } from "@ui/shadcn-io/spinner";
 import { Skeleton } from "@ui/skeleton";
@@ -5,7 +6,8 @@ import { Skeleton } from "@ui/skeleton";
 export default function HomePage() {
   // TODO: Fetch Data from API
   return (
-    <main>
+    <main className="mt-[3.75rem]">
+      <LandingCarousel />
       <Toolbar />
       {Array.from({ length: 2 }).map((_, index) => (
         <div className="no-scrollbar w-full overflow-x-scroll" key={index}>
