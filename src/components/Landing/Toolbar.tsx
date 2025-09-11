@@ -1,17 +1,7 @@
 import { Funnel, Search } from "lucide-react";
-import { Skeleton } from "./ui/skeleton";
-import { Spinner } from "./ui/spinner";
 
-export const LandingScreen = () => {
-  return (
-    <>
-      <Toolbar />
-      <MainSection />
-    </>
-  );
-};
-
-const Toolbar = () => {
+// TODO: FIX HARDCODED CATEGORIES
+export const Toolbar = () => {
   return (
     <div className="mx-4 mt-18 mb-8 flex items-center gap-5 px-4">
       <div className="flex grow rounded-full bg-white px-6 py-3 shadow-md">
@@ -42,30 +32,5 @@ const Toolbar = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-const MainSection = () => {
-  return (
-    <>
-      {Array.from({ length: 2 }).map((_, index) => (
-        <div className="no-scrollbar w-full overflow-x-scroll" key={index}>
-          <div className="flex flex-nowrap gap-4 py-4">
-            <div className="min-w-5"></div>
-            {Array.from({ length: 6 }).map((_, index) => (
-              <Skeleton
-                className="h-[250px] min-w-[375px] rounded-xl"
-                key={index}
-              />
-            ))}
-            <div className="min-w-5"></div>
-          </div>
-        </div>
-      ))}
-      <Spinner
-        className="text-app-brown mx-auto my-10"
-        variant="circle"
-      />
-    </>
   );
 };
