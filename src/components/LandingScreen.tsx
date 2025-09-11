@@ -49,14 +49,16 @@ const MainSection = () => {
   return (
     <>
       {Array.from({ length: 2 }).map((_, index) => (
-        <div className="no-scrollbar w-full overflow-x-scroll">
-          <div className="flex flex-nowrap gap-4 px-8 py-4">
+        <div className="no-scrollbar w-full overflow-x-scroll" key={index}>
+          <div className="flex flex-nowrap gap-4 py-4">
+            <div className="min-w-5"></div>
             {Array.from({ length: 6 }).map((_, index) => (
               <Skeleton
                 className="h-[250px] min-w-[375px] rounded-xl"
                 key={index}
               />
             ))}
+            <div className="min-w-5"></div>
           </div>
         </div>
       ))}
