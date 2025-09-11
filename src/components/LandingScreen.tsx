@@ -62,7 +62,10 @@ const MainSection = () => {
           </div>
         </div>
       ))}
-      <Spinner className="mx-auto my-10" />
+      <Spinner
+        className="text-app-brown mx-auto my-10"
+        variant="circle"
+      />
     </>
   );
 };
