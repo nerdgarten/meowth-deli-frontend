@@ -10,6 +10,7 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import { Circle } from "lucide-react";
 import { cn } from "@/libs/utils";
+import { MS_IN_SEC } from "@/constants/misc";
 
 export const LandingCarousel = () => {
   const [api, setApi] = useState<CarouselApi>();
@@ -36,7 +37,7 @@ export const LandingCarousel = () => {
 
   return (
     <>
-      <Carousel setApi={setApi} plugins={[Autoplay({ delay: 15 * 1000 })]}>
+      <Carousel setApi={setApi} plugins={[Autoplay({ delay: 15 * MS_IN_SEC })]}>
         <CarouselContent>
           <CarouselItem key="1">
             <div className="h-[calc(100vh-3.75rem)] w-full bg-gray-300" />
