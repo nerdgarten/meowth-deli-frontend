@@ -5,16 +5,21 @@ import {
   type LucideProps,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
 type SpinnerVariantProps = Omit<SpinnerProps, 'variant'>;
+
 const Default = ({ className, ...props }: SpinnerVariantProps) => (
   <LoaderIcon className={cn('animate-spin', className)} {...props} />
 );
+
 const Circle = ({ className, ...props }: SpinnerVariantProps) => (
   <LoaderCircleIcon className={cn('animate-spin', className)} {...props} />
 );
+
 const Pinwheel = ({ className, ...props }: SpinnerVariantProps) => (
   <LoaderPinwheelIcon className={cn('animate-spin', className)} {...props} />
 );
+
 const CircleFilled = ({
   className,
   size = 24,
@@ -35,6 +40,7 @@ const CircleFilled = ({
     />
   </div>
 );
+
 const Ellipsis = ({ size = 24, ...props }: SpinnerVariantProps) => {
   return (
     <svg
@@ -80,6 +86,7 @@ const Ellipsis = ({ size = 24, ...props }: SpinnerVariantProps) => {
     </svg>
   );
 };
+
 const Ring = ({ size = 24, ...props }: SpinnerVariantProps) => (
   <svg
     height={size}
@@ -138,6 +145,7 @@ const Ring = ({ size = 24, ...props }: SpinnerVariantProps) => (
     </g>
   </svg>
 );
+
 const Bars = ({ size = 24, ...props }: SpinnerVariantProps) => (
   <svg
     height={size}
@@ -196,6 +204,7 @@ const Bars = ({ size = 24, ...props }: SpinnerVariantProps) => (
     />
   </svg>
 );
+
 const Infinite = ({ size = 24, ...props }: SpinnerVariantProps) => (
   <svg
     height={size}
@@ -228,6 +237,7 @@ const Infinite = ({ size = 24, ...props }: SpinnerVariantProps) => (
     </path>
   </svg>
 );
+
 export type SpinnerProps = LucideProps & {
   variant?:
     | 'default'
@@ -239,6 +249,7 @@ export type SpinnerProps = LucideProps & {
     | 'bars'
     | 'infinite';
 };
+
 export const Spinner = ({ variant, ...props }: SpinnerProps) => {
   switch (variant) {
     case 'circle':
