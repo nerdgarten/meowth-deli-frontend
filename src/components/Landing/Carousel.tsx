@@ -2,18 +2,20 @@
 
 import { useEffect, useState } from "react";
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  type CarouselApi,
-} from "@ui/carousel";
+  Carousel as LandingCarouselContainer,
+  CarouselContent as LandingCarouselContent,
+  CarouselItem as LandingCarouselItem,
+  type CarouselApi as LandingCarouselApi,
+} from "@ui/custom/LandingCarousel";
 import Autoplay from "embla-carousel-autoplay";
-import { Circle } from "lucide-react";
+import { Circle, Coffee, MessageSquare } from "lucide-react";
 import { cn } from "@/libs/utils";
 import { MS_IN_SEC } from "@/constants/misc";
+import { TopCarouselCard } from "./TopCarouselCard";
+import { Carousel, CarouselContent, CarouselItem } from "@ui/carousel";
 
 export const LandingCarousel = () => {
-  const [api, setApi] = useState<CarouselApi>();
+  const [api, setApi] = useState<LandingCarouselApi>();
   const [currentIdx, setCurrentIdx] = useState(0);
 
   useEffect(() => {
@@ -37,19 +39,22 @@ export const LandingCarousel = () => {
 
   return (
     <>
-      <Carousel setApi={setApi} plugins={[Autoplay({ delay: 15 * MS_IN_SEC })]}>
-        <CarouselContent>
-          <CarouselItem key="1">
+      <LandingCarouselContainer
+        setApi={setApi}
+        plugins={[Autoplay({ delay: 15 * MS_IN_SEC })]}
+      >
+        <LandingCarouselContent>
+          <LandingCarouselItem key="1">
             <div className="h-[calc(100vh-3.75rem)] w-full bg-gray-300" />
-          </CarouselItem>
-          <CarouselItem key="2">
+          </LandingCarouselItem>
+          <LandingCarouselItem key="2">
             <div className="h-[calc(100vh-3.75rem)] w-full bg-gray-400" />
-          </CarouselItem>
-          <CarouselItem key="3">
+          </LandingCarouselItem>
+          <LandingCarouselItem key="3">
             <div className="h-[calc(100vh-3.75rem)] w-full bg-gray-500" />
-          </CarouselItem>
-        </CarouselContent>
-      </Carousel>
+          </LandingCarouselItem>
+        </LandingCarouselContent>
+      </LandingCarouselContainer>
       <div className="absolute bottom-3 left-1/2 flex gap-x-4">
         {[0, 1, 2].map((idx) => (
           <button key={idx} onClick={() => setCarouselIndex(idx)}>
@@ -61,6 +66,49 @@ export const LandingCarousel = () => {
             />
           </button>
         ))}
+      </div>
+      <div className="absolute top-[5rem] right-4 flex w-128 flex-col gap-y-4">
+        <TopCarouselCard>
+          <div className="text-app-nav-bg flex flex-row items-center gap-x-2">
+            <Coffee />
+            <h2 className="text-xl font-bold select-none">Most Ordered</h2>
+          </div>
+          <Carousel
+            className="mt-3"
+            plugins={[
+              Autoplay({
+                delay: 10 * MS_IN_SEC,
+              }),
+            ]}
+          >
+            <CarouselContent className="-ml-12">
+              {Array.from({ length: 10 }).map((_, index) => (
+                <CarouselItem key={index} className="basis-1/3 pl-12">
+                  <div className="bg-app-brown h-[20vh] w-[20vh] rounded-lg">
+                    <div className="text-app-yellow flex h-full w-full items-center justify-center select-none">
+                      {index}
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        </TopCarouselCard>
+        <TopCarouselCard>
+          <div className="text-app-nav-bg flex flex-row items-center gap-x-2">
+            <MessageSquare />
+            <h2 className="text-xl font-bold">Reviews</h2>
+          </div>
+          <div className="mt-3 flex flex-row gap-x-4">
+            <div className="bg-app-brown h-[25vh] w-[25vh] shrink-0 rounded-md" />
+            <p className="text-app-yellow">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa
+              minima, repellendus asperiores impedit cum quasi tenetur sequi,
+              dolor maxime numquam totam quisquam ea! Esse nemo error quaerat
+              sed alias provident!
+            </p>
+          </div>
+        </TopCarouselCard>
       </div>
     </>
   );
