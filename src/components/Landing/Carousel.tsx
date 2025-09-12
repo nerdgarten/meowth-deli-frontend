@@ -69,7 +69,7 @@ export const LandingCarousel = () => {
       </div>
       <div className="absolute top-[5rem] right-4 flex w-128 flex-col gap-y-4">
         <TopCarouselCard>
-          <div className="text-app-nav-bg flex flex-row items-center gap-x-2">
+          <div className="text-app-dark-brown flex flex-row items-center gap-x-2">
             <Coffee />
             <h2 className="text-xl font-bold select-none">Most Ordered</h2>
           </div>
@@ -95,7 +95,7 @@ export const LandingCarousel = () => {
           </Carousel>
         </TopCarouselCard>
         <TopCarouselCard>
-          <div className="text-app-nav-bg flex flex-row items-center gap-x-2">
+          <div className="text-app-dark-brown flex flex-row items-center gap-x-2">
             <MessageSquare />
             <h2 className="text-xl font-bold">Reviews</h2>
           </div>
