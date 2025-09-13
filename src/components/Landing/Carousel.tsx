@@ -45,13 +45,13 @@ export const LandingCarousel = () => {
       >
         <LandingCarouselContent>
           <LandingCarouselItem key="1">
-            <div className="h-[calc(100vh-3.75rem)] w-full bg-gray-300" />
+            <div className="h-[calc(100svh-4rem)] w-full bg-gray-300" />
           </LandingCarouselItem>
           <LandingCarouselItem key="2">
-            <div className="h-[calc(100vh-3.75rem)] w-full bg-gray-400" />
+            <div className="h-[calc(100svh-4rem)] w-full bg-gray-400" />
           </LandingCarouselItem>
           <LandingCarouselItem key="3">
-            <div className="h-[calc(100vh-3.75rem)] w-full bg-gray-500" />
+            <div className="h-[calc(100svh-4rem)] w-full bg-gray-500" />
           </LandingCarouselItem>
         </LandingCarouselContent>
       </LandingCarouselContainer>

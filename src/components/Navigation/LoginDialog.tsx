@@ -18,6 +18,7 @@ import {
 } from "@ui/form";
 import { Input } from "@ui/custom/AuthInput";
 import { Button } from "@ui/button";
+import Link from "next/link";
 
 interface LoginDialogProps {
   isProfileOpen: boolean;
@@ -106,6 +107,12 @@ export const LoginDialog = ({
             </div>
           </form>
         </Form>
+        <div className="text-md flex flex-row justify-center gap-x-1 text-[#9D9081]">
+          <p>Don&lsquo;t have an account?</p>
+          <Link href="/register" className="text-app-yellow shadow-app-yellow">
+            register
+          </Link>
+        </div>
       </DialogContent>
     </Dialog>
   );

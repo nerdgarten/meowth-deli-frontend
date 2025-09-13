@@ -16,10 +16,10 @@ export const Navigation = () => {
 
   return (
     <>
-      <nav className="bg-app-dark-brown fixed top-0 z-100 flex w-screen py-4">
+      <nav className="bg-app-dark-brown fixed top-0 z-100 flex h-[4rem] w-screen">
         <div className="flex w-full items-center justify-end">
           <div className="mr-3 flex gap-x-6">
-            <button onClick={() => handleProfileClick()}>
+            <button onClick={handleProfileClick} className="cursor-pointer">
               <User className="h-[1.75rem] text-white" />
             </button>
             <Link href="/settings">
