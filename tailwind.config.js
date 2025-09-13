@@ -9,6 +9,7 @@ const config = {
         "app-background": "#FEECC4",
         "app-yellow": "#FFC052",
         "app-tan": "#CCAD98",
+        "app-white": "#FFFCF8",
       },
     },
   },
