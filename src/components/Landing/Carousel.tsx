@@ -38,20 +38,20 @@ export const LandingCarousel = () => {
   };
 
   return (
-    <>
+    <div className="relative">
       <LandingCarouselContainer
         setApi={setApi}
         plugins={[Autoplay({ delay: 15 * MS_IN_SEC })]}
       >
         <LandingCarouselContent>
           <LandingCarouselItem key="1">
-            <div className="h-[calc(100vh-3.75rem)] w-full bg-gray-300" />
+            <div className="h-[calc(100svh-4rem)] w-full bg-gray-300" />
           </LandingCarouselItem>
           <LandingCarouselItem key="2">
-            <div className="h-[calc(100vh-3.75rem)] w-full bg-gray-400" />
+            <div className="h-[calc(100svh-4rem)] w-full bg-gray-400" />
           </LandingCarouselItem>
           <LandingCarouselItem key="3">
-            <div className="h-[calc(100vh-3.75rem)] w-full bg-gray-500" />
+            <div className="h-[calc(100svh-4rem)] w-full bg-gray-500" />
           </LandingCarouselItem>
         </LandingCarouselContent>
       </LandingCarouselContainer>
@@ -69,7 +69,7 @@ export const LandingCarousel = () => {
       </div>
       <div className="absolute top-[5rem] right-4 flex w-128 flex-col gap-y-4">
         <TopCarouselCard>
-          <div className="text-app-nav-bg flex flex-row items-center gap-x-2">
+          <div className="text-app-dark-brown flex flex-row items-center gap-x-2">
             <Coffee />
             <h2 className="text-xl font-bold select-none">Most Ordered</h2>
           </div>
@@ -95,7 +95,7 @@ export const LandingCarousel = () => {
           </Carousel>
         </TopCarouselCard>
         <TopCarouselCard>
-          <div className="text-app-nav-bg flex flex-row items-center gap-x-2">
+          <div className="text-app-dark-brown flex flex-row items-center gap-x-2">
             <MessageSquare />
             <h2 className="text-xl font-bold">Reviews</h2>
           </div>
@@ -110,6 +110,6 @@ export const LandingCarousel = () => {
           </div>
         </TopCarouselCard>
       </div>
-    </>
+    </div>
   );
 };
