@@ -38,7 +38,7 @@ export const LandingCarousel = () => {
   };
 
   return (
-    <>
+    <div className="relative">
       <LandingCarouselContainer
         setApi={setApi}
         plugins={[Autoplay({ delay: 15 * MS_IN_SEC })]}
@@ -110,6 +110,6 @@ export const LandingCarousel = () => {
           </div>
         </TopCarouselCard>
       </div>
-    </>
+    </div>
   );
 };
