@@ -109,7 +109,9 @@ export const LoginDialog = ({
         </Form>
         <div className="text-md flex flex-row justify-center gap-x-1 text-[#9D9081]">
           <p>Don&lsquo;t have an account?</p>
-          <Link href="/register" className="text-app-yellow shadow-app-yellow">
+          <Link href="/register" 
+          onClick={() => setIsProfileOpen(false)}
+          className="text-app-yellow shadow-app-yellow">
             register
           </Link>
         </div>
