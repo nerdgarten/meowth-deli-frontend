@@ -1,4 +1,4 @@
-import RoleCard from "@/components/Navigation/RoleCard";
+import RoleCard from "@/components/Landing/RoleCard";
 
 export default function RegisterLanding() {
   return (
