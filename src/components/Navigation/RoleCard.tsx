@@ -57,12 +57,19 @@ export default function RoleCard({
             </div>
 
             <ul className="mt-2 space-y-4 text-sm">
-            {features.map((f, i) => (
+            {features.map((f, i) => {
+                const textWithColor = f.text.replace(
+                /<b>/g,
+                `<b class="${badgeColor} font-semibold">`
+                );
+
+                return (
                 <li key={i} className="flex gap-3 text-white/85">
-                <CheckCircle2 className={`mt-0.5 h-5 w-5 ${badgeColor}`} />
-                <span dangerouslySetInnerHTML={{ __html: f.text }} />
+                    <CheckCircle2 className={`mt-0.5 h-5 w-5 ${badgeColor}`} />
+                    <span dangerouslySetInnerHTML={{ __html: textWithColor }} />
                 </li>
-            ))}
+                );
+            })}
             </ul>
 
         </div>

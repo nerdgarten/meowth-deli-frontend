@@ -1,4 +1,4 @@
-import RoleCard from "@/components/ui/custom/RoleCard";
+import RoleCard from "@/components/Navigation/RoleCard";
 
 export default function RegisterLanding() {
   return (
@@ -33,7 +33,7 @@ export default function RegisterLanding() {
             role="customer"
             titleRole="Customer"
             subtitle="Eat Without Limits!"
-            iconSrc="/images/meowth-eating.png"
+            iconSrc="/images/meowth-eating.webp"
             href="/register/customer"
             badgeColor="text-customer-font"
             features={[
@@ -49,7 +49,7 @@ export default function RegisterLanding() {
             role="driver"
             titleRole="Driver"
             subtitle="Deliver & Earn"
-            iconSrc="/images/meowth-driving.png"
+            iconSrc="/images/meowth-driving.webp"
             href="/register/driver"
             badgeColor="text-driver-font"
             features={[
