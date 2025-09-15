@@ -18,15 +18,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { PhoneInput } from "@/components/ui/custom/PhoneInput";
+import { Textarea } from "@/components/ui/textarea";
 
-export default function DriverRegisterPage() {
+export default function RestaurantRegisterPage() {
   return (
     <main className="bg-app-background flex h-full flex-col items-center">
       <div className="flex items-center justify-center gap-32 py-[2rem]">
-        <DriverRegisterFormCard />
+        <RestaurantRegisterFormCard />
         <Image
-          src="/images/meowth-eating.webp"
-          alt="meoth eating"
+          src="/images/meowth-cooking.webp"
+          alt="meoth cooking"
           height={225}
           width={200}
           className="pt-2 pb-6 drop-shadow-[0_6px_12px_rgba(0,0,0,0.35)]"
@@ -36,18 +37,18 @@ export default function DriverRegisterPage() {
   );
 }
 
-const DriverRegisterFormCard = () => {
+const RestaurantRegisterFormCard = () => {
   return (
     <div className="bg-app-white w-5/8 max-w-100 rounded-lg p-8">
-      <DriverRegisterForm />
+      <RestaurantRegisterForm />
     </div>
   );
 };
 
-const DriverRegisterFormSchema = z
+const RestaurantRegisterFormSchema = z
   .object({
-    firstName: z.string().min(1, "First name is required"),
-    surname: z.string().min(1, "Surname is required"),
+    name: z.string().min(1, "Restaurant name is required"),
+    description: z.string().max(500, "Description is too long"),
     phoneNumber: z
       .string()
       .min(6, "Invalid phone number")
@@ -68,10 +69,12 @@ const DriverRegisterFormSchema = z
     path: ["confirmPassword"],
   });
 
-const DriverRegisterForm = () => {
+const RestaurantRegisterForm = () => {
   const [step, setStep] = useState<1 | 2>(1);
-  const driverRegisterFrom = useForm<z.infer<typeof DriverRegisterFormSchema>>({
-    resolver: zodResolver(DriverRegisterFormSchema),
+  const restaurantRegisterFrom = useForm<
+    z.infer<typeof RestaurantRegisterFormSchema>
+  >({
+    resolver: zodResolver(RestaurantRegisterFormSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
@@ -86,11 +89,11 @@ const DriverRegisterForm = () => {
       agreePDPA: false,
     },
   });
-  const onSubmit = (data: z.infer<typeof DriverRegisterFormSchema>) => {
+  const onSubmit = (data: z.infer<typeof RestaurantRegisterFormSchema>) => {
     console.log(data);
   };
   const goNext = async () => {
-    const ok = await driverRegisterFrom.trigger([
+    const ok = await restaurantRegisterFrom.trigger([
       "email",
       "password",
       "confirmPassword",
@@ -100,21 +103,21 @@ const DriverRegisterForm = () => {
   const goBack = () => setStep(1);
 
   return (
-    <Form {...driverRegisterFrom}>
+    <Form {...restaurantRegisterFrom}>
       <form
-        onSubmit={driverRegisterFrom.handleSubmit(onSubmit)}
+        onSubmit={restaurantRegisterFrom.handleSubmit(onSubmit)}
         className="mt-4"
       >
         <h2 className="text-app-dark-brown mb-2 text-3xl font-semibold">
           Create your account
         </h2>
         <p className="text-app-dark-brown mb-8 text-sm">
-          Register as a driver to start ordering!
+          Register as a restaurant to start selling!
         </p>
         {step === 1 && (
           <>
             <FormField
-              control={driverRegisterFrom.control}
+              control={restaurantRegisterFrom.control}
               name="email"
               render={({ field }) => (
                 <FormItem className="pb-4">
@@ -127,7 +130,7 @@ const DriverRegisterForm = () => {
               )}
             />
             <FormField
-              control={driverRegisterFrom.control}
+              control={restaurantRegisterFrom.control}
               name="password"
               render={({ field }) => (
                 <FormItem className="pb-4">
@@ -140,7 +143,7 @@ const DriverRegisterForm = () => {
               )}
             />
             <FormField
-              control={driverRegisterFrom.control}
+              control={restaurantRegisterFrom.control}
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
@@ -167,36 +170,37 @@ const DriverRegisterForm = () => {
 
         {step === 2 && (
           <>
-            <div className="flex items-center justify-center gap-4 pb-4">
-              <FormField
-                control={driverRegisterFrom.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Meowth" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={driverRegisterFrom.control}
-                name="surname"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Surname</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Nerdsgarten" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
             <FormField
-              control={driverRegisterFrom.control}
+              control={restaurantRegisterFrom.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="pb-4">
+                  <FormLabel>Restaurant Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Meowth Cuisine" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={restaurantRegisterFrom.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="pb-4">
+                  <FormLabel>Description (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Meowth Cuisine is a wonderful restaurant. Our Meowth meat is the best!"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={restaurantRegisterFrom.control}
               name="phoneNumber"
               render={({ field }) => (
                 <FormItem className="pb-4">
@@ -214,7 +218,7 @@ const DriverRegisterForm = () => {
               )}
             />
             <FormField
-              control={driverRegisterFrom.control}
+              control={restaurantRegisterFrom.control}
               name="address"
               render={({ field }) => (
                 <FormItem className="pb-4">
@@ -230,7 +234,7 @@ const DriverRegisterForm = () => {
               )}
             />
             <FormField
-              control={driverRegisterFrom.control}
+              control={restaurantRegisterFrom.control}
               name="agreeTOS"
               render={({ field }) => (
                 <FormItem className="space-y-0 pb-1">
@@ -250,7 +254,7 @@ const DriverRegisterForm = () => {
               )}
             />
             <FormField
-              control={driverRegisterFrom.control}
+              control={restaurantRegisterFrom.control}
               name="agreePDPA"
               render={({ field }) => (
                 <FormItem className="space-y-0">
