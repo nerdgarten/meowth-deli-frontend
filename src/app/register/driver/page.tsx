@@ -19,14 +19,14 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { PhoneInput } from "@/components/ui/custom/PhoneInput";
 
-export default function CustomerRegisterPage() {
+export default function DriverRegisterPage() {
   return (
     <main className="bg-app-background flex h-full flex-col items-center">
       <div className="flex items-center justify-center gap-32 py-[2rem]">
-        <CustomerRegisterFormCard />
+        <DriverRegisterFormCard />
         <Image
-          src="/images/meowth-driving.webp"
-          alt="meoth driving"
+          src="/images/meowth-eating.webp"
+          alt="meoth eating"
           height={225}
           width={200}
           className="pt-2 pb-6 drop-shadow-[0_6px_12px_rgba(0,0,0,0.35)]"
@@ -36,15 +36,15 @@ export default function CustomerRegisterPage() {
   );
 }
 
-const CustomerRegisterFormCard = () => {
+const DriverRegisterFormCard = () => {
   return (
     <div className="bg-app-white w-5/8 max-w-100 rounded-lg p-8">
-      <CustomerRegisterForm />
+      <DriverRegisterForm />
     </div>
   );
 };
 
-const CustomerRegisterFormSchema = z
+const DriverRegisterFormSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
     surname: z.string().min(1, "Surname is required"),
@@ -68,12 +68,10 @@ const CustomerRegisterFormSchema = z
     path: ["confirmPassword"],
   });
 
-const CustomerRegisterForm = () => {
+const DriverRegisterForm = () => {
   const [step, setStep] = useState<1 | 2>(1);
-  const customerRegisterFrom = useForm<
-    z.infer<typeof CustomerRegisterFormSchema>
-  >({
-    resolver: zodResolver(CustomerRegisterFormSchema),
+  const driverRegisterFrom = useForm<z.infer<typeof DriverRegisterFormSchema>>({
+    resolver: zodResolver(DriverRegisterFormSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
@@ -88,11 +86,11 @@ const CustomerRegisterForm = () => {
       agreePDPA: false,
     },
   });
-  const onSubmit = (data: z.infer<typeof CustomerRegisterFormSchema>) => {
+  const onSubmit = (data: z.infer<typeof DriverRegisterFormSchema>) => {
     console.log(data);
   };
   const goNext = async () => {
-    const ok = await customerRegisterFrom.trigger([
+    const ok = await driverRegisterFrom.trigger([
       "email",
       "password",
       "confirmPassword",
@@ -102,21 +100,21 @@ const CustomerRegisterForm = () => {
   const goBack = () => setStep(1);
 
   return (
-    <Form {...customerRegisterFrom}>
+    <Form {...driverRegisterFrom}>
       <form
-        onSubmit={customerRegisterFrom.handleSubmit(onSubmit)}
+        onSubmit={driverRegisterFrom.handleSubmit(onSubmit)}
         className="mt-4"
       >
         <h2 className="text-app-dark-brown mb-2 text-3xl font-semibold">
           Create your account
         </h2>
         <p className="text-app-dark-brown mb-8 text-sm">
-          Register as a customer to start ordering!
+          Register as a driver to start delivering!
         </p>
         {step === 1 && (
           <>
             <FormField
-              control={customerRegisterFrom.control}
+              control={driverRegisterFrom.control}
               name="email"
               render={({ field }) => (
                 <FormItem className="pb-4">
@@ -129,7 +127,7 @@ const CustomerRegisterForm = () => {
               )}
             />
             <FormField
-              control={customerRegisterFrom.control}
+              control={driverRegisterFrom.control}
               name="password"
               render={({ field }) => (
                 <FormItem className="pb-4">
@@ -142,7 +140,7 @@ const CustomerRegisterForm = () => {
               )}
             />
             <FormField
-              control={customerRegisterFrom.control}
+              control={driverRegisterFrom.control}
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
@@ -171,7 +169,7 @@ const CustomerRegisterForm = () => {
           <>
             <div className="flex items-center justify-center gap-4 pb-4">
               <FormField
-                control={customerRegisterFrom.control}
+                control={driverRegisterFrom.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
@@ -184,7 +182,7 @@ const CustomerRegisterForm = () => {
                 )}
               />
               <FormField
-                control={customerRegisterFrom.control}
+                control={driverRegisterFrom.control}
                 name="surname"
                 render={({ field }) => (
                   <FormItem>
@@ -198,7 +196,7 @@ const CustomerRegisterForm = () => {
               />
             </div>
             <FormField
-              control={customerRegisterFrom.control}
+              control={driverRegisterFrom.control}
               name="phoneNumber"
               render={({ field }) => (
                 <FormItem className="pb-4">
@@ -216,7 +214,7 @@ const CustomerRegisterForm = () => {
               )}
             />
             <FormField
-              control={customerRegisterFrom.control}
+              control={driverRegisterFrom.control}
               name="address"
               render={({ field }) => (
                 <FormItem className="pb-4">
@@ -232,7 +230,7 @@ const CustomerRegisterForm = () => {
               )}
             />
             <FormField
-              control={customerRegisterFrom.control}
+              control={driverRegisterFrom.control}
               name="agreeTOS"
               render={({ field }) => (
                 <FormItem className="space-y-0 pb-1">
@@ -252,7 +250,7 @@ const CustomerRegisterForm = () => {
               )}
             />
             <FormField
-              control={customerRegisterFrom.control}
+              control={driverRegisterFrom.control}
               name="agreePDPA"
               render={({ field }) => (
                 <FormItem className="space-y-0">

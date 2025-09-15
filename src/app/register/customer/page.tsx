@@ -19,11 +19,11 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { PhoneInput } from "@/components/ui/custom/PhoneInput";
 
-export default function DriverRegisterPage() {
+export default function CustomerRegisterPage() {
   return (
     <main className="bg-app-background flex h-full flex-col items-center">
       <div className="flex items-center justify-center gap-32 py-[2rem]">
-        <DriverRegisterFormCard />
+        <CustomerRegisterFormCard />
         <Image
           src="/images/meowth-eating.webp"
           alt="meoth eating"
@@ -36,15 +36,15 @@ export default function DriverRegisterPage() {
   );
 }
 
-const DriverRegisterFormCard = () => {
+const CustomerRegisterFormCard = () => {
   return (
     <div className="bg-app-white w-5/8 max-w-100 rounded-lg p-8">
-      <DriverRegisterForm />
+      <CustomerRegisterForm />
     </div>
   );
 };
 
-const DriverRegisterFormSchema = z
+const CustomerRegisterFormSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
     surname: z.string().min(1, "Surname is required"),
@@ -68,10 +68,12 @@ const DriverRegisterFormSchema = z
     path: ["confirmPassword"],
   });
 
-const DriverRegisterForm = () => {
+const CustomerRegisterForm = () => {
   const [step, setStep] = useState<1 | 2>(1);
-  const driverRegisterFrom = useForm<z.infer<typeof DriverRegisterFormSchema>>({
-    resolver: zodResolver(DriverRegisterFormSchema),
+  const customerRegisterFrom = useForm<
+    z.infer<typeof CustomerRegisterFormSchema>
+  >({
+    resolver: zodResolver(CustomerRegisterFormSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
@@ -86,11 +88,11 @@ const DriverRegisterForm = () => {
       agreePDPA: false,
     },
   });
-  const onSubmit = (data: z.infer<typeof DriverRegisterFormSchema>) => {
+  const onSubmit = (data: z.infer<typeof CustomerRegisterFormSchema>) => {
     console.log(data);
   };
   const goNext = async () => {
-    const ok = await driverRegisterFrom.trigger([
+    const ok = await customerRegisterFrom.trigger([
       "email",
       "password",
       "confirmPassword",
@@ -100,21 +102,21 @@ const DriverRegisterForm = () => {
   const goBack = () => setStep(1);
 
   return (
-    <Form {...driverRegisterFrom}>
+    <Form {...customerRegisterFrom}>
       <form
-        onSubmit={driverRegisterFrom.handleSubmit(onSubmit)}
+        onSubmit={customerRegisterFrom.handleSubmit(onSubmit)}
         className="mt-4"
       >
         <h2 className="text-app-dark-brown mb-2 text-3xl font-semibold">
           Create your account
         </h2>
         <p className="text-app-dark-brown mb-8 text-sm">
-          Register as a driver to start ordering!
+          Register as a customer to start ordering!
         </p>
         {step === 1 && (
           <>
             <FormField
-              control={driverRegisterFrom.control}
+              control={customerRegisterFrom.control}
               name="email"
               render={({ field }) => (
                 <FormItem className="pb-4">
@@ -127,7 +129,7 @@ const DriverRegisterForm = () => {
               )}
             />
             <FormField
-              control={driverRegisterFrom.control}
+              control={customerRegisterFrom.control}
               name="password"
               render={({ field }) => (
                 <FormItem className="pb-4">
@@ -140,7 +142,7 @@ const DriverRegisterForm = () => {
               )}
             />
             <FormField
-              control={driverRegisterFrom.control}
+              control={customerRegisterFrom.control}
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
@@ -169,7 +171,7 @@ const DriverRegisterForm = () => {
           <>
             <div className="flex items-center justify-center gap-4 pb-4">
               <FormField
-                control={driverRegisterFrom.control}
+                control={customerRegisterFrom.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
@@ -182,7 +184,7 @@ const DriverRegisterForm = () => {
                 )}
               />
               <FormField
-                control={driverRegisterFrom.control}
+                control={customerRegisterFrom.control}
                 name="surname"
                 render={({ field }) => (
                   <FormItem>
@@ -196,7 +198,7 @@ const DriverRegisterForm = () => {
               />
             </div>
             <FormField
-              control={driverRegisterFrom.control}
+              control={customerRegisterFrom.control}
               name="phoneNumber"
               render={({ field }) => (
                 <FormItem className="pb-4">
@@ -214,7 +216,7 @@ const DriverRegisterForm = () => {
               )}
             />
             <FormField
-              control={driverRegisterFrom.control}
+              control={customerRegisterFrom.control}
               name="address"
               render={({ field }) => (
                 <FormItem className="pb-4">
@@ -230,7 +232,7 @@ const DriverRegisterForm = () => {
               )}
             />
             <FormField
-              control={driverRegisterFrom.control}
+              control={customerRegisterFrom.control}
               name="agreeTOS"
               render={({ field }) => (
                 <FormItem className="space-y-0 pb-1">
@@ -250,7 +252,7 @@ const DriverRegisterForm = () => {
               )}
             />
             <FormField
-              control={driverRegisterFrom.control}
+              control={customerRegisterFrom.control}
               name="agreePDPA"
               render={({ field }) => (
                 <FormItem className="space-y-0">
