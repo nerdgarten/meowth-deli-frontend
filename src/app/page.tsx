@@ -2,6 +2,7 @@
 
 import { LandingCarousel } from "@/components/Landing/Carousel";
 import { Toolbar } from "@/components/Landing/Toolbar";
+import OnboardingCard from "@/components/Onboarding/OnboardingCard";
 import { Spinner } from "@ui/shadcn-io/spinner";
 import { Skeleton } from "@ui/skeleton";
 
