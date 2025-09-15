@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 
 import OnboardingCard from "@/components/Onboarding/OnboardingCard";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,7 @@ import { useState } from "react";
 export default function TemporaryPage() {
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
   const [contents, setContents] = useState<any[]>([]);
-  
+
   const restaurantContents = [
     {
       heading: "Registration Complete",
