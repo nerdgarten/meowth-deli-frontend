@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 
 import { QueryProvider } from "@/components/common/QueryProvider";
 import { Navigation } from "@/components/Navigation/Navigation";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Meowth Delivery",
@@ -26,6 +27,7 @@ export default function RootLayout({
         <QueryProvider>
           <Navigation />
           {children}
+          <Toaster position="top-center" reverseOrder={true}/>
         </QueryProvider>
       </body>
     </html>

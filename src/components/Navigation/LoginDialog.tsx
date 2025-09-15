@@ -18,25 +18,42 @@ import {
 } from "@ui/form";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { type z } from "zod";
 
-import { apiClient } from "@/libs/axios";
+import { useMutation } from "@tanstack/react-query";
+import { LoginFormSchema, loginSubmitMutation } from "@/queries/auth";
+import toast from "react-hot-toast";
 
 interface LoginDialogProps {
   isLoginDialogOpen: boolean;
   setIsLoginDialogOpen: (open: boolean) => void;
 }
 
-const LoginFormSchema = z.object({
-  email: z.email(),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
 export const LoginDialog = ({
   isLoginDialogOpen,
   setIsLoginDialogOpen,
 }: LoginDialogProps) => {
   const router = useRouter();
+  const loginMutation = useMutation({
+    mutationFn: loginSubmitMutation,
+    onSuccess: () => {
+      toast.success("Login successful!");
+      setIsLoginDialogOpen(false);
+    },
+    onError: (error: unknown) => {
+      if(error instanceof Error) {
+        if (error.message.includes("404")) {
+          toast.error("User not found. Please check your email.");
+        }
+        else if (error.message.includes("401")) {
+          toast.error("Incorrect password. Please try again.");
+        }
+      }
+      else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+    }
+  })
 
   const loginForm = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
@@ -46,19 +63,7 @@ export const LoginDialog = ({
     },
   });
 
-  const onSubmit = async(data: z.infer<typeof LoginFormSchema>) => {
-    const response = await apiClient.post("/auth/signin", {
-      email: data.email,
-      password: data.password,
-      role: "customer",
-    });
-
-    // TODO: show toast notification
-    if (response.status === 200) {
-      setIsLoginDialogOpen(false);
-      router.refresh();
-    }
-  };
+  const onSubmit = async(data: z.infer<typeof LoginFormSchema>) => loginMutation.mutate(data);
 
   return (
     <Dialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>

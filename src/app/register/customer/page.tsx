@@ -29,7 +29,7 @@ export default function CustomerRegisterPage() {
           alt="meoth eating"
           height={225}
           width={200}
-          className="pt-2 pb-6 drop-shadow-[0_6px_12px_rgba(0,0,0,0.35)]"
+          className="pt-2 pb-6 drop-shadow-[0_6px_12px_rgba(0,0,0,0.35)] select-none"
         />
       </div>
     </main>
@@ -48,7 +48,7 @@ const CustomerRegisterFormSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
     surname: z.string().min(1, "Surname is required"),
-    phoneNumber: z
+    tel: z
       .string()
       .min(6, "Invalid phone number")
       .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
@@ -79,7 +79,7 @@ const CustomerRegisterForm = () => {
     defaultValues: {
       firstName: "",
       surname: "",
-      phoneNumber: "",
+      tel: "",
       address: "",
       email: "",
       password: "",
@@ -199,14 +199,14 @@ const CustomerRegisterForm = () => {
             </div>
             <FormField
               control={customerRegisterFrom.control}
-              name="phoneNumber"
+              name="tel"
               render={({ field }) => (
                 <FormItem className="pb-4">
                   <FormLabel>Phone Number</FormLabel>
                   <FormControl>
                     <PhoneInput
                       {...field}
-                      id="phoneNumber"
+                      id="tel"
                       placeholder="Enter a phone number"
                       className="w-full overflow-hidden rounded-full border"
                     />
