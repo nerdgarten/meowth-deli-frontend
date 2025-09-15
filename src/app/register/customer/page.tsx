@@ -17,6 +17,7 @@ import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { PhoneInput } from "@/components/ui/custom/PhoneInput";
 
 export default function CustomerRegisterPage() {
   return (
@@ -45,10 +46,10 @@ const CustomerRegisterFormSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
     surname: z.string().min(1, "Surname is required"),
-    mobileNumber: z
+    phoneNumber: z
       .string()
-      .min(6, "Invalid mobile number")
-      .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid mobile number"),
+      .min(6, "Invalid phone number")
+      .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
     address: z.string().min(1, "Address is required"),
     email: z.email(),
     password: z.string().min(6, "Password must be at least 6 characters"),
@@ -76,7 +77,7 @@ const CustomerRegisterForm = () => {
     defaultValues: {
       firstName: "",
       surname: "",
-      mobileNumber: "",
+      phoneNumber: "",
       address: "",
       email: "",
       password: "",
@@ -190,12 +191,17 @@ const CustomerRegisterForm = () => {
             </div>
             <FormField
               control={customerRegisterFrom.control}
-              name="mobileNumber"
+              name="phoneNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mobile Number</FormLabel>
+                  <FormLabel>Phone Number</FormLabel>
                   <FormControl>
-                    <Input placeholder="+6681 234 5678" {...field} />
+                    <PhoneInput
+                      {...field}
+                      id="phoneNumber"
+                      placeholder="Enter a phone number"
+                      className="w-full overflow-hidden rounded-full border"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
