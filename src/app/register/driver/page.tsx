@@ -46,9 +46,9 @@ const DriverRegisterFormCard = () => {
 
 const DriverRegisterFormSchema = z
   .object({
-    firstName: z.string().min(1, "First name is required"),
-    surname: z.string().min(1, "Surname is required"),
-    phoneNumber: z
+    firstname: z.string().min(1, "First name is required"),
+    lastname: z.string().min(1, "Lastname is required"),
+    tel: z
       .string()
       .min(6, "Invalid phone number")
       .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
@@ -75,9 +75,9 @@ const DriverRegisterForm = () => {
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
-      firstName: "",
-      surname: "",
-      phoneNumber: "",
+      firstname: "",
+      lastname: "",
+      tel: "",
       address: "",
       email: "",
       password: "",
@@ -170,10 +170,10 @@ const DriverRegisterForm = () => {
             <div className="flex items-center justify-center gap-4 pb-4">
               <FormField
                 control={driverRegisterFrom.control}
-                name="firstName"
+                name="firstname"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel>Firstname</FormLabel>
                     <FormControl>
                       <Input placeholder="Meowth" {...field} />
                     </FormControl>
@@ -183,10 +183,10 @@ const DriverRegisterForm = () => {
               />
               <FormField
                 control={driverRegisterFrom.control}
-                name="surname"
+                name="lastname"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Surname</FormLabel>
+                    <FormLabel>Lastname</FormLabel>
                     <FormControl>
                       <Input placeholder="Nerdsgarten" {...field} />
                     </FormControl>
@@ -197,14 +197,14 @@ const DriverRegisterForm = () => {
             </div>
             <FormField
               control={driverRegisterFrom.control}
-              name="phoneNumber"
+              name="tel"
               render={({ field }) => (
                 <FormItem className="pb-4">
                   <FormLabel>Phone Number</FormLabel>
                   <FormControl>
                     <PhoneInput
                       {...field}
-                      id="phoneNumber"
+                      id="tel"
                       placeholder="Enter a phone number"
                       className="w-full overflow-hidden rounded-full border"
                     />
