@@ -8,6 +8,7 @@ const config = {
         "app-brown": "#685B4B",
         "app-background": "#FEECC4",
         "app-yellow": "#FFC052",
+        "app-blue": "#5081FF",
         "app-tan": "#CCAD98",
         "app-white": "#FFFCF8",
         "app-bronze": "#A67244",

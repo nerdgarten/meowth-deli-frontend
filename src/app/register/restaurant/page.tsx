@@ -19,6 +19,8 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { PhoneInput } from "@/components/ui/custom/PhoneInput";
 import { Textarea } from "@/components/ui/textarea";
+import { ToSDialogButton } from "@/components/Register/ToSDialog";
+import { PDPADialogButton } from "@/components/Register/PDPADialog";
 
 export default function RestaurantRegisterPage() {
   return (
@@ -246,7 +248,8 @@ const RestaurantRegisterForm = () => {
                       />
                     </FormControl>
                     <FormLabel className="text-sm font-normal">
-                      I agree to Terms of Services
+                      I agree to{" "}
+                      <ToSDialogButton>Terms of Service</ToSDialogButton>
                     </FormLabel>
                   </div>
                   <FormMessage />
@@ -266,7 +269,7 @@ const RestaurantRegisterForm = () => {
                       />
                     </FormControl>
                     <FormLabel className="text-sm font-normal">
-                      I agree to PDPA
+                      I agree to <PDPADialogButton>PDPA</PDPADialogButton>
                     </FormLabel>
                   </div>
                   <FormMessage />
