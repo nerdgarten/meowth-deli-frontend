@@ -1,9 +1,10 @@
-import { QueryProvider } from "@/components/common/QueryProvider";
-import { Navigation } from "@/components/Navigation/Navigation";
 import "@/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Inter } from "next/font/google";
+
+import { QueryProvider } from "@/components/common/QueryProvider";
+import { Navigation } from "@/components/Navigation/Navigation";
 
 export const metadata: Metadata = {
   title: "Meowth Delivery",
