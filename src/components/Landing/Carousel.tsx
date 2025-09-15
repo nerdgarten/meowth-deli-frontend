@@ -1,18 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Carousel, CarouselContent, CarouselItem } from "@ui/carousel";
 import {
   Carousel as LandingCarouselContainer,
+  type CarouselApi as LandingCarouselApi,
   CarouselContent as LandingCarouselContent,
   CarouselItem as LandingCarouselItem,
-  type CarouselApi as LandingCarouselApi,
 } from "@ui/custom/LandingCarousel";
 import Autoplay from "embla-carousel-autoplay";
 import { Circle, Coffee, MessageSquare } from "lucide-react";
-import { cn } from "@/libs/utils";
+import { useEffect, useState } from "react";
+
 import { MS_IN_SEC } from "@/constants/misc";
+import { cn } from "@/libs/utils";
+
 import { TopCarouselCard } from "./TopCarouselCard";
-import { Carousel, CarouselContent, CarouselItem } from "@ui/carousel";
 
 export const LandingCarousel = () => {
   const [api, setApi] = useState<LandingCarouselApi>();

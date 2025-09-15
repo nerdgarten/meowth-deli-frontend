@@ -1,9 +1,10 @@
 "use client";
 
-import { LandingCarousel } from "@/components/Landing/Carousel";
-import { Toolbar } from "@/components/Landing/Toolbar";
 import { Spinner } from "@ui/shadcn-io/spinner";
 import { Skeleton } from "@ui/skeleton";
+
+import { LandingCarousel } from "@/components/Landing/Carousel";
+import { Toolbar } from "@/components/Landing/Toolbar";
 
 export default function HomePage() {
   // TODO: Fetch Data from API
