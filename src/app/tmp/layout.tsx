@@ -1,4 +1,4 @@
-export default function RegisterLayout({ children }: { children: React.ReactNode }) {
+export default function TemporaryLayout({ children }: { children: React.ReactNode }) {
   return (
     // push content below fixed nav + lock the page to one viewport
     <div className="bg-app-background pt-16"
