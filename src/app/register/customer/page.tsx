@@ -22,11 +22,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CustomerRegisterFormSchema, registerCustomerMutation } from "@/queries/auth";
+import {
+  CustomerRegisterFormSchema,
+  registerCustomerMutation,
+} from "@/queries/auth";
+import { ToSDialogButton } from "@/components/Register/ToSDialog";
+import { PDPADialogButton } from "@/components/Register/PDPADialog";
 
 export default function CustomerRegisterPage() {
   return (
-    <main className="bg-app-background flex h-full flex-col items-center">
+    <main className="bg-app-background flex h-full flex-col items-center overflow-y-scroll">
       <div className="flex items-center justify-center gap-32 py-[2rem]">
         <CustomerRegisterFormCard />
         <Image
@@ -78,16 +83,16 @@ const CustomerRegisterForm = () => {
       router.push("/");
     },
     onError: (error: unknown) => {
-      if(error instanceof Error) {
+      if (error instanceof Error) {
         toast.error(error.message);
-      }
-      else {
+      } else {
         toast.error("Register failed! Please try again.");
       }
-    }
-  })
+    },
+  });
 
-  const onSubmit = (data: z.infer<typeof CustomerRegisterFormSchema>) => registerMutation.mutate(data);
+  const onSubmit = (data: z.infer<typeof CustomerRegisterFormSchema>) =>
+    registerMutation.mutate(data);
 
   const goNext = async () => {
     const ok = await customerRegisterFrom.trigger([
@@ -243,7 +248,8 @@ const CustomerRegisterForm = () => {
                       />
                     </FormControl>
                     <FormLabel className="text-sm font-normal">
-                      I agree to Terms of Services
+                      I agree to{" "}
+                      <ToSDialogButton>Terms of Service</ToSDialogButton>
                     </FormLabel>
                   </div>
                   <FormMessage />
@@ -263,7 +269,7 @@ const CustomerRegisterForm = () => {
                       />
                     </FormControl>
                     <FormLabel className="text-sm font-normal">
-                      I agree to PDPA
+                      I agree to <PDPADialogButton>PDPA</PDPADialogButton>
                     </FormLabel>
                   </div>
                   <FormMessage />

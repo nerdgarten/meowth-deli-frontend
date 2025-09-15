@@ -18,6 +18,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { PhoneInput } from "@/components/ui/custom/PhoneInput";
+import { PDPADialogButton } from "@/components/Register/PDPADialog";
+import { ToSDialogButton } from "@/components/Register/ToSDialog";
 
 export default function DriverRegisterPage() {
   return (
@@ -242,7 +244,8 @@ const DriverRegisterForm = () => {
                       />
                     </FormControl>
                     <FormLabel className="text-sm font-normal">
-                      I agree to Terms of Services
+                      I agree to{" "}
+                      <ToSDialogButton>Terms of Service</ToSDialogButton>
                     </FormLabel>
                   </div>
                   <FormMessage />
@@ -262,7 +265,7 @@ const DriverRegisterForm = () => {
                       />
                     </FormControl>
                     <FormLabel className="text-sm font-normal">
-                      I agree to PDPA
+                      I agree to <PDPADialogButton>PDPA</PDPADialogButton>
                     </FormLabel>
                   </div>
                   <FormMessage />
