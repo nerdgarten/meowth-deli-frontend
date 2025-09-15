@@ -44,7 +44,7 @@ export default function OnboardingCard({
         </DialogHeader>
         <div className="flex h-full items-center justify-center">
           <Image
-            src={contents[currentIndex]?.imageSrc || ""}
+            src={contents[currentIndex]?.imageSrc || "/images/meowth-eating.webp"}
             alt={`${contents[currentIndex]?.heading} image`}
             height={180}
             width={160}
