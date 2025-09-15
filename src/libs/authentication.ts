@@ -7,7 +7,7 @@ interface JwtPayload {
 
 export const isAuthenticated = (): boolean => {
   const token = Cookies.get("token");
-  if(!token) {
+  if (!token) {
     return false;
   }
 
@@ -19,4 +19,4 @@ export const isAuthenticated = (): boolean => {
   } catch (error) {
     return false;
   }
-}
+};

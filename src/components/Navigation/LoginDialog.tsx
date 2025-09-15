@@ -41,19 +41,17 @@ export const LoginDialog = ({
       setIsLoginDialogOpen(false);
     },
     onError: (error: unknown) => {
-      if(error instanceof Error) {
+      if (error instanceof Error) {
         if (error.message.includes("404")) {
           toast.error("User not found. Please check your email.");
-        }
-        else if (error.message.includes("401")) {
+        } else if (error.message.includes("401")) {
           toast.error("Incorrect password. Please try again.");
         }
-      }
-      else {
+      } else {
         toast.error("An unexpected error occurred. Please try again.");
       }
-    }
-  })
+    },
+  });
 
   const loginForm = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
@@ -63,7 +61,8 @@ export const LoginDialog = ({
     },
   });
 
-  const onSubmit = async(data: z.infer<typeof LoginFormSchema>) => loginMutation.mutate(data);
+  const onSubmit = async (data: z.infer<typeof LoginFormSchema>) =>
+    loginMutation.mutate(data);
 
   return (
     <Dialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
@@ -129,14 +128,14 @@ export const LoginDialog = ({
         <div className="text-md flex flex-row justify-center gap-x-1 text-[#9D9081]">
           <p>Don&lsquo;t have an account?</p>
           <button
-          onClick={() => {
-            setIsLoginDialogOpen(false);
-            router.push("/register");
-          }}
-          className="text-app-yellow shadow-app-yellow"
-        >
-          register
-        </button>
+            onClick={() => {
+              setIsLoginDialogOpen(false);
+              router.push("/register");
+            }}
+            className="text-app-yellow shadow-app-yellow"
+          >
+            register
+          </button>
         </div>
       </DialogContent>
     </Dialog>

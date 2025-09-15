@@ -33,7 +33,7 @@ export default function RootLayout({
             toastOptions={{
               style: {
                 backgroundColor: "#685B4B",
-                color: "#FEECC4"
+                color: "#FEECC4",
               },
             }}
           />

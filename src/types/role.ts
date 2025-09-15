@@ -1,1 +1,1 @@
-export type Role = 'restaurant' | 'customer' | 'driver';
+export type Role = "restaurant" | "customer" | "driver";

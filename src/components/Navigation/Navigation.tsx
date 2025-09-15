@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu,User } from "lucide-react";
+import { Menu, User } from "lucide-react";
 import { useState } from "react";
 
 import { EditProfileDialog } from "@/components/Navigation/EditProfileDialog";
@@ -13,26 +13,25 @@ import toast from "react-hot-toast";
 
 export const Navigation = () => {
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState<boolean>(false);
-  const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] = useState<boolean>(false);
+  const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] =
+    useState<boolean>(false);
   const [isMenuDialogOpen, setIsMenuDialogOpen] = useState<boolean>(false);
 
   const handleProfileClick = () => {
-    if(isAuthenticated()) {
+    if (isAuthenticated()) {
       setIsEditProfileDialogOpen(true);
-    }
-    else {
+    } else {
       setIsLoginDialogOpen(true);
     }
   };
 
   const handleMenuClick = () => {
-    if(isAuthenticated()) {
+    if (isAuthenticated()) {
       setIsMenuDialogOpen(true);
-    }
-    else {
+    } else {
       toast.error("You have to be logged in to access the menu.");
     }
-  }
+  };
 
   return (
     <>
@@ -55,8 +54,14 @@ export const Navigation = () => {
         isLoginDialogOpen={isLoginDialogOpen}
         setIsLoginDialogOpen={setIsLoginDialogOpen}
       />
-      <EditProfileDialog isEditProfileDialogOpen={isEditProfileDialogOpen} setIsEditProfileDialogOpen={setIsEditProfileDialogOpen}/>
-      <MenuDialog isMenuDialogOpen={isMenuDialogOpen} setIsMenuDialogOpen={setIsMenuDialogOpen} />
+      <EditProfileDialog
+        isEditProfileDialogOpen={isEditProfileDialogOpen}
+        setIsEditProfileDialogOpen={setIsEditProfileDialogOpen}
+      />
+      <MenuDialog
+        isMenuDialogOpen={isMenuDialogOpen}
+        setIsMenuDialogOpen={setIsMenuDialogOpen}
+      />
     </>
   );
 };
