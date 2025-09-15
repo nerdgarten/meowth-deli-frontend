@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { User, Menu } from "lucide-react";
 import { LoginDialog } from "./LoginDialog";
+import BreadcrumbNav from "./BreadCrumbNav";
 
 export const Navigation = () => {
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
@@ -17,6 +18,9 @@ export const Navigation = () => {
   return (
     <>
       <nav className="bg-app-dark-brown fixed top-0 z-100 flex h-[4rem] w-screen">
+        <div className="flex w-full items-center px-4">
+          <BreadcrumbNav />
+        </div>
         <div className="flex w-full items-center justify-end">
           <div className="mr-3 flex gap-x-6">
             <button onClick={handleProfileClick} className="cursor-pointer">
