@@ -1,7 +1,7 @@
 import { FlatCompat } from "@eslint/eslintrc";
 import tseslint from "typescript-eslint";
 import unusedImports from "eslint-plugin-unused-imports";
-import simpleImportSort from "eslint-plugin-simple-import-sort"
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,

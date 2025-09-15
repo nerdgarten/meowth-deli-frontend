@@ -42,6 +42,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.62.0",
     "react-is": "^19.1.1",
+    "react-hot-toast": "^2.6.0",
     "react-phone-number-input": "^3.4.12",
     "recharts": "^2.15.4",
     "tailwind-merge": "^3.3.1",

@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 
 import { QueryProvider } from "@/components/common/QueryProvider";
 import { Navigation } from "@/components/Navigation/Navigation";
@@ -26,6 +27,16 @@ export default function RootLayout({
         <QueryProvider>
           <Navigation />
           {children}
+          <Toaster
+            position="top-center"
+            reverseOrder={true}
+            toastOptions={{
+              style: {
+                backgroundColor: "#685B4B",
+                color: "#FEECC4",
+              },
+            }}
+          />
         </QueryProvider>
       </body>
     </html>

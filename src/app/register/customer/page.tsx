@@ -1,7 +1,21 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { type z } from "zod";
+
+import { PDPADialogButton } from "@/components/Register/PDPADialog";
+import { ToSDialogButton } from "@/components/Register/ToSDialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/custom/AuthInput";
+import { PhoneInput } from "@/components/ui/custom/PhoneInput";
 import {
   Form,
   FormControl,
@@ -10,18 +24,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { z } from "zod";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowRight } from "lucide-react";
-import Image from "next/image";
-import { PhoneInput } from "@/components/ui/custom/PhoneInput";
-
+import {
+  CustomerRegisterFormSchema,
+  registerCustomerMutation,
+} from "@/queries/auth";
 export default function CustomerRegisterPage() {
   return (
-    <main className="bg-app-background flex h-full flex-col items-center">
+    <main className="bg-app-background flex h-full flex-col items-center overflow-y-scroll">
       <div className="flex items-center justify-center gap-32 py-[2rem]">
         <CustomerRegisterFormCard />
         <Image
@@ -29,7 +38,7 @@ export default function CustomerRegisterPage() {
           alt="meoth eating"
           height={225}
           width={200}
-          className="pt-2 pb-6 drop-shadow-[0_6px_12px_rgba(0,0,0,0.35)]"
+          className="pt-2 pb-6 drop-shadow-[0_6px_12px_rgba(0,0,0,0.35)] select-none"
         />
       </div>
     </main>
@@ -44,31 +53,8 @@ const CustomerRegisterFormCard = () => {
   );
 };
 
-const CustomerRegisterFormSchema = z
-  .object({
-    firstName: z.string().min(1, "First name is required"),
-    surname: z.string().min(1, "Surname is required"),
-    phoneNumber: z
-      .string()
-      .min(6, "Invalid phone number")
-      .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
-    address: z.string().min(1, "Address is required"),
-    email: z.email(),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string(),
-    agreeTOS: z.boolean().refine((v) => v === true, {
-      message: "You must agree to the Terms of Services",
-    }),
-    agreePDPA: z
-      .boolean()
-      .refine((v) => v === true, { message: "You must agree to PDPA" }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-
 const CustomerRegisterForm = () => {
+  const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
   const customerRegisterFrom = useForm<
     z.infer<typeof CustomerRegisterFormSchema>
@@ -77,9 +63,9 @@ const CustomerRegisterForm = () => {
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
-      firstName: "",
-      surname: "",
-      phoneNumber: "",
+      firstname: "",
+      lastname: "",
+      tel: "",
       address: "",
       email: "",
       password: "",
@@ -88,9 +74,25 @@ const CustomerRegisterForm = () => {
       agreePDPA: false,
     },
   });
-  const onSubmit = (data: z.infer<typeof CustomerRegisterFormSchema>) => {
-    console.log(data);
-  };
+
+  const registerMutation = useMutation({
+    mutationFn: registerCustomerMutation,
+    onSuccess: () => {
+      toast.success("Register successfully!");
+      router.push("/");
+    },
+    onError: (error: unknown) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Register failed! Please try again.");
+      }
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof CustomerRegisterFormSchema>) =>
+    registerMutation.mutate(data);
+
   const goNext = async () => {
     const ok = await customerRegisterFrom.trigger([
       "email",
@@ -99,6 +101,7 @@ const CustomerRegisterForm = () => {
     ]);
     if (ok) setStep(2);
   };
+
   const goBack = () => setStep(1);
 
   return (
@@ -172,10 +175,10 @@ const CustomerRegisterForm = () => {
             <div className="flex items-center justify-center gap-4 pb-4">
               <FormField
                 control={customerRegisterFrom.control}
-                name="firstName"
+                name="firstname"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel>Firstname</FormLabel>
                     <FormControl>
                       <Input placeholder="Meowth" {...field} />
                     </FormControl>
@@ -185,10 +188,10 @@ const CustomerRegisterForm = () => {
               />
               <FormField
                 control={customerRegisterFrom.control}
-                name="surname"
+                name="lastname"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Surname</FormLabel>
+                    <FormLabel>Lastname</FormLabel>
                     <FormControl>
                       <Input placeholder="Nerdsgarten" {...field} />
                     </FormControl>
@@ -199,14 +202,14 @@ const CustomerRegisterForm = () => {
             </div>
             <FormField
               control={customerRegisterFrom.control}
-              name="phoneNumber"
+              name="tel"
               render={({ field }) => (
                 <FormItem className="pb-4">
                   <FormLabel>Phone Number</FormLabel>
                   <FormControl>
                     <PhoneInput
                       {...field}
-                      id="phoneNumber"
+                      id="tel"
                       placeholder="Enter a phone number"
                       className="w-full overflow-hidden rounded-full border"
                     />
@@ -244,7 +247,8 @@ const CustomerRegisterForm = () => {
                       />
                     </FormControl>
                     <FormLabel className="text-sm font-normal">
-                      I agree to Terms of Services
+                      I agree to{" "}
+                      <ToSDialogButton>Terms of Service</ToSDialogButton>
                     </FormLabel>
                   </div>
                   <FormMessage />
@@ -264,7 +268,7 @@ const CustomerRegisterForm = () => {
                       />
                     </FormControl>
                     <FormLabel className="text-sm font-normal">
-                      I agree to PDPA
+                      I agree to <PDPADialogButton>PDPA</PDPADialogButton>
                     </FormLabel>
                   </div>
                   <FormMessage />

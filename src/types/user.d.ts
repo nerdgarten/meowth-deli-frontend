@@ -1,5 +1,5 @@
 export interface ICustomerProfile {
-  firstname: string,
-  lastname: string,
-  tel: string,
+  firstname: string;
+  lastname: string;
+  tel: string;
 }

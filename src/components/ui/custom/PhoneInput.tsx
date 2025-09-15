@@ -2,6 +2,7 @@ import { CheckIcon, ChevronsUpDown } from "lucide-react";
 import * as React from "react";
 import * as RPNInput from "react-phone-number-input";
 import flags from "react-phone-number-input/flags";
+
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -16,9 +17,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-import { cn } from "@/libs/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/libs/utils";
 
 type PhoneInputProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -58,8 +58,8 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
            *
            * @param {E164Number | undefined} value - The entered value
            */
-          // @ts-ignore
-          onChange={(value) => onChange?.(value || "")}
+          // @ts-expect-error TS2322 - RPNInput onChange type is not compatible with HTMLInputElement onChange type
+          onChange={(value) => onChange?.(value ?? "")}
           {...props}
         />
       );
@@ -67,18 +67,19 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
   );
 PhoneInput.displayName = "PhoneInput";
 
-const InputComponent = React.forwardRef<HTMLInputElement, any>(
-  ({ className, ...props }, ref) => (
-    <input
-      className={cn(
-        "h-full flex-1 rounded-none border-0 bg-transparent px-2 text-base outline-none placeholder:text-[#A19175] md:text-sm",
-        className
-      )}
-      {...props}
-      ref={ref}
-    />
-  )
-);
+const InputComponent = React.forwardRef<
+  HTMLInputElement,
+  React.InputHTMLAttributes<HTMLInputElement>
+>(({ className, ...props }, ref) => (
+  <input
+    className={cn(
+      "h-full flex-1 rounded-none border-0 bg-transparent px-2 text-base outline-none placeholder:text-[#A19175] md:text-sm",
+      className
+    )}
+    {...props}
+    ref={ref}
+  />
+));
 InputComponent.displayName = "InputComponent";
 
 type CountrySelectOption = { label: string; value: RPNInput.Country };

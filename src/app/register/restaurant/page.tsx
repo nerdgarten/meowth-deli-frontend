@@ -1,7 +1,18 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { PDPADialogButton } from "@/components/Register/PDPADialog";
+import { ToSDialogButton } from "@/components/Register/ToSDialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/custom/AuthInput";
+import { PhoneInput } from "@/components/ui/custom/PhoneInput";
 import {
   Form,
   FormControl,
@@ -10,14 +21,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { z } from "zod";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowRight } from "lucide-react";
-import Image from "next/image";
-import { PhoneInput } from "@/components/ui/custom/PhoneInput";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function RestaurantRegisterPage() {
@@ -49,7 +52,7 @@ const RestaurantRegisterFormSchema = z
   .object({
     name: z.string().min(1, "Restaurant name is required"),
     description: z.string().max(500, "Description is too long"),
-    phoneNumber: z
+    tel: z
       .string()
       .min(6, "Invalid phone number")
       .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
@@ -78,9 +81,8 @@ const RestaurantRegisterForm = () => {
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
-      firstName: "",
-      surname: "",
-      phoneNumber: "",
+      name: "",
+      description: "",
       address: "",
       email: "",
       password: "",
@@ -201,14 +203,14 @@ const RestaurantRegisterForm = () => {
             />
             <FormField
               control={restaurantRegisterFrom.control}
-              name="phoneNumber"
+              name="tel"
               render={({ field }) => (
                 <FormItem className="pb-4">
                   <FormLabel>Phone Number</FormLabel>
                   <FormControl>
                     <PhoneInput
                       {...field}
-                      id="phoneNumber"
+                      id="tel"
                       placeholder="Enter a phone number"
                       className="w-full overflow-hidden rounded-full border"
                     />
@@ -246,7 +248,8 @@ const RestaurantRegisterForm = () => {
                       />
                     </FormControl>
                     <FormLabel className="text-sm font-normal">
-                      I agree to Terms of Services
+                      I agree to{" "}
+                      <ToSDialogButton>Terms of Service</ToSDialogButton>
                     </FormLabel>
                   </div>
                   <FormMessage />
@@ -266,7 +269,7 @@ const RestaurantRegisterForm = () => {
                       />
                     </FormControl>
                     <FormLabel className="text-sm font-normal">
-                      I agree to PDPA
+                      I agree to <PDPADialogButton>PDPA</PDPADialogButton>
                     </FormLabel>
                   </div>
                   <FormMessage />
