@@ -18,6 +18,7 @@ import {
 } from "@ui/form";
 import { Input } from "@ui/custom/AuthInput";
 import { Button } from "@ui/button";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 interface LoginDialogProps {
@@ -41,7 +42,7 @@ export const LoginDialog = ({
       password: "",
     },
   });
-
+  const router = useRouter();
   const onSubmit = (data: z.infer<typeof LoginFormSchema>) => {
     console.log(data);
   };
@@ -109,9 +110,15 @@ export const LoginDialog = ({
         </Form>
         <div className="text-md flex flex-row justify-center gap-x-1 text-[#9D9081]">
           <p>Don&lsquo;t have an account?</p>
-          <Link href="/register" className="text-app-yellow shadow-app-yellow">
-            register
-          </Link>
+          <button
+          onClick={() => {
+            setIsProfileOpen(false);
+            router.push("/register");
+          }}
+          className="text-app-yellow shadow-app-yellow"
+        >
+          register
+        </button>
         </div>
       </DialogContent>
     </Dialog>
