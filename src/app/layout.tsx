@@ -2,10 +2,10 @@ import "@/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 
 import { QueryProvider } from "@/components/common/QueryProvider";
 import { Navigation } from "@/components/Navigation/Navigation";
-import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Meowth Delivery",

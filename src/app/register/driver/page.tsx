@@ -1,7 +1,18 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { PDPADialogButton } from "@/components/Register/PDPADialog";
+import { ToSDialogButton } from "@/components/Register/ToSDialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/custom/AuthInput";
+import { PhoneInput } from "@/components/ui/custom/PhoneInput";
 import {
   Form,
   FormControl,
@@ -10,16 +21,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { z } from "zod";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowRight } from "lucide-react";
-import Image from "next/image";
-import { PhoneInput } from "@/components/ui/custom/PhoneInput";
-import { PDPADialogButton } from "@/components/Register/PDPADialog";
-import { ToSDialogButton } from "@/components/Register/ToSDialog";
 
 export default function DriverRegisterPage() {
   return (

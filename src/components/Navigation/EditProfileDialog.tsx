@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@ui/button";
 import { Input } from "@ui/custom/AuthInput";
+import { PhoneInput } from "@ui/custom/PhoneInput";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/dialog";
 import {
   Form,
@@ -15,17 +16,15 @@ import {
 } from "@ui/form";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import toast from "react-hot-toast";
+import { type z } from "zod";
 
-import { apiClient } from "@/libs/axios";
 import {
   EditProfileFormSchema,
   queryCustomerProfile,
   updateCustomerProfileMutation,
 } from "@/queries/profile";
 import type { ICustomerProfile } from "@/types/user";
-import { PhoneInput } from "@ui/custom/PhoneInput";
-import toast from "react-hot-toast";
 
 interface EditProfileDialogProps {
   isEditProfileDialogOpen: boolean;

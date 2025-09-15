@@ -1,5 +1,4 @@
 "use client";
-import { Progress } from "@ui/progress";
 import { Button } from "@ui/button";
 import {
   Dialog,
@@ -8,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@ui/dialog";
+import { Progress } from "@ui/progress";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -30,7 +30,7 @@ export default function OnboardingCard({
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   return (
-    <Dialog open={isOnboardingOpen} onOpenChange={ setIsOnboardingOpen }>
+    <Dialog open={isOnboardingOpen} onOpenChange={setIsOnboardingOpen}>
       <DialogContent className="bg-app-white h-[32rem] w-[24rem] p-8">
         <DialogHeader>
           <DialogTitle className="text-app-dark-brown text-2xl font-semibold text-wrap">
@@ -44,16 +44,16 @@ export default function OnboardingCard({
         </DialogHeader>
         <div className="flex h-full items-center justify-center">
           <Image
-            src={contents[currentIndex]?.imageSrc || "/images/meowth-eating.webp"}
+            src={
+              contents[currentIndex]?.imageSrc ?? "/images/meowth-eating.webp"
+            }
             alt={`${contents[currentIndex]?.heading} image`}
             height={180}
             width={160}
           />
         </div>
         <div className="flex items-center justify-center">
-          <Progress
-            value={((currentIndex + 1) / contents.length) * 100}
-          />
+          <Progress value={((currentIndex + 1) / contents.length) * 100} />
         </div>
         <div
           className={
@@ -75,12 +75,12 @@ export default function OnboardingCard({
               if (currentIndex + 1 < contents.length)
                 setCurrentIndex(currentIndex + 1);
               else {
-                  setCurrentIndex(0);
+                setCurrentIndex(0);
                 setIsOnboardingOpen(false);
               }
             }}
           >
-            {currentIndex<contents.length-1 ? "Next" : "Finish"}
+            {currentIndex < contents.length - 1 ? "Next" : "Finish"}
           </Button>
         </div>
       </DialogContent>

@@ -10,6 +10,8 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { type z } from "zod";
 
+import { PDPADialogButton } from "@/components/Register/PDPADialog";
+import { ToSDialogButton } from "@/components/Register/ToSDialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/custom/AuthInput";
@@ -26,8 +28,6 @@ import {
   CustomerRegisterFormSchema,
   registerCustomerMutation,
 } from "@/queries/auth";
-import { ToSDialogButton } from "@/components/Register/ToSDialog";
-import { PDPADialogButton } from "@/components/Register/PDPADialog";
 export default function CustomerRegisterPage() {
   return (
     <main className="bg-app-background flex h-full flex-col items-center overflow-y-scroll">

@@ -2,14 +2,14 @@
 
 import { Menu, User } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 import { EditProfileDialog } from "@/components/Navigation/EditProfileDialog";
+import { MenuDialog } from "@/components/Navigation/MenuDialog";
 import { isAuthenticated } from "@/libs/authentication";
 
-import { LoginDialog } from "./LoginDialog";
 import BreadcrumbNav from "./BreadCrumbNav";
-import { MenuDialog } from "@/components/Navigation/MenuDialog";
-import toast from "react-hot-toast";
+import { LoginDialog } from "./LoginDialog";
 
 export const Navigation = () => {
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState<boolean>(false);

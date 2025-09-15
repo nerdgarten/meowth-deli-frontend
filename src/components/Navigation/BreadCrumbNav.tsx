@@ -1,8 +1,9 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { House } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbItem,

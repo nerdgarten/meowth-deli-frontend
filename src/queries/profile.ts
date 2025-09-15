@@ -1,6 +1,7 @@
+import { z } from "zod";
+
 import { apiClient } from "@/libs/axios";
 import type { ICustomerProfile } from "@/types/user";
-import { z } from "zod";
 
 export async function queryCustomerProfile(): Promise<ICustomerProfile> {
   const response = await apiClient.get<ICustomerProfile>("/customer/profile");
