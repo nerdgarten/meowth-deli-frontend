@@ -67,10 +67,10 @@ export const LandingCarousel = () => {
           </button>
         ))}
       </div>
-      <div className="absolute top-[5.5rem] right-4 flex flex-col gap-y-6 w-3/8">
+      <div className="absolute top-[5.5rem] right-4 flex w-3/8 flex-col gap-y-6">
         <TopCarouselCard>
           <div className="text-app-dark-brown flex flex-row items-center gap-x-2">
-            <Coffee className="stroke-2 h-8 w-8"/>
+            <Coffee className="h-8 w-8 stroke-2" />
             <h2 className="text-2xl font-bold select-none">Most Ordered</h2>
           </div>
           <Carousel
@@ -83,7 +83,10 @@ export const LandingCarousel = () => {
           >
             <CarouselContent className="-ml-3">
               {Array.from({ length: 10 }).map((_, index) => (
-                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 pl-3">
+                <CarouselItem
+                  key={index}
+                  className="pl-3 md:basis-1/2 lg:basis-1/3"
+                >
                   <div className="bg-app-brown h-[24vh] w-full rounded-lg">
                     <div className="text-app-yellow flex h-full w-full items-center justify-center select-none">
                       {index}
@@ -96,12 +99,12 @@ export const LandingCarousel = () => {
         </TopCarouselCard>
         <TopCarouselCard>
           <div className="text-app-dark-brown flex flex-row items-center gap-x-2">
-            <MessageSquare className="stroke-2 h-8 w-8"/>
+            <MessageSquare className="h-8 w-8 stroke-2" />
             <h2 className="text-2xl font-bold">Reviews</h2>
           </div>
           <div className="mt-3 flex flex-row gap-x-4">
             <div className="bg-app-brown h-[25vh] w-[25vh] shrink-0 rounded-md" />
-            <p className="text-app-brown font-semibold text-lg">
+            <p className="text-app-brown text-lg font-semibold">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa
               minima, repellendus asperiores impedit cum quasi tenetur sequi,
               dolor maxime numquam totam quisquam ea! Esse nemo error quaerat
