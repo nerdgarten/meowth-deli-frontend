@@ -20,6 +20,8 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { apiClient } from "@/libs/axios";
+
 interface LoginDialogProps {
   isLoginDialogOpen: boolean;
   setIsLoginDialogOpen: (open: boolean) => void;
@@ -34,6 +36,8 @@ export const LoginDialog = ({
   isLoginDialogOpen,
   setIsLoginDialogOpen,
 }: LoginDialogProps) => {
+  const router = useRouter();
+
   const loginForm = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
@@ -41,9 +45,19 @@ export const LoginDialog = ({
       password: "",
     },
   });
-  const router = useRouter();
-  const onSubmit = (data: z.infer<typeof LoginFormSchema>) => {
-    console.log(data);
+
+  const onSubmit = async(data: z.infer<typeof LoginFormSchema>) => {
+    const response = await apiClient.post("/auth/signin", {
+      email: data.email,
+      password: data.password,
+      role: "customer",
+    });
+
+    // TODO: show toast notification
+    if (response.status === 200) {
+      setIsLoginDialogOpen(false);
+      router.refresh();
+    }
   };
 
   return (
