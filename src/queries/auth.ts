@@ -24,8 +24,8 @@ export async function loginSubmitMutation(
 
 export const CustomerRegisterFormSchema = z
   .object({
-    firstname: z.string().min(1, "First name is required"),
-    lastname: z.string().min(1, "Surname is required"),
+    firstname: z.string().min(1, "Firstname is required"),
+    lastname: z.string().min(1, "Lastname is required"),
     tel: z
       .string()
       .min(6, "Invalid phone number")

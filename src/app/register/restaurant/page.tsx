@@ -51,7 +51,7 @@ const RestaurantRegisterFormSchema = z
   .object({
     name: z.string().min(1, "Restaurant name is required"),
     description: z.string().max(500, "Description is too long"),
-    phoneNumber: z
+    tel: z
       .string()
       .min(6, "Invalid phone number")
       .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
@@ -80,9 +80,8 @@ const RestaurantRegisterForm = () => {
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
-      firstName: "",
-      surname: "",
-      phoneNumber: "",
+      name: "",
+      description: "",
       address: "",
       email: "",
       password: "",
@@ -203,14 +202,14 @@ const RestaurantRegisterForm = () => {
             />
             <FormField
               control={restaurantRegisterFrom.control}
-              name="phoneNumber"
+              name="tel"
               render={({ field }) => (
                 <FormItem className="pb-4">
                   <FormLabel>Phone Number</FormLabel>
                   <FormControl>
                     <PhoneInput
                       {...field}
-                      id="phoneNumber"
+                      id="tel"
                       placeholder="Enter a phone number"
                       className="w-full overflow-hidden rounded-full border"
                     />
