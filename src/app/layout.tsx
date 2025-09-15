@@ -1,4 +1,5 @@
 import { QueryProvider } from "@/components/common/QueryProvider";
+import BreadcrumbNav from "@/components/Navigation/BreadCrumbNav";
 import { Navigation } from "@/components/Navigation/Navigation";
 import "@/styles/globals.css";
 
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable}`}>
       <body className="bg-app-background min-h-screen w-full font-sans">
         <QueryProvider>
+          {/* <BreadcrumbNav /> */}
           <Navigation />
           {children}
         </QueryProvider>
