@@ -28,7 +28,6 @@ import {
 } from "@/queries/auth";
 import { ToSDialogButton } from "@/components/Register/ToSDialog";
 import { PDPADialogButton } from "@/components/Register/PDPADialog";
-
 export default function CustomerRegisterPage() {
   return (
     <main className="bg-app-background flex h-full flex-col items-center overflow-y-scroll">

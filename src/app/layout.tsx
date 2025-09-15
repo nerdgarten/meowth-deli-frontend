@@ -27,7 +27,16 @@ export default function RootLayout({
         <QueryProvider>
           <Navigation />
           {children}
-          <Toaster position="top-center" reverseOrder={true}/>
+          <Toaster
+            position="top-center"
+            reverseOrder={true}
+            toastOptions={{
+              style: {
+                backgroundColor: "#685B4B",
+                color: "#FEECC4",
+              },
+            }}
+          />
         </QueryProvider>
       </body>
     </html>

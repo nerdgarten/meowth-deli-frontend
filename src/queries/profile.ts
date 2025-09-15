@@ -11,12 +11,19 @@ export async function queryCustomerProfile(): Promise<ICustomerProfile> {
 export const EditProfileFormSchema = z.object({
   firstname: z.string(),
   lastname: z.string(),
-  tel: z.string()
-  .min(6, "Invalid phone number")
-  .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),});
+  tel: z
+    .string()
+    .min(6, "Invalid phone number")
+    .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
+});
 
-export async function updateCustomerProfileMutation(data: z.infer<typeof EditProfileFormSchema>) {
-  const response = await apiClient.patch<ICustomerProfile>("/customer/profile", data);
+export async function updateCustomerProfileMutation(
+  data: z.infer<typeof EditProfileFormSchema>
+) {
+  const response = await apiClient.patch<ICustomerProfile>(
+    "/customer/profile",
+    data
+  );
 
   return response.data;
 }

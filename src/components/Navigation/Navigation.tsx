@@ -1,7 +1,6 @@
 "use client";
 
-import { Menu,User } from "lucide-react";
-import Link from "next/link";
+import { Menu, User } from "lucide-react";
 import { useState } from "react";
 
 import { EditProfileDialog } from "@/components/Navigation/EditProfileDialog";
@@ -9,17 +8,28 @@ import { isAuthenticated } from "@/libs/authentication";
 
 import { LoginDialog } from "./LoginDialog";
 import BreadcrumbNav from "./BreadCrumbNav";
+import { MenuDialog } from "@/components/Navigation/MenuDialog";
+import toast from "react-hot-toast";
 
 export const Navigation = () => {
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState<boolean>(false);
-  const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] = useState<boolean>(false);
+  const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] =
+    useState<boolean>(false);
+  const [isMenuDialogOpen, setIsMenuDialogOpen] = useState<boolean>(false);
 
   const handleProfileClick = () => {
-    if(isAuthenticated()) {
+    if (isAuthenticated()) {
       setIsEditProfileDialogOpen(true);
-    }
-    else {
+    } else {
       setIsLoginDialogOpen(true);
+    }
+  };
+
+  const handleMenuClick = () => {
+    if (isAuthenticated()) {
+      setIsMenuDialogOpen(true);
+    } else {
+      toast.error("You have to be logged in to access the menu.");
     }
   };
 
@@ -34,9 +44,9 @@ export const Navigation = () => {
             <button onClick={handleProfileClick} className="cursor-pointer">
               <User className="h-[1.75rem] text-white" />
             </button>
-            <Link href="/settings">
+            <button onClick={handleMenuClick} className="cursor-pointer">
               <Menu className="h-[1.75rem] text-white" />
-            </Link>
+            </button>
           </div>
         </div>
       </nav>
@@ -44,7 +54,14 @@ export const Navigation = () => {
         isLoginDialogOpen={isLoginDialogOpen}
         setIsLoginDialogOpen={setIsLoginDialogOpen}
       />
-      <EditProfileDialog isEditProfileDialogOpen={isEditProfileDialogOpen} setIsEditProfileDialogOpen={setIsEditProfileDialogOpen}/>
+      <EditProfileDialog
+        isEditProfileDialogOpen={isEditProfileDialogOpen}
+        setIsEditProfileDialogOpen={setIsEditProfileDialogOpen}
+      />
+      <MenuDialog
+        isMenuDialogOpen={isMenuDialogOpen}
+        setIsMenuDialogOpen={setIsMenuDialogOpen}
+      />
     </>
   );
 };

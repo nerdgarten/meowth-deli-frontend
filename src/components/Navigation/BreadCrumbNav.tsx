@@ -13,32 +13,40 @@ import {
 } from "@/components/ui/breadcrumb";
 
 export default function BreadcrumbNav() {
-  const pathname = usePathname(); 
+  const pathname = usePathname();
   const pathParts = pathname.split("/").filter(Boolean);
-  const capitalize = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+  const capitalize = (s: string) =>
+    s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="/"><House/></Link>
+            <Link href="/">
+              <House />
+            </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
 
         {pathParts.map((part, idx) => {
           const href = "/" + pathParts.slice(0, idx + 1).join("/");
           const isLast = idx === pathParts.length - 1;
-          const isPrev = idx <= pathParts.length - 2; 
+          const isPrev = idx <= pathParts.length - 2;
 
           return (
             <div key={idx} className="flex items-center space-x-2">
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage className="font-semibold text-app-white">{capitalize(part)}</BreadcrumbPage>
+                  <BreadcrumbPage className="text-app-white font-semibold">
+                    {capitalize(part)}
+                  </BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink className={isPrev ? "text-[#B9AE9C]" : undefined} asChild>
+                  <BreadcrumbLink
+                    className={isPrev ? "text-[#B9AE9C]" : undefined}
+                    asChild
+                  >
                     <Link href={href}>{capitalize(part)}</Link>
                   </BreadcrumbLink>
                 )}
