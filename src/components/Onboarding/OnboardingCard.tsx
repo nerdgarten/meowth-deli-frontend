@@ -7,7 +7,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "../ui/dialog";
+} from "@ui/dialog";
 import Image from "next/image";
 import { useState } from "react";
 
