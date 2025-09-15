@@ -1,3 +1,5 @@
+"use client";
+
 import { LandingCarousel } from "@/components/Landing/Carousel";
 import { Toolbar } from "@/components/Landing/Toolbar";
 import { Spinner } from "@ui/shadcn-io/spinner";
