@@ -1,3 +1,6 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@ui/button";
+import { Input } from "@ui/custom/AuthInput";
 import {
   Dialog,
   DialogContent,
@@ -5,9 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -16,14 +16,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@ui/form";
-import { Input } from "@ui/custom/AuthInput";
-import { Button } from "@ui/button";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { apiClient } from "@/libs/axios";
 
 interface LoginDialogProps {
-  isProfileOpen: boolean;
-  setIsProfileOpen: (open: boolean) => void;
+  isLoginDialogOpen: boolean;
+  setIsLoginDialogOpen: (open: boolean) => void;
 }
 
 const LoginFormSchema = z.object({
@@ -32,9 +33,11 @@ const LoginFormSchema = z.object({
 });
 
 export const LoginDialog = ({
-  isProfileOpen,
-  setIsProfileOpen,
+  isLoginDialogOpen,
+  setIsLoginDialogOpen,
 }: LoginDialogProps) => {
+  const router = useRouter();
+
   const loginForm = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
@@ -42,13 +45,23 @@ export const LoginDialog = ({
       password: "",
     },
   });
-  const router = useRouter();
-  const onSubmit = (data: z.infer<typeof LoginFormSchema>) => {
-    console.log(data);
+
+  const onSubmit = async(data: z.infer<typeof LoginFormSchema>) => {
+    const response = await apiClient.post("/auth/signin", {
+      email: data.email,
+      password: data.password,
+      role: "customer",
+    });
+
+    // TODO: show toast notification
+    if (response.status === 200) {
+      setIsLoginDialogOpen(false);
+      router.refresh();
+    }
   };
 
   return (
-    <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+    <Dialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
       <DialogContent className="bg-app-white p-8">
         <DialogHeader>
           <DialogTitle className="text-app-dark-brown text-3xl font-semibold">
@@ -112,7 +125,7 @@ export const LoginDialog = ({
           <p>Don&lsquo;t have an account?</p>
           <button
           onClick={() => {
-            setIsProfileOpen(false);
+            setIsLoginDialogOpen(false);
             router.push("/register");
           }}
           className="text-app-yellow shadow-app-yellow"

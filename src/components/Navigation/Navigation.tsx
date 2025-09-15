@@ -1,18 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { Menu,User } from "lucide-react";
 import Link from "next/link";
-import { User, Menu } from "lucide-react";
+import { useState } from "react";
+
+import { EditProfileDialog } from "@/components/Navigation/EditProfileDialog";
+import { isAuthenticated } from "@/libs/authentication";
+
 import { LoginDialog } from "./LoginDialog";
 import BreadcrumbNav from "./BreadCrumbNav";
 
 export const Navigation = () => {
-  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
+  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState<boolean>(false);
+  const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] = useState<boolean>(false);
 
   const handleProfileClick = () => {
-    // TODO: Integrate with user profile logic
-    // For now, just open the dialog
-    setIsProfileOpen(true);
+    if(isAuthenticated()) {
+      setIsEditProfileDialogOpen(true);
+    }
+    else {
+      setIsLoginDialogOpen(true);
+    }
   };
 
   return (
@@ -33,9 +41,10 @@ export const Navigation = () => {
         </div>
       </nav>
       <LoginDialog
-        isProfileOpen={isProfileOpen}
-        setIsProfileOpen={setIsProfileOpen}
+        isLoginDialogOpen={isLoginDialogOpen}
+        setIsLoginDialogOpen={setIsLoginDialogOpen}
       />
+      <EditProfileDialog isEditProfileDialogOpen={isEditProfileDialogOpen} setIsEditProfileDialogOpen={setIsEditProfileDialogOpen}/>
     </>
   );
 };
