@@ -1,5 +1,5 @@
 import { DialogTitle } from "@radix-ui/react-dialog";
-import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader } from "@ui/dialog";
 import { useState } from "react";
 
 interface ToSDialogProps {
