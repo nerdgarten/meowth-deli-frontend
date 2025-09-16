@@ -17,16 +17,18 @@ export const Navigation = () => {
     useState<boolean>(false);
   const [isMenuDialogOpen, setIsMenuDialogOpen] = useState<boolean>(false);
 
-  const handleProfileClick = () => {
-    if (isAuthenticated()) {
+  const handleProfileClick = async() => {
+    const authenticated = await isAuthenticated();
+    if (authenticated) {
       setIsEditProfileDialogOpen(true);
     } else {
       setIsLoginDialogOpen(true);
     }
   };
 
-  const handleMenuClick = () => {
-    if (isAuthenticated()) {
+  const handleMenuClick = async() => {
+    const authenticated = await isAuthenticated();
+    if (authenticated) {
       setIsMenuDialogOpen(true);
     } else {
       toast.error("You have to be logged in to access the menu.");

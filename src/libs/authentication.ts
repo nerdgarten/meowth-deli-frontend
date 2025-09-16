@@ -1,6 +1,7 @@
-import Cookies from "js-cookie";
+import { apiClient } from "@/libs/axios";
 
-export const isAuthenticated = (): boolean => {
-  const authenticated = Cookies.get("authenticated");
-  return authenticated === "true";
+export const isAuthenticated = async(): Promise<boolean> => {
+  const response = await apiClient.get("/isAuthenticated");
+
+  return response.status === 200;
 };
