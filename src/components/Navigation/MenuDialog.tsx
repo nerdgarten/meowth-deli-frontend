@@ -2,6 +2,8 @@ import { Button } from "@ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/dialog";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
+import { logoutFunctionMutation } from "@/queries/logout";
 
 interface MenuDialogProps {
   isMenuDialogOpen: boolean;
@@ -12,11 +14,16 @@ export const MenuDialog = ({
   isMenuDialogOpen,
   setIsMenuDialogOpen,
 }: MenuDialogProps) => {
-  function handleLogout() {
-    Cookies.remove("token");
-    toast.success("Logged Out");
-    setIsMenuDialogOpen(false);
-  }
+  const logoutMutation = useMutation({
+    mutationFn: logoutFunctionMutation,
+    onSuccess: () => {
+      toast.success("Logged Out");
+      setIsMenuDialogOpen(false);
+    },
+    onError: () => {
+      toast.error("Failed to logout. Please try again.");
+    }
+  });
 
   return (
     <Dialog open={isMenuDialogOpen} onOpenChange={setIsMenuDialogOpen}>
@@ -26,7 +33,7 @@ export const MenuDialog = ({
             Menu
           </DialogTitle>
         </DialogHeader>
-        <Button onClick={handleLogout}>Logout</Button>
+        <Button onClick={() => logoutMutation.mutate()}>Logout</Button>
       </DialogContent>
     </Dialog>
   );
