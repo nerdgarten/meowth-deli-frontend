@@ -1,0 +1,84 @@
+"use client"
+
+export const SelectMenu = () => {
+    const detailed = {
+        id: 1,
+        name: "Sushimi Size XL",
+        tags: ["Sushi", "Cheap"],
+        price: 19.99,
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        note: "Best served with soy sauce and wasabi.",
+    }
+    const dummyArray = [
+        1,2,3,4, 5,6
+    ]
+  return (
+    <div className="grid-row-2 mx-4 grid h-full grid-cols-1 gap-4 rounded-sm bg-white p-4">
+      <div className="col-span-1 row-span-1 grid grid-cols-3 grid-rows-1 overflow-hidden rounded-2xl p-4">
+        <div className="bg-app-blue h-full w-full rounded-2xl"></div>
+        <div className="col-span-2 grid w-full grid-cols-2 grid-rows-7 gap-4 p-8">
+          <div className="col-span-1 row-span-2 text-4xl">
+            <h1 className="font-bold">Sushimi Size XL</h1>
+            <div className="fond-semibold mt-2 flex gap-2 text-sm">
+              {detailed.tags.map((tag) => (
+                <div
+                  key={tag}
+                  className="flex w-14 items-center justify-center rounded-sm bg-slate-200"
+                >
+                  {tag}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="col-span-1 row-span-2 flex flex-col items-end">
+            <h2 className="text-4xl font-bold text-black">{detailed.price}</h2>
+            <h2 className="text-xl text-slate-500">Base Price</h2>
+          </div>
+          <div className="col-span-2 row-span-2">
+            <h1 className="text-lg font-bold">Description</h1>
+            <p className="mt-2 text-sm font-semibold text-slate-600">
+              {detailed.description}
+            </p>
+          </div>
+          <div className="col-span-2 row-span-2 grid grid-cols-2 grid-rows-3 gap-4">
+            <h1 className="col-span-1 row-span-1 text-lg font-bold">
+              Note to Restaurant
+            </h1>
+            <div className="flex w-full justify-end">
+              <div className="fond-semibold flex h-fit w-18 items-center justify-center gap-2 rounded-sm bg-slate-200 text-sm">
+                Optioanl
+              </div>
+            </div>
+            <input
+              type="text"
+              className="focus:border-app-brown focus:ring-app-brown col-span-2 row-span-2 mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm focus:ring-1 focus:outline-none"
+              placeholder="E.g. No onions, extra spicy, etc."
+            />
+          </div>
+          <div className="col-span-2 row-span-1 grid grid-cols-7 grid-rows-1 gap-16">
+            <div className="col-span-3 row-span-1 flex items-center justify-between">
+              <div className="aspect-square h-full rounded-full border-4 border-black"></div>
+              <h1 className="text-4xl font-bold">1</h1>
+              <div className="aspect-square h-full rounded-full border-4 border-black"></div>
+            </div>
+            <button className="col-span-4 row-span-1 rounded-full bg-black"></button>
+          </div>
+        </div>
+      </div>
+
+      <div className="col-span-1 row-span-1 grid grid-cols-4 grid-rows-5 gap-4">
+        <h3 className="col-span-4 row-span-1 text-3xl font-bold">
+          Pairing Suggestion
+        </h3>
+        <div className="col-span-4 row-span-4 flex w-full gap-20 overflow-x-auto p-3">
+          {dummyArray.map((item) => (
+            <div
+              key={item}
+              className="w-72 flex-shrink-0 rounded-lg bg-slate-400 shadow-lg"
+            ></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
