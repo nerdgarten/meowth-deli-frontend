@@ -1,4 +1,4 @@
-export default function MenuLayout({
+export default function OrderLayout({
   children,
 }: {
   children: React.ReactNode;

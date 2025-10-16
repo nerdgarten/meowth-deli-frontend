@@ -1,4 +1,4 @@
-export default function MenuLayout({
+export default function StatusLayout({
   children,
 }: {
   children: React.ReactNode;

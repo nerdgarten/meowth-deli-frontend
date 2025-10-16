@@ -1,11 +1,15 @@
 "use client"
 
+import { Icon } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
+
+
 export const SelectMenu = () => {
     const detailed = {
         id: 1,
         name: "Sushimi Size XL",
         tags: ["Sushi", "Cheap"],
-        price: 19.99,
+        price: 1299,
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
         note: "Best served with soy sauce and wasabi.",
     }
@@ -31,7 +35,9 @@ export const SelectMenu = () => {
             </div>
           </div>
           <div className="col-span-1 row-span-2 flex flex-col items-end">
-            <h2 className="text-4xl font-bold text-black">{detailed.price}</h2>
+            <h2 className="text-4xl font-bold text-black">
+              {detailed.price} THB
+            </h2>
             <h2 className="text-xl text-slate-500">Base Price</h2>
           </div>
           <div className="col-span-2 row-span-2">
@@ -46,7 +52,7 @@ export const SelectMenu = () => {
             </h1>
             <div className="flex w-full justify-end">
               <div className="fond-semibold flex h-fit w-18 items-center justify-center gap-2 rounded-sm bg-slate-200 text-sm">
-                Optioanl
+                Optional
               </div>
             </div>
             <input
@@ -55,13 +61,19 @@ export const SelectMenu = () => {
               placeholder="E.g. No onions, extra spicy, etc."
             />
           </div>
-          <div className="col-span-2 row-span-1 grid grid-cols-7 grid-rows-1 gap-16">
+          <div className="col-span-2 row-span-1 grid grid-cols-7 grid-rows-1 gap-12">
             <div className="col-span-3 row-span-1 flex items-center justify-between">
-              <div className="aspect-square h-full rounded-full border-4 border-black"></div>
+              <div className="flex aspect-square h-full items-center justify-center rounded-full border-4 border-black transition active:scale-90">
+                <Minus size={40} />
+              </div>
               <h1 className="text-4xl font-bold">1</h1>
-              <div className="aspect-square h-full rounded-full border-4 border-black"></div>
+              <div className="flex aspect-square h-full items-center justify-center rounded-full border-4 border-black transition active:scale-90">
+                <Plus size={40} />
+              </div>
             </div>
-            <button className="col-span-4 row-span-1 rounded-full bg-black"></button>
+            <button className="bg-app-yellow active:bg-app-bronze col-span-4 row-span-1 rounded-full transition hover:bg-amber-500">
+              <h1 className="text-2xl font-bold text-white">Add to Basket</h1>
+            </button>
           </div>
         </div>
       </div>
