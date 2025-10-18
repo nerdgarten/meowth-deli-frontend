@@ -2,9 +2,20 @@
 
 import { Icon } from "lucide-react";
 import { Plus, Minus } from "lucide-react";
+import { IDish } from "@/types/dish";
+
+interface SelectMenuProps {
+  dish: IDish;
+  recommendations: IDish[];
+}
 
 
-export const SelectMenu = () => {
+export const SelectMenu = ({
+  dish,
+  recommendations,
+} : SelectMenuProps
+  
+) => {
     const detailed = {
         id: 1,
         name: "Sushimi Size XL",
@@ -16,13 +27,22 @@ export const SelectMenu = () => {
     const dummyArray = [
         1,2,3,4, 5,6
     ]
+    if (!dish) {
+      return (
+        <div className="grid-row-2 mx-4 grid h-full grid-cols-1 gap-4 rounded-sm bg-white p-4">
+          <div className="text-center text-gray-500">
+            No dish data available
+          </div>
+        </div>
+      );
+    }
   return (
     <div className="grid-row-2 mx-4 grid h-full grid-cols-1 gap-4 rounded-sm bg-white p-4">
       <div className="col-span-1 row-span-1 grid grid-cols-3 grid-rows-1 overflow-hidden rounded-2xl p-4">
         <div className="bg-app-blue h-full w-full rounded-2xl"></div>
         <div className="col-span-2 grid w-full grid-cols-2 grid-rows-7 gap-4 p-8">
           <div className="col-span-1 row-span-2 text-4xl">
-            <h1 className="font-bold">Sushimi Size XL</h1>
+            <h1 className="font-bold">{dish.name}</h1>
             <div className="fond-semibold mt-2 flex gap-2 text-sm">
               {detailed.tags.map((tag) => (
                 <div
@@ -36,14 +56,14 @@ export const SelectMenu = () => {
           </div>
           <div className="col-span-1 row-span-2 flex flex-col items-end">
             <h2 className="text-4xl font-bold text-black">
-              {detailed.price} THB
+              {dish.price} THB
             </h2>
             <h2 className="text-xl text-slate-500">Base Price</h2>
           </div>
           <div className="col-span-2 row-span-2">
             <h1 className="text-lg font-bold">Description</h1>
             <p className="mt-2 text-sm font-semibold text-slate-600">
-              {detailed.description}
+              {dish.detail}
             </p>
           </div>
           <div className="col-span-2 row-span-2 grid grid-cols-2 grid-rows-3 gap-4">
@@ -83,11 +103,23 @@ export const SelectMenu = () => {
           Pairing Suggestion
         </h3>
         <div className="col-span-4 row-span-4 flex w-full gap-20 overflow-x-auto p-3">
-          {dummyArray.map((item) => (
+          {recommendations.map((item) => (
             <div
-              key={item}
-              className="w-72 flex-shrink-0 rounded-lg bg-slate-400 shadow-lg"
-            ></div>
+              key={item.id}
+              className="h-full w-72 flex-shrink-0 overflow-hidden rounded-lg bg-white p-2 shadow-2xl"
+              // onClick={() => onDishClick(item)}
+            >
+              <div className="h-3/5 rounded-lg bg-slate-800"></div>
+              <div className="grid h-2/5 grid-cols-3 grid-rows-2 text-black">
+                <h4 className="col-span-2 row-span-1 font-semibold">
+                  {item.name}
+                </h4>
+                <h3 className="col-span-1 row-span-1 text-right text-2xl font-bold">
+                  ${item.price.toFixed(2)}
+                </h3>
+                <p className="col-span-2 row-span-1">{item.detail}</p>
+              </div>
+            </div>
           ))}
         </div>
       </div>
