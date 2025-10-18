@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 
 import { EditProfileDialog } from "@/components/Navigation/EditProfileDialog";
 import { MenuDialog } from "@/components/Navigation/MenuDialog";
+import { ResetPasswordDialog } from "@/components/Navigation/ResetPasswordDialog";
 import { isAuthenticated } from "@/libs/authentication";
 
 import BreadcrumbNav from "./BreadCrumbNav";
@@ -16,6 +17,8 @@ export const Navigation = () => {
   const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] =
     useState<boolean>(false);
   const [isMenuDialogOpen, setIsMenuDialogOpen] = useState<boolean>(false);
+  const [isResetPasswordDialogOpen, setIsResetPasswordDialogOpen] =
+    useState<boolean>(false);
 
   const handleProfileClick = async() => {
     const authenticated = await isAuthenticated();
@@ -33,6 +36,16 @@ export const Navigation = () => {
     } else {
       toast.error("You have to be logged in to access the menu.");
     }
+  };
+
+  const handleForgotPassword = () => {
+    setIsLoginDialogOpen(false);
+    setIsResetPasswordDialogOpen(true);
+  };
+
+  const handleBackToLogin = () => {
+    setIsResetPasswordDialogOpen(false);
+    setIsLoginDialogOpen(true);
   };
 
   return (
@@ -55,6 +68,12 @@ export const Navigation = () => {
       <LoginDialog
         isLoginDialogOpen={isLoginDialogOpen}
         setIsLoginDialogOpen={setIsLoginDialogOpen}
+        onForgotPassword={handleForgotPassword}
+      />
+      <ResetPasswordDialog
+        isOpen={isResetPasswordDialogOpen}
+        setIsOpen={setIsResetPasswordDialogOpen}
+        onBackToLogin={handleBackToLogin}
       />
       <EditProfileDialog
         isEditProfileDialogOpen={isEditProfileDialogOpen}
