@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@ui/button";
 import { Input } from "@ui/custom/AuthInput";
 import {
@@ -14,13 +15,12 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@ui/form";
 import { ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { z } from "zod";
 
-import { env } from "@/env";
-
-const ResetPasswordSchema = z.object({
-  email: z.email({ message: "Please enter a valid email address." }),
-});
+import {
+  resetPasswordRequestMutation,
+  ResetPasswordRequestSchema,
+  type ResetPasswordRequestValues,
+} from "@/queries/auth";
 
 interface ResetPasswordDialogProps {
   isOpen: boolean;
@@ -33,42 +33,32 @@ export const ResetPasswordDialog = ({
   setIsOpen,
   onBackToLogin,
 }: ResetPasswordDialogProps) => {
-  const form = useForm<z.infer<typeof ResetPasswordSchema>>({
-    resolver: zodResolver(ResetPasswordSchema),
+  const form = useForm<ResetPasswordRequestValues>({
+    resolver: zodResolver(ResetPasswordRequestSchema),
     defaultValues: {
       email: "",
     },
   });
 
-  const onSubmit = async ({ email }: z.infer<typeof ResetPasswordSchema>) => {
-    try {
-      const response = await fetch(
-        `${env.NEXT_PUBLIC_API_BASE_URL}/auth/reset/request`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to request password reset.");
-      }
-
+  const requestResetMutation = useMutation({
+    mutationFn: resetPasswordRequestMutation,
+    onSuccess: () => {
       toast.success("Reset link sent! Please check your email.");
       setIsOpen(false);
       onBackToLogin();
       form.reset();
-    } catch (error) {
+    },
+    onError: (error: unknown) => {
       toast.error(
         error instanceof Error
           ? error.message
           : "Unable to send reset link. Please try again."
       );
-    }
+    },
+  });
+
+  const onSubmit = (data: ResetPasswordRequestValues) => {
+    requestResetMutation.mutate(data);
   };
 
   return (
@@ -113,10 +103,10 @@ export const ResetPasswordDialog = ({
             <div className="flex justify-center">
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting}
+                disabled={requestResetMutation.isPending}
                 className="bg-app-yellow text-app-white w-32 rounded-full py-4 text-lg font-semibold disabled:opacity-70"
               >
-                {form.formState.isSubmitting ? "Sending..." : "Send"}
+                {requestResetMutation.isPending ? "Sending..." : "Send"}
               </Button>
             </div>
           </form>

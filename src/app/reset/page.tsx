@@ -1,28 +1,23 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@ui/button";
 import { Input } from "@ui/custom/AuthInput";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@ui/form";
+import { isAxiosError } from "axios";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { z } from "zod";
 
-import { env } from "@/env";
-
-const ResetPasswordFormSchema = z
-  .object({
-    password: z.string().min(6, "Must be at least 6 characters"),
-    confirmPassword: z.string().min(1, "Please confirm your password."),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Both passwords must match",
-    path: ["confirmPassword"],
-  });
+import {
+  ResetPasswordFormSchema,
+  type ResetPasswordFormValues,
+  resetPasswordSubmitMutation,
+} from "@/queries/auth";
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
@@ -34,7 +29,7 @@ export default function ResetPasswordPage() {
   const [isResetSuccessful, setIsResetSuccessful] = useState(false);
   const [isTokenInvalid, setIsTokenInvalid] = useState(false);
 
-  const form = useForm<z.infer<typeof ResetPasswordFormSchema>>({
+  const form = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(ResetPasswordFormSchema),
     defaultValues: {
       password: "",
@@ -79,34 +74,25 @@ export default function ResetPasswordPage() {
     );
   }
 
-  const onSubmit = async ({
-    password,
-  }: z.infer<typeof ResetPasswordFormSchema>) => {
-    try {
-      const response = await fetch(
-        `${env.NEXT_PUBLIC_API_BASE_URL}/auth/reset/${token}`,
-        {
-          method: "PATCH",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ password }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorBody = await response.json().catch(() => null);
-        const rawMessage =
-          typeof errorBody?.message === "string"
-            ? errorBody.message
-            : Array.isArray(errorBody?.message)
-              ? errorBody?.message.join(", ")
-              : null;
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPasswordSubmitMutation,
+    onSuccess: () => {
+      toast.success("Successful reset the password");
+      setIsResetSuccessful(true);
+      form.reset();
+    },
+    onError: (error: unknown) => {
+      if (isAxiosError(error)) {
+        const status = error.response?.status ?? 0;
+        const messagePayload = error.response?.data?.message;
+        const rawMessage = Array.isArray(messagePayload)
+          ? messagePayload.join(", ")
+          : messagePayload;
 
         if (
-          response.status === 400 &&
-          rawMessage?.toLowerCase().includes("invalid or expired token")
+          status === 400 &&
+          typeof rawMessage === "string" &&
+          rawMessage.toLowerCase().includes("invalid or expired token")
         ) {
           setIsTokenInvalid(true);
           toast.error(
@@ -115,19 +101,25 @@ export default function ResetPasswordPage() {
           return;
         }
 
-        throw new Error(rawMessage ?? "Failed to reset password.");
+        toast.error(
+          typeof rawMessage === "string"
+            ? rawMessage
+            : "Unable to reset password. Please try again."
+        );
+        return;
       }
 
-      toast.success("Successful reset the password");
-      setIsResetSuccessful(true);
-      form.reset();
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Unable to reset password. Please try again."
-      );
+      toast.error("Unable to reset password. Please try again.");
+    },
+  });
+
+  const onSubmit = (values: ResetPasswordFormValues) => {
+    if (!token) {
+      setIsTokenInvalid(true);
+      return;
     }
+
+    resetPasswordMutation.mutate({ token, password: values.password });
   };
 
   return (
@@ -211,10 +203,10 @@ export default function ResetPasswordPage() {
               />
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting}
+                disabled={resetPasswordMutation.isPending}
                 className="bg-app-yellow text-app-dark-brown mt-4 w-full rounded-full py-4 text-lg font-semibold transition disabled:opacity-70"
               >
-                {form.formState.isSubmitting ? "Resetting..." : "Reset"}
+                {resetPasswordMutation.isPending ? "Resetting..." : "Reset"}
               </Button>
             </form>
           </Form>
