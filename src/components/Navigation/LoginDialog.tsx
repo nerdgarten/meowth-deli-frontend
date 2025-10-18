@@ -23,15 +23,16 @@ import toast from "react-hot-toast";
 import { type z } from "zod";
 
 import { LoginFormSchema, loginSubmitMutation } from "@/queries/auth";
-
 interface LoginDialogProps {
   isLoginDialogOpen: boolean;
   setIsLoginDialogOpen: (open: boolean) => void;
+  onForgotPassword: () => void;
 }
 
 export const LoginDialog = ({
   isLoginDialogOpen,
   setIsLoginDialogOpen,
+  onForgotPassword,
 }: LoginDialogProps) => {
   const router = useRouter();
   const loginMutation = useMutation({
@@ -75,6 +76,7 @@ export const LoginDialog = ({
             Just <span className="text-app-yellow">login</span> as ...
           </DialogDescription>
         </DialogHeader>
+
         <Form {...loginForm}>
           <form
             onSubmit={loginForm.handleSubmit(onSubmit)}
@@ -115,6 +117,15 @@ export const LoginDialog = ({
                 </FormItem>
               )}
             />
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={onForgotPassword}
+                className="text-app-tan hover:text-app-yellow text-xs font-medium transition"
+              >
+                Forgot password?
+              </button>
+            </div>
             <div className="mt-10 flex w-full justify-center">
               <Button
                 type="submit"
