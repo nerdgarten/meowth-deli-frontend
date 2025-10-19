@@ -5,35 +5,32 @@ import { IDish } from "@/types/dish";
 import { getDishRestuarantId, getRestaurantById } from "@/libs/restaurant";
 import { useQuery } from "@tanstack/react-query";
 
-export default function RestaurantPage() {
-  const params = useSearchParams();
+export default function RestaurantPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const id = params?.get("id");
 
   // Fetch restaurant info
   const { data: restaurant } = useQuery({
-    queryKey: ["restaurant-info", id],
+    queryKey: ["restaurant-info", params.id],
     queryFn: ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No id provided");
       return getRestaurantById(restaurantId as string);
     },
-    enabled: !!id,
+    enabled: !!params.id,
   });
 
   const { data: dishes } = useQuery({
-    queryKey: ["restaurant-dishes", id],
+    queryKey: ["restaurant-dishes", params.id],
     queryFn: ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No id provided");
       return getDishRestuarantId(restaurantId as string);
     },
-    enabled: !!id,
+    enabled: !!params.id,
   });
 
-
   const onDishClick = (dish: IDish) => {
-    router.push(`/restaurant/dish?id=${id}&dishid=${dish.id}`);
+    router.push(`/menu/${params.id}/${dish.id}`);
   };
 
   return (

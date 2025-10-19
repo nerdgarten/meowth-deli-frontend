@@ -7,10 +7,7 @@ import { getDishRestuarantId } from "@/libs/restaurant";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
-export default function MenuPage() {
-  const params = useSearchParams();
-  const id = params?.get("id");
-  const menuId = params?.get("dishid");
+export default function MenuPage({ params }: { params: { id: string; menuId: string } }) {
 
   // Fetch dish details
   const {
@@ -18,13 +15,13 @@ export default function MenuPage() {
     isLoading: dishLoading,
     isError: dishError,
   } = useQuery({
-    queryKey: ["dish", menuId],
+    queryKey: ["dish", params.menuId],
     queryFn: ({ queryKey }) => {
       const [, dishId] = queryKey;
       if (!dishId) throw new Error("No dish ID provided");
       return getDishById(dishId as string);
     },
-    enabled: !!menuId,
+    enabled: !! params.menuId,
   });
 
   const {
@@ -32,17 +29,16 @@ export default function MenuPage() {
     isLoading: recLoading,
     isError: recError,
   } = useQuery({
-    queryKey: ["restaurant-dishes", id],
+    queryKey: ["restaurant-dishes", params.id],
     queryFn: ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No restaurant ID provided");
       return getDishRestuarantId(restaurantId as string);
     },
-    enabled: !!id,
+    enabled: !!params.id,
   });
 
-  // Handle loading 
-
+  // Handle loading
 
   return (
     <main className="h-230 w-full overflow-auto p-16">
