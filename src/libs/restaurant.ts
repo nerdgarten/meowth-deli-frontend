@@ -1,6 +1,6 @@
 import { apiClient } from "@/libs/axios";
-import { IDish } from "@/types/dish";
-import { IRestaurant } from "@/types/restaurant";
+import type { IDish } from "@/types/dish";
+import type { Restaurant } from "@/types/restaurant";
 
 export const getDishRestuarantId = async(restaurant_id: string): Promise<IDish[]> => {
   try {
@@ -12,14 +12,30 @@ export const getDishRestuarantId = async(restaurant_id: string): Promise<IDish[]
   }
 };
 
-export const getRestaurantById = async(restaurant_id: string): Promise<IRestaurant> => {
+export const getRestaurantById = async (
+  restaurant_id: string
+): Promise<Restaurant> => {
   try {
-    const response = await apiClient.get<IRestaurant>(`/restaurant/${restaurant_id}`);
+    const response = await apiClient.get<Restaurant>(
+      `/restaurant/${restaurant_id}`
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching dish:", error);
     throw error;
   }
 };
+
+export const getAllRestaurant = async (): Promise<Restaurant[]> =>{
+  try {
+    const response = await apiClient.get<Restaurant[]>(
+      `/restaurant`
+    )
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching dish:", error);
+    throw error;
+  }
+}
 
 
