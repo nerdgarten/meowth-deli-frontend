@@ -14,7 +14,6 @@ export const OrderSummary = ({
 ) => {
 
   const price = 20.99;
-  const fee = 2.99;
 
   return (
     <div className="flex flex-col rounded-sm bg-white p-4">

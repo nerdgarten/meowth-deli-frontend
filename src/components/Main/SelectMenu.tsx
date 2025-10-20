@@ -1,6 +1,5 @@
 "use client"
 
-import { Icon } from "lucide-react";
 import { Minus,Plus } from "lucide-react";
 import { useState } from "react";
 

@@ -1,7 +1,6 @@
 import { Clock } from "lucide-react";
 import { Map } from "lucide-react";
 import { CircleCheck } from "lucide-react";
-import type { StringLiteral } from "typescript";
 
 import type { IOrder } from "@/types/order";
 
