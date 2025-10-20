@@ -1,8 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname,useRouter } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
+
 import { useCart } from "../context/CartProvider";
 
 interface FloatingOrderButtonProps {
@@ -16,8 +18,8 @@ export function FloatingOrderButton({
   const pathname = usePathname();
   const { getItemCount, getTotalPrice } = useCart();
 
-  const itemCount = getItemCount();
-  const totalPrice = getTotalPrice();
+  const itemCount = getItemCount(restaurantId);
+  const totalPrice = getTotalPrice(restaurantId);
 
   // Check if current path is the order page
   const isOrderPage = pathname === `/menu/${restaurantId}/order`;

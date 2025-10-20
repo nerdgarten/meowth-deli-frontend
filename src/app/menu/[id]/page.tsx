@@ -1,38 +1,50 @@
 "use client";
-import { useSearchParams, useRouter } from "next/navigation";
-import { RestaurantList } from "@/components/Main/RestaurantList";
-import { IDish } from "@/types/dish";
-import { getDishRestuarantId, getRestaurantById } from "@/libs/restaurant";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default function RestaurantPage({ params }: { params: { id: string } }) {
+import { RestaurantList } from "@/components/Main/RestaurantList";
+import { getDishRestaurantId, getRestaurantById } from "@/libs/restaurant";
+import type { IDish } from "@/types/dish";
+
+export default function RestaurantPage({ params }: { params: Promise<{ id: string }> }) {
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
+
+  useEffect(() => {
+    params.then(setResolvedParams).catch(console.error);
+  }, [params]);
+
   const router = useRouter();
 
   // Fetch restaurant info
   const { data: restaurant } = useQuery({
-    queryKey: ["restaurant-info", params.id],
+    queryKey: ["restaurant-info", resolvedParams?.id],
     queryFn: ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No id provided");
-      return getRestaurantById(restaurantId as string);
-      
+      return getRestaurantById(restaurantId);
     },
-    enabled: !!params.id,
+    enabled: !!resolvedParams?.id,
   });
 
   const { data: dishes } = useQuery({
-    queryKey: ["restaurant-dishes", params.id],
+    queryKey: ["restaurant-dishes", resolvedParams?.id],
     queryFn: ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No id provided");
-      return getDishRestuarantId(restaurantId as string);
+      return getDishRestaurantId(restaurantId);
     },
-    enabled: !!params.id,
+    enabled: !!resolvedParams?.id,
   });
 
   const onDishClick = (dish: IDish) => {
-    router.push(`/menu/${params.id}/${dish.id}`);
+    if (!resolvedParams) return;
+    router.push(`/menu/${resolvedParams.id}/${dish.id}`);
   };
+
+  if (!resolvedParams) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <main className="h-300 w-full overflow-auto p-16">

@@ -1,118 +1,236 @@
 "use client";
+import type {ReactNode} from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-import { createContext, useContext, useState, ReactNode } from "react";
-import { IDish } from "@/types/dish";
-import { CartItem } from "@/types/order";
+import type { IDish } from "@/types/dish";
 
+interface CartItem {
+  dish: IDish;
+  quantity: number;
+}
+
+type RestaurantCarts = Record<string, Map<string, CartItem>>;
 
 interface CartContextType {
-  cart: Map<string, CartItem>;
-  addToCart: (dish: IDish, quantity: number) => void;
-  removeFromCart: (dishId: string) => void;
-  updateQuantity: (dishId: string, quantity: number) => void;
-  clearCart: () => void;
-  getItemCount: () => number;
-  getTotalPrice: () => number;
-  getCartItems: () => CartItem[];
-  getItemQuantity: (dishId: string) => number;
+  restaurantCarts: RestaurantCarts;
+  addToCart: (restaurantId: string, dish: IDish, quantity: number) => void;
+  removeFromCart: (restaurantId: string, dishId: string) => void;
+  updateQuantity: (
+    restaurantId: string,
+    dishId: string,
+    quantity: number
+  ) => void;
+  clearCart: (restaurantId: string) => void;
+  clearAllCarts: () => void;
+  getItemCount: (restaurantId: string) => number;
+  getTotalPrice: (restaurantId: string) => number;
+  getCartItems: (restaurantId: string) => CartItem[];
+  getItemQuantity: (restaurantId: string, dishId: string) => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<Map<string, CartItem>>(new Map());
+const serializeCarts = (carts: RestaurantCarts): string => {
+  const serialized: Record<string, [string, CartItem][]> = {};
+  Object.keys(carts).forEach((restaurantId) => {
+    serialized[restaurantId] = Array.from(carts[restaurantId]!.entries());
+  });
+  return JSON.stringify(serialized);
+};
 
-  // Add dish to cart
-  const addToCart = (dish: IDish, quantity: number) => {
-    setCart((prev) => {
-      const newCart = new Map(prev);
-      const existingItem = newCart.get(dish.id);
+const deserializeCarts = (serialized: string): RestaurantCarts => {
+  try {
+    const parsed = JSON.parse(serialized) as Record<string, [string, CartItem][]>;
+    const carts: RestaurantCarts = {};
+    Object.keys(parsed).forEach((restaurantId) => {
+      const entries = parsed[restaurantId];
+      carts[restaurantId] = new Map(entries);
+    });
+    return carts;
+  } catch {
+    return {};
+  }
+};
+
+export function CartProvider({ children }: { children: ReactNode }) {
+  const [restaurantCarts, setRestaurantCarts] = useState<RestaurantCarts>({});
+
+  useEffect(() => {
+    const savedCarts = localStorage.getItem("meowth-carts");
+    if (savedCarts) {
+      setRestaurantCarts(deserializeCarts(savedCarts));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("meowth-carts", serializeCarts(restaurantCarts));
+  }, [restaurantCarts]);
+
+  const validateRestaurantId = (restaurantId: string): boolean => {
+    return !!restaurantId && restaurantId.trim().length > 0;
+  };
+
+  const addToCart = (restaurantId: string, dish: IDish, quantity: number) => {
+    if (!validateRestaurantId(restaurantId)) {
+      console.warn('Invalid restaurantId provided to addToCart');
+      return;
+    }
+
+    setRestaurantCarts((prev) => {
+      const newCarts = { ...prev };
+      const cart = newCarts[restaurantId] ?? new Map();
+      const existingItem = cart.get(dish.id) as CartItem | undefined;
 
       if (existingItem) {
-        newCart.set(dish.id, {
+        cart.set(dish.id, {
           ...existingItem,
           quantity: existingItem.quantity + quantity,
         });
       } else {
-        newCart.set(dish.id, {
+        cart.set(dish.id, {
           dish,
           quantity: quantity,
         });
       }
-      return newCart;
+      newCarts[restaurantId] = new Map<string, CartItem>(cart);
+      return newCarts;
     });
   };
 
-  const removeFromCart = (dishId: string) => {
-    setCart((prev) => {
-      const newCart = new Map(prev);
-      const existingItem = newCart.get(dishId);
-
-      if (existingItem) {
-        if (existingItem.quantity <= 1) {
-          newCart.delete(dishId);
-        } else {
-          newCart.set(dishId, {
-            ...existingItem,
-            quantity: existingItem.quantity - 1,
-          });
-        }
-      }
-      return newCart;
-    });
-  };
-
-  const updateQuantity = (dishId: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(dishId);
+  const removeFromCart = (restaurantId: string, dishId: string) => {
+    if (!validateRestaurantId(restaurantId)) {
+      console.warn('Invalid restaurantId provided to removeFromCart');
       return;
     }
 
-    setCart((prev) => {
-      const newCart = new Map(prev);
-      const existingItem = newCart.get(dishId);
+    setRestaurantCarts((prev) => {
+      const newCarts = { ...prev };
+      const cart = newCarts[restaurantId];
 
-      if (existingItem) {
-        newCart.set(dishId, {
-          ...existingItem,
-          quantity,
-        });
+      if (cart) {
+        const existingItem = cart.get(dishId);
+        if (existingItem) {
+          if (existingItem.quantity <= 1) {
+            cart.delete(dishId);
+          } else {
+            cart.set(dishId, {
+              ...existingItem,
+              quantity: existingItem.quantity - 1,
+            });
+          }
+          newCarts[restaurantId] = new Map(cart);
+        }
       }
-      return newCart;
+      return newCarts;
     });
   };
 
-  const clearCart = () => {
-    setCart(new Map());
+  const updateQuantity = (
+    restaurantId: string,
+    dishId: string,
+    quantity: number
+  ) => {
+    if (!validateRestaurantId(restaurantId)) {
+      console.warn('Invalid restaurantId provided to updateQuantity');
+      return;
+    }
+
+    if (quantity <= 0) {
+      removeFromCart(restaurantId, dishId);
+      return;
+    }
+
+    setRestaurantCarts((prev) => {
+      const newCarts = { ...prev };
+      const cart = newCarts[restaurantId];
+
+      if (cart) {
+        const existingItem = cart.get(dishId);
+        if (existingItem) {
+          cart.set(dishId, {
+            ...existingItem,
+            quantity,
+          });
+          newCarts[restaurantId] = new Map(cart);
+        }
+      }
+      return newCarts;
+    });
   };
 
-  const getItemCount = () => {
+  const clearCart = (restaurantId: string) => {
+    if (!validateRestaurantId(restaurantId)) {
+      console.warn('Invalid restaurantId provided to clearCart');
+      return;
+    }
+
+    setRestaurantCarts((prev) => ({
+      ...prev,
+      [restaurantId]: new Map(),
+    }));
+  };
+
+  const clearAllCarts = () => {
+    setRestaurantCarts({});
+  };
+
+  const getItemCount = (restaurantId: string): number => {
+    if (!validateRestaurantId(restaurantId)) {
+      return 0;
+    }
+
+    const cart = restaurantCarts[restaurantId];
+    if (!cart) return 0;
     return Array.from(cart.values()).reduce(
       (sum, item) => sum + item.quantity,
       0
     );
   };
 
-  const getTotalPrice = () => {
+  const getTotalPrice = (restaurantId: string): number => {
+    if (!validateRestaurantId(restaurantId)) {
+      return 0;
+    }
+
+    const cart = restaurantCarts[restaurantId];
+    if (!cart) return 0;
     return Array.from(cart.values()).reduce((sum, item) => {
       return sum + item.dish.price * item.quantity;
     }, 0);
   };
 
-  const getCartItems = (): CartItem[] => {
+  const getCartItems = (restaurantId: string): CartItem[] => {
+    if (!validateRestaurantId(restaurantId)) {
+      return [];
+    }
+
+    const cart = restaurantCarts[restaurantId];
+    if (!cart) return [];
     return Array.from(cart.values());
   };
 
-  const getItemQuantity = (dishId: string): number => {
-    return cart.get(dishId)?.quantity || 0;
+  const getItemQuantity = (restaurantId: string, dishId: string): number => {
+    if (!validateRestaurantId(restaurantId)) {
+      return 0;
+    }
+
+    const cart = restaurantCarts[restaurantId];
+    if (!cart) return 0;
+    return cart.get(dishId)?.quantity ?? 0;
   };
 
   const value: CartContextType = {
-    cart,
+    restaurantCarts,
     addToCart,
     removeFromCart,
     updateQuantity,
     clearCart,
+    clearAllCarts,
     getItemCount,
     getTotalPrice,
     getCartItems,

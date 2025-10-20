@@ -160,3 +160,43 @@ export async function registerDriverMutation(
 
   return response.data;
 }
+
+export const ResetPasswordRequestSchema = z.object({
+  email: z.email({ message: "Please enter a valid email address." }),
+});
+
+export type ResetPasswordRequestValues = z.infer<
+  typeof ResetPasswordRequestSchema
+>;
+
+export async function resetPasswordRequestMutation(
+  data: ResetPasswordRequestValues
+): Promise<void> {
+  await apiClient.post("/auth/reset/request", data);
+}
+
+export const ResetPasswordFormSchema = z
+  .object({
+    password: z.string().min(6, "Must be at least 6 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your password."),
+  })
+  .refine((values) => values.password === values.confirmPassword, {
+    message: "Both passwords must match",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordFormValues = z.infer<typeof ResetPasswordFormSchema>;
+
+export interface ResetPasswordSubmitInput {
+  token: string;
+  password: string;
+}
+
+export async function resetPasswordSubmitMutation({
+  token,
+  password,
+}: ResetPasswordSubmitInput): Promise<void> {
+  await apiClient.patch(`/auth/reset/${token}`, {
+    password,
+  });
+}

@@ -1,9 +1,9 @@
 "use client"
 
-import { Icon } from "lucide-react";
-import { Plus, Minus } from "lucide-react";
-import { IDish } from "@/types/dish";
+import { Minus,Plus } from "lucide-react";
 import { useState } from "react";
+
+import type { IDish } from "@/types/dish";
 
 interface SelectMenuProps {
   dish: IDish;
