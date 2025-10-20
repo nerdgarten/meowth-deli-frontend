@@ -1,9 +1,8 @@
 import { apiClient } from "@/libs/axios";
-import type { Restaurant } from "@/types/restaurant";
-import { isAuthenticated } from "@/libs/authentication";
+import type { IRestaurant } from "@/types/restaurant";
 
-export async function getRestaurant(restaurantId: number): Promise<Restaurant> {
-  const response = await apiClient.get<Restaurant>(
+export async function getRestaurant(restaurantId: number): Promise<IRestaurant> {
+  const response = await apiClient.get<IRestaurant>(
     `/restaurant/${restaurantId}`
   );
 

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 import { PDPADialogButton } from "@/components/Register/PDPADialog";
 import { ToSDialogButton } from "@/components/Register/ToSDialog";
@@ -22,6 +23,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  RestaurantRegisterFormSchema,
+  registerRestaurantMutation,
+} from "@/queries/auth";
+import { useMutation } from "node_modules/@tanstack/react-query/build/modern/useMutation";
+import { toast } from "react-hot-toast";
 
 export default function RestaurantRegisterPage() {
   return (
@@ -48,31 +55,8 @@ const RestaurantRegisterFormCard = () => {
   );
 };
 
-const RestaurantRegisterFormSchema = z
-  .object({
-    name: z.string().min(1, "Restaurant name is required"),
-    description: z.string().max(500, "Description is too long"),
-    tel: z
-      .string()
-      .min(6, "Invalid phone number")
-      .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
-    address: z.string().min(1, "Address is required"),
-    email: z.email(),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string(),
-    agreeTOS: z.boolean().refine((v) => v === true, {
-      message: "You must agree to the Terms of Services",
-    }),
-    agreePDPA: z
-      .boolean()
-      .refine((v) => v === true, { message: "You must agree to PDPA" }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-
 const RestaurantRegisterForm = () => {
+  const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
   const restaurantRegisterFrom = useForm<
     z.infer<typeof RestaurantRegisterFormSchema>
@@ -83,7 +67,8 @@ const RestaurantRegisterForm = () => {
     defaultValues: {
       name: "",
       description: "",
-      address: "",
+      tel: "",
+      location: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -91,9 +76,22 @@ const RestaurantRegisterForm = () => {
       agreePDPA: false,
     },
   });
-  const onSubmit = (data: z.infer<typeof RestaurantRegisterFormSchema>) => {
-    console.log(data);
-  };
+  const registerMutation = useMutation({
+    mutationFn: registerRestaurantMutation,
+    onSuccess: () => {
+      toast.success("Register successfully!");
+      router.push("/");
+    },
+    onError: (error: unknown) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Register failed! Please try again.");
+      }
+    },
+  });
+  const onSubmit = (data: z.infer<typeof RestaurantRegisterFormSchema>) =>
+    registerMutation.mutate(data);
   const goNext = async () => {
     const ok = await restaurantRegisterFrom.trigger([
       "email",
@@ -221,7 +219,7 @@ const RestaurantRegisterForm = () => {
             />
             <FormField
               control={restaurantRegisterFrom.control}
-              name="address"
+              name="location"
               render={({ field }) => (
                 <FormItem className="pb-4">
                   <FormLabel>Address</FormLabel>

@@ -1,15 +1,13 @@
 import { FlatCompat } from "@eslint/eslintrc";
-import tseslint from "typescript-eslint";
-import unusedImports from "eslint-plugin-unused-imports";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
+import unusedImports from "eslint-plugin-unused-imports";
+import tseslint from "typescript-eslint";
 
-const compat = new FlatCompat({
-  baseDirectory: import.meta.dirname,
-});
+const compat = new FlatCompat();
 
 export default tseslint.config(
   {
-    ignores: [".next"],
+    ignores: [".next", "next-env.d.ts", "prettier.config.js"],
   },
   ...compat.extends("next/core-web-vitals"),
   {

@@ -1,7 +1,5 @@
 "use client";
 
-import { Suspense } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@ui/button";
@@ -21,7 +19,7 @@ import {
   resetPasswordSubmitMutation,
 } from "@/queries/auth";
 
-function ResetPasswordPageClient() {
+export default function ResetPasswordPageClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get("token");
@@ -236,13 +234,5 @@ function ResetPasswordPageClient() {
         </div>
       </div>
     </main>
-  );
-}
-
-export default function ResetPasswordPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ResetPasswordPageClient />
-    </Suspense>
   );
 }

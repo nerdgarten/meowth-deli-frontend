@@ -1,7 +1,7 @@
 "use client";
 
 import { OrderStatusMenu } from "@/components/Main/OrderStatus";
-import { IOrder } from "@/types/order";
+import type { IOrder } from "@/types/order";
 
 export default function StatusPage() {
   const order = {

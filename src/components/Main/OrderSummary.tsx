@@ -1,4 +1,5 @@
 import { ChevronLeft } from "lucide-react";
+
 import type { CartItem } from "@/types/order";
 interface OrderSummaryProps {
   cartItem: CartItem[];
@@ -11,26 +12,9 @@ export const OrderSummary = ({
     TotalPrice
   } : OrderSummaryProps
 ) => {
-  const dummyItems = [
-    {
-      restaurant: "Sushi",
-      time: "12:30 PM",
-      menu: [
-        { name: "Sushi Platter", quantity: 1, price: 12.99 },
-        { name: "Ramen", quantity: 1, price: 10.99 },
-      ],
-    },
-    {
-      restaurant: "Sushi",
-      time: "12:30 PM",
-      menu: [
-        { name: "Sushi Platter", quantity: 1, price: 12.99 },
-        { name: "Ramen", quantity: 1, price: 10.99 },
-      ],
-    },
-  ];
-    const price = 20.99;
-    const fee = 2.99;
+
+  const price = 20.99;
+
   return (
     <div className="flex flex-col rounded-sm bg-white p-4">
       <div className="h-full border-b p-4">
@@ -48,11 +32,13 @@ export const OrderSummary = ({
                 <div className="flex gap-6">
                   <div className="aspect-square h-24 rounded-sm bg-slate-200" />
                   <div className="text-lg font-bold">
+                    {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
                     <h4 className="text-black">{menuItem.dish.name} x {menuItem.quantity}</h4>
                     <h4 className="text-purple-700">Edit</h4>
                   </div>
                 </div>
                 <h4 className="text-lg font-semibold">
+                  {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
                   {(menuItem.quantity * menuItem.dish.price).toFixed(2)} THB
                 </h4>
               </div>

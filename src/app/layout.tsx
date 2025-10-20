@@ -5,8 +5,8 @@ import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 
 import { QueryProvider } from "@/components/common/QueryProvider";
-import { Navigation } from "@/components/Navigation/Navigation";
 import { CartProvider } from "@/components/context/CartProvider";
+import { Navigation } from "@/components/Navigation/Navigation";
 
 export const metadata: Metadata = {
   title: "Meowth Delivery",

@@ -1,5 +1,5 @@
 import { apiClient } from "@/libs/axios";
-import { IDish } from "@/types/dish";
+import type { IDish } from "@/types/dish";
 
 export const getDishById = async(dish_id: string): Promise<IDish> => {
   try {
@@ -10,5 +10,3 @@ export const getDishById = async(dish_id: string): Promise<IDish> => {
     throw error;
   }
 };
-
-

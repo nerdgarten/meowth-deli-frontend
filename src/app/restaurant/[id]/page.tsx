@@ -2,7 +2,6 @@
 
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Clock, MapPin, Phone, Star } from "lucide-react";
-
 import React, { useEffect, useRef } from "react";
 
 import ReviewCardSkeleton from "@/components/Review/ReviewCardSkeleton";
