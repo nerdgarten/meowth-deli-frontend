@@ -1,22 +1,35 @@
+"use client";
+
 import { BarChart3, Menu, TrendingUp, User, Users } from "lucide-react";
 
 import { SidebarTrigger } from "@ui/sidebar";
 import { useQuery } from "@tanstack/react-query";
 import { getRestaurant } from "@/queries/restaurant";
 
-export default function DashboardPage() {
-  const {data: restaurantData} = useQuery({
-    queryKey: ["restaurant"],
-    queryFn: async() => getRestaurant(restaurantId),
+export default function DashboardPage({ params }: { params: { id: string } }) {
+  const restaurantId = params.id;
 
-  })
+  const { data: restaurantData, isLoading } = useQuery({
+    queryKey: ["restaurant", restaurantId],
+    queryFn: async () => getRestaurant(parseInt(restaurantId)),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <p className="text-sm text-gray-500">Loading dashboard...</p>
+      </div>
+    );
+  }
+
+
   return (
     <>
       <div className="max-w-6xl flex-1 px-6 py-8">
         <section className="rounded-3xl bg-gradient-to-br from-[#fdf0d4] via-[#fde7bd] to-[#f8dca2] p-8 shadow-2xl ring-1 ring-[#f1d39a]">
           <div className="space-y-3">
             <h2 className="text-2xl font-bold text-[#c7731b]">
-              Welcome back, {restaurantData.name}!
+              Welcome back, {restaurantData?.name}!
             </h2>
             <p className="max-w-3xl text-sm text-[#7a5a35]">
               This dashboard provides an overview of your restaurant&apos;s key
