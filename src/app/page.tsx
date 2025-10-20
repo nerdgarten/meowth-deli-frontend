@@ -1,13 +1,21 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@ui/shadcn-io/spinner";
-import { Skeleton } from "@ui/skeleton";
 
+import { RestaurantCard } from "@/components/common/RestaurantCard";
 import { LandingCarousel } from "@/components/Landing/Carousel";
 import { Toolbar } from "@/components/Landing/Toolbar";
+import { getAllRestaurant } from "@/libs/restaurant";
 
 export default function HomePage() {
-  // TODO: Fetch Data from API
+  const { data: restaurant } = useQuery({
+    queryKey: ["restaurant-all"],
+    queryFn: () => {
+      return getAllRestaurant();
+    },
+  });
+
   return (
     <main className="mt-[4rem]">
       <LandingCarousel />
@@ -16,11 +24,8 @@ export default function HomePage() {
         <div className="no-scrollbar w-full overflow-x-scroll" key={index}>
           <div className="flex flex-nowrap gap-4 py-4">
             <div className="min-w-5"></div>
-            {Array.from({ length: 6 }).map((_, index) => (
-              <Skeleton
-                className="h-[250px] min-w-[375px] rounded-xl"
-                key={index}
-              />
+            {restaurant?.map((data, index_2) => (
+              <RestaurantCard key={index_2} restaurant={data} />
             ))}
             <div className="min-w-5"></div>
           </div>

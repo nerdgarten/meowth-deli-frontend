@@ -14,3 +14,10 @@ export interface CartItem {
   dish: IDish;
   quantity: number;
 }
+
+
+
+export interface IOrderDish {
+  dish_id: number;
+  quantity: number;
+}
