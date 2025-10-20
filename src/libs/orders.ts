@@ -26,3 +26,15 @@ export const createOrder = async ({
     throw error;
   }
 };
+
+export const getOrderById = async (
+  order_id: number
+): Promise<IOrder> => {
+  try {
+    const response = await apiClient.get<IOrder>(`/customer/my-orders-hist/${order_id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching dish:", error);
+    throw error;
+  }
+};

@@ -1,58 +1,70 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { CheckCircle, Clock, Star, Truck } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getOrderById } from "@/libs/orders";
 import { getRestaurantById } from "@/libs/restaurant";
-import type { StoredOrder } from "@/types/order";
+import type { IOrder, StoredOrder } from "@/types/order"; // ensure Restaurant type exists
+import type { IRestaurant } from "@/types/restaurant";
 
 export default function OrderSuccessPage() {
   const router = useRouter();
-  const resolvedParams = useParams();
-  const restaurantId = resolvedParams.id as string;
+  const params = useParams();
+  const restaurantId = params.id as string;
 
   const [latestOrder, setLatestOrder] = useState<StoredOrder | null>(null);
 
-  const { data: restaurant } = useQuery({
+  // ✅ Properly typed restaurant query
+  const restaurantQuery: UseQueryResult<IRestaurant, Error> = useQuery({
     queryKey: ["restaurant-info", restaurantId],
-    queryFn: async ({ queryKey }) => {
+    queryFn: async ({ queryKey }): Promise<IRestaurant> => {
       const [, id] = queryKey;
       if (!id) throw new Error("No restaurant ID provided");
-      return await getRestaurantById(id);
+      const data = await getRestaurantById(id);
+      return data;
     },
     enabled: !!restaurantId,
   });
 
-  // Get the latest order from localStorage
+  const restaurant: IRestaurant | undefined = restaurantQuery.data;
+
+  // ✅ Load latest order from localStorage
   useEffect(() => {
-    const getLatestOrder = () => {
-      try {
-        const rawOrders = localStorage.getItem("meowth-orders");
+    try {
+      const rawOrders = localStorage.getItem("meowth-orders");
+      const orders: StoredOrder[] = rawOrders
+        ? (JSON.parse(rawOrders) as StoredOrder[])
+        : [];
 
-        // ✅ Explicitly type the parsed value to StoredOrder[]
-        const orders: StoredOrder[] = rawOrders
-          ? (JSON.parse(rawOrders) as StoredOrder[])
-          : [];
-
-        const order =
-          orders.find((o: StoredOrder) => o.restaurantId === restaurantId) ??
-          null;
-
-        setLatestOrder(order);
-      } catch (error) {
-        console.error("Error retrieving order from localStorage:", error);
-        setLatestOrder(null);
-      }
-    };
-
-    getLatestOrder();
+      const order =
+        orders.find((o) => o.restaurantId === restaurantId) ?? null;
+      setLatestOrder(order);
+    } catch (error) {
+      console.error("Error retrieving order from localStorage:", error);
+      setLatestOrder(null);
+    }
   }, [restaurantId]);
 
+  // ✅ Strongly type order query
+  const orderQuery: UseQueryResult<IOrder, Error> = useQuery<IOrder, Error>({
+    queryKey: ["order", latestOrder?.id],
+    queryFn: async ({ queryKey }): Promise<IOrder> => {
+      const [, id] = queryKey;
+      if (!id) throw new Error("No order ID provided");
+      const data = await getOrderById(Number(id));
+      return data;
+    },
+    enabled: !!latestOrder?.id,
+  });
 
+  const order: IOrder | undefined = orderQuery.data;
+
+  // --- Button handlers ---
   const handleCheckStatus = () => {
     if (latestOrder) {
       router.push(`/order/${latestOrder.id}`);
@@ -62,28 +74,18 @@ export default function OrderSuccessPage() {
   };
 
   const handleLeaveReview = () => {
-    router.push(`/restaurant/${restaurantId}/review`);
+    router.push(`/restaurant/${restaurantId}`);
   };
 
   const handleBackToMenu = () => {
-    router.push(`/menu/${restaurantId}`);
+    router.push(`/`);
   };
 
-  // Mock order items (you might want to replace this with real data later)
-  const mockOrderItems = [
-    { name: "Pad Thai", quantity: 2, price: 120 },
-    { name: "Tom Yum Soup", quantity: 1, price: 90 },
-    { name: "Spring Rolls", quantity: 1, price: 60 },
-  ];
-
-  const totalAmount =
-    latestOrder?.totalAmount ??
-    mockOrderItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
-
+  // --- UI ---
   return (
     <main className="min-h-screen py-8">
       <div className="container mx-auto max-w-2xl px-4">
-        {/* Success Header */}
+        {/* ✅ Success Header */}
         <div className="mb-8 text-center">
           <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-500" />
           <h1 className="mb-2 text-3xl font-bold text-gray-900">
@@ -94,7 +96,7 @@ export default function OrderSuccessPage() {
           </p>
         </div>
 
-        {/* Order Summary Card */}
+        {/* ✅ Order Summary Card */}
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -114,32 +116,21 @@ export default function OrderSuccessPage() {
               </div>
               <div>
                 <span className="font-semibold">Estimated Delivery:</span>
-                <p>30-45 minutes</p>
+                <p>30–45 minutes</p>
               </div>
               <div>
                 <span className="font-semibold">Total Amount:</span>
-                <p className="font-bold">฿{totalAmount.toFixed(2)}</p>
-              </div>
-            </div>
-
-            {/* Order Items */}
-            <div>
-              <h3 className="mb-2 font-semibold">Order Items:</h3>
-              <div className="space-y-2">
-                {mockOrderItems.map((item, index) => (
-                  <div key={index} className="flex justify-between text-sm">
-                    <span>
-                      {item.quantity}x {item.name}
-                    </span>
-                    <span>฿{(item.quantity * item.price).toFixed(2)}</span>
-                  </div>
-                ))}
+                <p className="font-bold">
+                  {order && typeof order.total_amount === "number"
+                    ? `฿${order.total_amount.toFixed(2)}`
+                    : "Loading..."}
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Action Buttons */}
+        {/* ✅ Action Buttons */}
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <Button
             onClick={handleCheckStatus}
