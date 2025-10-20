@@ -13,6 +13,12 @@ export interface GetDriverReviewsParams {
   offset?: number;
 }
 
+export interface SubmitReviewData {
+  orderId: number;
+  rate: number;
+  reviewText?: string;
+}
+
 export async function getRestaurantReviews({
   restaurantId,
   limit = 10,
@@ -41,4 +47,18 @@ export async function getDriverReviews({
   );
 
   return response.data;
+}
+
+export async function submitDriverReview(
+  driverId: number,
+  reviewData: SubmitReviewData
+): Promise<void> {
+  await apiClient.post(`/review/driver/${driverId}`, reviewData);
+}
+
+export async function submitRestaurantReview(
+  restaurantId: number,
+  reviewData: SubmitReviewData
+): Promise<void> {
+  await apiClient.post(`/review/restaurant/${restaurantId}`, reviewData);
 }
