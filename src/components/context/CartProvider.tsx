@@ -1,13 +1,13 @@
 "use client";
+import type {ReactNode} from "react";
 
 import {
   createContext,
   useContext,
   useState,
-  ReactNode,
   useEffect,
 } from "react";
-import { IDish } from "@/types/dish";
+import type { IDish } from "@/types/dish";
 
 interface CartItem {
   dish: IDish;
@@ -76,7 +76,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("meowth-carts", serializeCarts(restaurantCarts));
   }, [restaurantCarts]);
 
+  // Validate restaurantId
+  const validateRestaurantId = (restaurantId: string): boolean => {
+    return !!restaurantId && typeof restaurantId === 'string' && restaurantId.trim().length > 0;
+  };
+
   const addToCart = (restaurantId: string, dish: IDish, quantity: number) => {
+    if (!validateRestaurantId(restaurantId)) {
+      console.warn('Invalid restaurantId provided to addToCart');
+      return;
+    }
+
     setRestaurantCarts((prev) => {
       const newCarts = { ...prev };
       const cart = newCarts[restaurantId] || new Map();
@@ -99,6 +109,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeFromCart = (restaurantId: string, dishId: string) => {
+    if (!validateRestaurantId(restaurantId)) {
+      console.warn('Invalid restaurantId provided to removeFromCart');
+      return;
+    }
+
     setRestaurantCarts((prev) => {
       const newCarts = { ...prev };
       const cart = newCarts[restaurantId];
@@ -126,6 +141,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     dishId: string,
     quantity: number
   ) => {
+    if (!validateRestaurantId(restaurantId)) {
+      console.warn('Invalid restaurantId provided to updateQuantity');
+      return;
+    }
+
     if (quantity <= 0) {
       removeFromCart(restaurantId, dishId);
       return;
@@ -150,6 +170,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const clearCart = (restaurantId: string) => {
+    if (!validateRestaurantId(restaurantId)) {
+      console.warn('Invalid restaurantId provided to clearCart');
+      return;
+    }
+
     setRestaurantCarts((prev) => ({
       ...prev,
       [restaurantId]: new Map(),
@@ -161,6 +186,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const getItemCount = (restaurantId: string): number => {
+    if (!validateRestaurantId(restaurantId)) {
+      return 0;
+    }
+
     const cart = restaurantCarts[restaurantId];
     if (!cart) return 0;
     return Array.from(cart.values()).reduce(
@@ -170,6 +199,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const getTotalPrice = (restaurantId: string): number => {
+    if (!validateRestaurantId(restaurantId)) {
+      return 0;
+    }
+
     const cart = restaurantCarts[restaurantId];
     if (!cart) return 0;
     return Array.from(cart.values()).reduce((sum, item) => {
@@ -178,12 +211,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const getCartItems = (restaurantId: string): CartItem[] => {
+    if (!validateRestaurantId(restaurantId)) {
+      return [];
+    }
+
     const cart = restaurantCarts[restaurantId];
     if (!cart) return [];
     return Array.from(cart.values());
   };
 
   const getItemQuantity = (restaurantId: string, dishId: string): number => {
+    if (!validateRestaurantId(restaurantId)) {
+      return 0;
+    }
+
     const cart = restaurantCarts[restaurantId];
     if (!cart) return 0;
     return cart.get(dishId)?.quantity || 0;

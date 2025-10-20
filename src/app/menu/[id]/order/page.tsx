@@ -2,7 +2,7 @@
 
 import { OrderSummary } from "@/components/Main/OrderSummary";
 import { useCart } from "@/components/context/CartProvider";
-import { CartItem } from "@/types/order";
+import type { CartItem } from "@/types/order";
 import { getRestaurantById } from "@/libs/restaurant";
 import { useQuery } from "@tanstack/react-query";
 

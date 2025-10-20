@@ -1,5 +1,5 @@
 import { ChevronLeft } from "lucide-react";
-import { CartItem } from "@/types/order";
+import type { CartItem } from "@/types/order";
 interface OrderSummaryProps {
   cartItem: CartItem[];
   restaurantName: string;

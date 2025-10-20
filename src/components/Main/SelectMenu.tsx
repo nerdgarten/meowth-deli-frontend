@@ -2,7 +2,7 @@
 
 import { Icon } from "lucide-react";
 import { Plus, Minus } from "lucide-react";
-import { IDish } from "@/types/dish";
+import type { IDish } from "@/types/dish";
 import { useState } from "react";
 
 interface SelectMenuProps {

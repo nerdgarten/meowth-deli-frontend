@@ -1,5 +1,5 @@
 "use client";
-import { IDish } from "@/types/dish";
+import type { IDish } from "@/types/dish";
 
 
 interface RestaurantListProps {
@@ -22,7 +22,7 @@ export const RestaurantList = ({
           <h2 className="text-app-brown text-4xl font-semibold">
             {restaurant}
           </h2>
-          <h2 className="text-app-dark-brown text-4xl font-semibold">Text2</h2>
+          {/* <h2 className="text-app-dark-brown text-4xl font-semibold">Text2</h2> */}
         </div>
         <div className="bg-app-yellow absolute inset-0 h-full w-full origin-left translate-x-113 skew-x-12 transform"></div>
         <div className="absolute inset-0 h-full w-full origin-left translate-x-120 skew-x-20 transform bg-black"></div>
