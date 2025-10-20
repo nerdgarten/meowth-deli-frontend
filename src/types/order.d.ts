@@ -21,3 +21,10 @@ export interface IOrderDish {
   dish_id: number;
   quantity: number;
 }
+
+export interface StoredOrder {
+  id: string;
+  restaurantId: string;
+  createdAt: string;
+  totalAmount: number;
+}
