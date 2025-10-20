@@ -53,6 +53,13 @@ export interface IRegisterResponse {
   role: Role;
 }
 
+export interface ILocation {
+  id: number;
+  userId: number;
+  address: string;
+  is_default: boolean;
+}
+
 export async function registerCustomerMutation(
   data: z.infer<typeof CustomerRegisterFormSchema>
 ) {
@@ -69,6 +76,13 @@ export async function registerCustomerMutation(
       address: data.address,
     }
   );
+  console.log("Registered user:", response.data.id);
+  console.log(data.address);
+  const locationResponse = await apiClient.post<ILocation>("/location", {
+    customer_id: response.data.id,
+    address: data.address,
+    is_default: true,
+  });
 
   return response.data;
 }
