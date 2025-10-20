@@ -45,11 +45,55 @@ export default function ResetPasswordPage() {
 
   const isValidPasswordCombo = isPasswordValid && doPasswordsMatch;
 
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPasswordSubmitMutation,
+    onSuccess: () => {
+      toast.success("Successful reset the password");
+      setIsResetSuccessful(true);
+      form.reset();
+    },
+    onError: (error: unknown) => {
+      if (isAxiosError(error)) {
+        const axiosError = error as import("axios").AxiosError;
+        const status = axiosError.response?.status ?? 0;
+        const messagePayload = axiosError.response?.data?.message;
+        const rawMessage = Array.isArray(messagePayload)
+          ? messagePayload.join(", ")
+          : messagePayload;
+
+        if (
+          status === 400 &&
+          typeof rawMessage === "string" &&
+          rawMessage.toLowerCase().includes("invalid or expired token")
+        ) {
+          setIsTokenInvalid(true);
+          toast.error(
+            "Reset link invalid or expired. Please request a new one."
+          );
+          return;
+        }
+
+        toast.error(rawMessage || "An error occurred");
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    },
+  });
+
   const catMessage = isResetSuccessful
     ? "Successful reset the password"
     : isValidPasswordCombo
       ? "Good Password"
       : "Try new password";
+
+  const onSubmit = (values: ResetPasswordFormValues) => {
+    if (!token) {
+      setIsTokenInvalid(true);
+      return;
+    }
+
+    resetPasswordMutation.mutate({ token, password: values.password });
+  };
 
   if (!token || isTokenInvalid) {
     return (
@@ -73,54 +117,6 @@ export default function ResetPasswordPage() {
       </main>
     );
   }
-
-  const resetPasswordMutation = useMutation({
-    mutationFn: resetPasswordSubmitMutation,
-    onSuccess: () => {
-      toast.success("Successful reset the password");
-      setIsResetSuccessful(true);
-      form.reset();
-    },
-    onError: (error: unknown) => {
-      if (isAxiosError(error)) {
-        const status = error.response?.status ?? 0;
-        const messagePayload = error.response?.data?.message;
-        const rawMessage = Array.isArray(messagePayload)
-          ? messagePayload.join(", ")
-          : messagePayload;
-
-        if (
-          status === 400 &&
-          typeof rawMessage === "string" &&
-          rawMessage.toLowerCase().includes("invalid or expired token")
-        ) {
-          setIsTokenInvalid(true);
-          toast.error(
-            "Reset link invalid or expired. Please request a new one."
-          );
-          return;
-        }
-
-        toast.error(
-          typeof rawMessage === "string"
-            ? rawMessage
-            : "Unable to reset password. Please try again."
-        );
-        return;
-      }
-
-      toast.error("Unable to reset password. Please try again.");
-    },
-  });
-
-  const onSubmit = (values: ResetPasswordFormValues) => {
-    if (!token) {
-      setIsTokenInvalid(true);
-      return;
-    }
-
-    resetPasswordMutation.mutate({ token, password: values.password });
-  };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-[#CFC3AD] px-4 py-12">

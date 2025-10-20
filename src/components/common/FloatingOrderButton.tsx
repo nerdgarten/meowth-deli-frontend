@@ -1,8 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname,useRouter } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
+
 import { useCart } from "../context/CartProvider";
 
 interface FloatingOrderButtonProps {

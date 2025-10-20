@@ -1,12 +1,12 @@
 "use client";
 import type {ReactNode} from "react";
-
 import {
   createContext,
   useContext,
-  useState,
   useEffect,
+  useState,
 } from "react";
+
 import type { IDish } from "@/types/dish";
 
 interface CartItem {
@@ -14,9 +14,7 @@ interface CartItem {
   quantity: number;
 }
 
-interface RestaurantCarts {
-  [restaurantId: string]: Map<string, CartItem>;
-}
+type RestaurantCarts = Record<string, Map<string, CartItem>>;
 
 interface CartContextType {
   restaurantCarts: RestaurantCarts;
@@ -37,22 +35,21 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// Helper function to serialize Map for localStorage
 const serializeCarts = (carts: RestaurantCarts): string => {
-  const serialized: any = {};
+  const serialized: Record<string, [string, CartItem][]> = {};
   Object.keys(carts).forEach((restaurantId) => {
-    serialized[restaurantId] = Array.from(carts[restaurantId].entries());
+    serialized[restaurantId] = Array.from(carts[restaurantId]!.entries());
   });
   return JSON.stringify(serialized);
 };
 
-// Helper function to deserialize from localStorage
 const deserializeCarts = (serialized: string): RestaurantCarts => {
   try {
-    const parsed = JSON.parse(serialized);
+    const parsed = JSON.parse(serialized) as Record<string, [string, CartItem][]>;
     const carts: RestaurantCarts = {};
     Object.keys(parsed).forEach((restaurantId) => {
-      carts[restaurantId] = new Map(parsed[restaurantId]);
+      const entries = parsed[restaurantId];
+      carts[restaurantId] = new Map(entries);
     });
     return carts;
   } catch {
@@ -63,7 +60,6 @@ const deserializeCarts = (serialized: string): RestaurantCarts => {
 export function CartProvider({ children }: { children: ReactNode }) {
   const [restaurantCarts, setRestaurantCarts] = useState<RestaurantCarts>({});
 
-  // Load cart from localStorage on component mount
   useEffect(() => {
     const savedCarts = localStorage.getItem("meowth-carts");
     if (savedCarts) {
@@ -71,14 +67,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("meowth-carts", serializeCarts(restaurantCarts));
   }, [restaurantCarts]);
 
-  // Validate restaurantId
   const validateRestaurantId = (restaurantId: string): boolean => {
-    return !!restaurantId && typeof restaurantId === 'string' && restaurantId.trim().length > 0;
+    return !!restaurantId && restaurantId.trim().length > 0;
   };
 
   const addToCart = (restaurantId: string, dish: IDish, quantity: number) => {
@@ -89,8 +83,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     setRestaurantCarts((prev) => {
       const newCarts = { ...prev };
-      const cart = newCarts[restaurantId] || new Map();
-      const existingItem = cart.get(dish.id);
+      const cart = newCarts[restaurantId] ?? new Map();
+      const existingItem = cart.get(dish.id) as CartItem | undefined;
 
       if (existingItem) {
         cart.set(dish.id, {
@@ -103,7 +97,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           quantity: quantity,
         });
       }
-      newCarts[restaurantId] = new Map(cart);
+      newCarts[restaurantId] = new Map<string, CartItem>(cart);
       return newCarts;
     });
   };
@@ -227,7 +221,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     const cart = restaurantCarts[restaurantId];
     if (!cart) return 0;
-    return cart.get(dishId)?.quantity || 0;
+    return cart.get(dishId)?.quantity ?? 0;
   };
 
   const value: CartContextType = {
