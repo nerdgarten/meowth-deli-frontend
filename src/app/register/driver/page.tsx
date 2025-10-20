@@ -1,11 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 import { PDPADialogButton } from "@/components/Register/PDPADialog";
 import { ToSDialogButton } from "@/components/Register/ToSDialog";
@@ -21,6 +23,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  DriverRegisterFormSchema,
+  registerDriverMutation,
+} from "@/queries/auth";
+import { toast } from "react-hot-toast";
 
 export default function DriverRegisterPage() {
   return (
@@ -47,31 +54,8 @@ const DriverRegisterFormCard = () => {
   );
 };
 
-const DriverRegisterFormSchema = z
-  .object({
-    firstname: z.string().min(1, "First name is required"),
-    lastname: z.string().min(1, "Lastname is required"),
-    tel: z
-      .string()
-      .min(6, "Invalid phone number")
-      .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
-    address: z.string().min(1, "Address is required"),
-    email: z.email(),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string(),
-    agreeTOS: z.boolean().refine((v) => v === true, {
-      message: "You must agree to the Terms of Services",
-    }),
-    agreePDPA: z
-      .boolean()
-      .refine((v) => v === true, { message: "You must agree to PDPA" }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-
 const DriverRegisterForm = () => {
+  const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
   const driverRegisterFrom = useForm<z.infer<typeof DriverRegisterFormSchema>>({
     resolver: zodResolver(DriverRegisterFormSchema),
@@ -81,7 +65,7 @@ const DriverRegisterForm = () => {
       firstname: "",
       lastname: "",
       tel: "",
-      address: "",
+      location: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -89,9 +73,24 @@ const DriverRegisterForm = () => {
       agreePDPA: false,
     },
   });
-  const onSubmit = (data: z.infer<typeof DriverRegisterFormSchema>) => {
-    console.log(data);
-  };
+
+  const registerMutation = useMutation({
+    mutationFn: registerDriverMutation,
+    onSuccess: () => {
+      toast.success("Register successfully!");
+      router.push("/");
+    },
+    onError: (error: unknown) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Register failed! Please try again.");
+      }
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof DriverRegisterFormSchema>) =>
+    registerMutation.mutate(data);
   const goNext = async () => {
     const ok = await driverRegisterFrom.trigger([
       "email",
@@ -218,7 +217,7 @@ const DriverRegisterForm = () => {
             />
             <FormField
               control={driverRegisterFrom.control}
-              name="address"
+              name="location"
               render={({ field }) => (
                 <FormItem className="pb-4">
                   <FormLabel>Address</FormLabel>
