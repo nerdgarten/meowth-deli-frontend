@@ -11,6 +11,7 @@ import { authenticatedAs } from "@/libs/authentication";
 import BreadcrumbNav from "./BreadCrumbNav";
 import { LoginDialog } from "./LoginDialog";
 import { useRouter } from "next/navigation";
+import { ResetPasswordDialog } from "@/components/Navigation/ResetPasswordDialog";
 
 export const Navigation = () => {
   const router = useRouter();
@@ -18,6 +19,8 @@ export const Navigation = () => {
   const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] =
     useState<boolean>(false);
   const [isMenuDialogOpen, setIsMenuDialogOpen] = useState<boolean>(false);
+  const [isResetPasswordDialogOpen, setIsResetPasswordDialogOpen] =
+    useState<boolean>(false);
 
   const handleProfileClick = async () => {
     const authenticated = await authenticatedAs();
@@ -35,6 +38,16 @@ export const Navigation = () => {
     } else {
       toast.error("You have to be logged in to access the menu.");
     }
+  };
+
+  const handleForgotPassword = () => {
+    setIsLoginDialogOpen(false);
+    setIsResetPasswordDialogOpen(true);
+  };
+
+  const handleBackToLogin = () => {
+    setIsResetPasswordDialogOpen(false);
+    setIsLoginDialogOpen(true);
   };
 
   return (
@@ -57,6 +70,12 @@ export const Navigation = () => {
       <LoginDialog
         isLoginDialogOpen={isLoginDialogOpen}
         setIsLoginDialogOpen={setIsLoginDialogOpen}
+        onForgotPassword={handleForgotPassword}
+      />
+      <ResetPasswordDialog
+        isOpen={isResetPasswordDialogOpen}
+        setIsOpen={setIsResetPasswordDialogOpen}
+        onBackToLogin={handleBackToLogin}
       />
       <EditProfileDialog
         isEditProfileDialogOpen={isEditProfileDialogOpen}
