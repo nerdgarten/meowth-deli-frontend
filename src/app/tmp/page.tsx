@@ -1,20 +1,16 @@
 "use client";
-import { useState } from "react";
 
 import OnboardingCard from "@/components/Onboarding/OnboardingCard";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useState } from "react";
 
 // Page for simulate onboarding after registration complete, will be removed later
 
-interface IContent {
-  heading: string;
-  descriptions: { text: string }[];
-  imageSrc: string;
-}
+export default function TemporaryPage() {
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
+  const [contents, setContents] = useState<any[]>([]);
 
-export default function RegisterLanding() {
-  const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(true);
-  const [contents, setContents] = useState<IContent[]>([]);
   const restaurantContents = [
     {
       heading: "Registration Complete",
@@ -108,7 +104,8 @@ export default function RegisterLanding() {
   return (
     <main className="bg-app-background">
       <div className="flex flex-col items-center justify-center gap-4 p-8">
-        <h2>will replace meowth images with real webpage images later</h2>
+        <h2>will replace meowth images with real web page images later</h2>
+
         <Button
           onClick={() => {
             setIsOnboardingOpen(true);
@@ -133,6 +130,10 @@ export default function RegisterLanding() {
         >
           onboarding for driver
         </Button>
+        <h2>waiting for restaurant profile page</h2>
+        <Link href="/tmp/dashboard">
+          <Button>Restaurant Dashboard</Button>
+        </Link>
       </div>
       <OnboardingCard
         contents={contents}
