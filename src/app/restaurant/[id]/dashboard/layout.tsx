@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   MessageSquare,
@@ -22,35 +22,37 @@ import {
   SidebarProvider,
 } from "@ui/sidebar";
 
-const NAVIGATION_ITEMS = [
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Orders",
-    href: "/dashboard/orders",
-    icon: ShoppingBag,
-  },
-  {
-    title: "Reviews",
-    href: "/dashboard/reviews",
-    icon: MessageSquare,
-  },
-  {
-    title: "Settings",
-    href: "/dashboard/settings",
-    icon: Settings,
-  },
-] as const;
-
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { id } = useParams();
+  const restaurantId = id as string;
+
+  const NAVIGATION_ITEMS = [
+    {
+      title: "Dashboard",
+      href: `/restaurant/${restaurantId}/dashboard`,
+      icon: LayoutDashboard,
+    },
+    {
+      title: "Orders",
+      href: `/restaurant/${restaurantId}/dashboard/orders`,
+      icon: ShoppingBag,
+    },
+    // {
+    //   title: "Reviews",
+    //   href: `/restaurant/${restaurantId}/dashboard/reviews`,
+    //   icon: MessageSquare,
+    // },
+    // {
+    //   title: "Settings",
+    //   href: `/restaurant/${restaurantId}/dashboard/settings`,
+    //   icon: Settings,
+    // },
+  ] as const;
 
   return (
     <SidebarProvider className="min-h-screen bg-[#2c241f]">
@@ -76,9 +78,9 @@ export default function DashboardLayout({
                   {NAVIGATION_ITEMS.map((item) => {
                     const Icon = item.icon;
                     const isActive =
-                      pathname === item.href ||
-                      (item.href !== "/dashboard" &&
-                        pathname.startsWith(item.href));
+                      item.href === `/restaurant/${restaurantId}/dashboard`
+                        ? pathname === item.href
+                        : pathname.startsWith(item.href);
 
                     return (
                       <SidebarMenuItem key={item.title}>

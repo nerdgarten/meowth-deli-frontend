@@ -1,13 +1,17 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { BarChart3, Menu, TrendingUp, User, Users } from "lucide-react";
 
 import { SidebarTrigger } from "@ui/sidebar";
 import { useQuery } from "@tanstack/react-query";
 import { getRestaurant } from "@/queries/restaurant";
 
-export default function DashboardPage({ params }: { params: { id: string } }) {
-  const restaurantId = params.id;
+export default function DashboardPage() {
+  const params = useParams();
+  const restaurantId = params.id as string;
+
+  // TODO: integrate with api
 
   const { data: restaurantData, isLoading } = useQuery({
     queryKey: ["restaurant", restaurantId],
@@ -22,7 +26,6 @@ export default function DashboardPage({ params }: { params: { id: string } }) {
     );
   }
 
-
   return (
     <>
       <div className="max-w-6xl flex-1 px-6 py-8">
@@ -31,13 +34,6 @@ export default function DashboardPage({ params }: { params: { id: string } }) {
             <h2 className="text-2xl font-bold text-[#c7731b]">
               Welcome back, {restaurantData?.name}!
             </h2>
-            <p className="max-w-3xl text-sm text-[#7a5a35]">
-              This dashboard provides an overview of your restaurant&apos;s key
-              performance metrics, including revenue, orders, customer
-              acquisition, and visitor trends. Use the interactive charts and
-              summary cards below to monitor business growth, spot trends, and
-              make informed decisions.
-            </p>
           </div>
           <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1.4fr)]">
             <div className="space-y-6 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-[#f2dcba]">
