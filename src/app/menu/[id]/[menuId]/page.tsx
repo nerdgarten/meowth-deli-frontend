@@ -1,55 +1,57 @@
 "use client";
 
-import { SelectMenu } from "@/components/Main/SelectMenu";
-import type { IDish } from "@/types/dish";
-import { getDishById } from "@/libs/dish";
-import { getDishRestuarantId } from "@/libs/restaurant";
-import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+
 import { useCart } from "@/components/context/CartProvider";
+import { SelectMenu } from "@/components/Main/SelectMenu";
+import { getDishById } from "@/libs/dish";
+import { getDishRestaurantId } from "@/libs/restaurant";
+import type { IDish } from "@/types/dish";
 
-export default function MenuPage({ params }: { params: { id: string; menuId: string } }) {
-  const {addToCart} = useCart();
-  
+export default function MenuPage({ params }: { params: Promise<{ id: string; menuId: string }> }) {
+  const [resolvedParams, setResolvedParams] = useState<{ id: string; menuId: string } | null>(null);
 
-  const addCart = (dish:IDish, quantity:number) => {
-    addToCart(params.id, dish, quantity);
-    console.log("test")
+  useEffect(() => {
+    params.then(setResolvedParams).catch(console.error);
+  }, [params]);
 
-  }
+  const { addToCart } = useCart();
 
-  const {
-    data: dish,
-    isLoading: dishLoading,
-    isError: dishError,
-  } = useQuery({
-    queryKey: ["dish", params.menuId],
+  const addCart = (dish: IDish, quantity: number) => {
+    if (!resolvedParams) return;
+    addToCart(resolvedParams.id, dish, quantity);
+    console.log("test");
+  };
+
+  const { data: dish } = useQuery({
+    queryKey: ["dish", resolvedParams?.menuId],
     queryFn: ({ queryKey }) => {
       const [, dishId] = queryKey;
       if (!dishId) throw new Error("No dish ID provided");
-      return getDishById(dishId as string);
+      return getDishById(dishId);
     },
-    enabled: !! params.menuId,
+    enabled: !!resolvedParams?.menuId,
   });
 
-  const {
-    data: recommendations,
-  } = useQuery({
-    queryKey: ["restaurant-dishes", params.id],
+  const { data: recommendations } = useQuery({
+    queryKey: ["restaurant-dishes", resolvedParams?.id],
     queryFn: ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No restaurant ID provided");
-      return getDishRestuarantId(restaurantId as string);
+      return getDishRestaurantId(restaurantId);
     },
-    enabled: !!params.id,
+    enabled: !!resolvedParams?.id,
   });
 
-  // Handle loading
+  if (!resolvedParams) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <main className="h-230 w-full overflow-auto p-16">
       <SelectMenu
-        dish={dish as IDish}
+        dish={dish!}
         recommendations={recommendations ?? []}
         addToCart={addCart}
       />

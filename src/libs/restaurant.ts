@@ -1,8 +1,8 @@
 import { apiClient } from "@/libs/axios";
-import { IDish } from "@/types/dish";
-import { IRestaurant } from "@/types/restaurant";
+import type { IDish } from "@/types/dish";
+import type { IRestaurant } from "@/types/restaurant";
 
-export const getDishRestuarantId = async(restaurant_id: string): Promise<IDish[]> => {
+export const getDishRestaurantId = async(restaurant_id: string): Promise<IDish[]> => {
   try {
     const response = await apiClient.get<IDish[]>(`/restaurant/${restaurant_id}/dish`);
     return response.data;
@@ -21,5 +21,3 @@ export const getRestaurantById = async(restaurant_id: string): Promise<IRestaura
     throw error;
   }
 };
-
-

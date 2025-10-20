@@ -1,4 +1,4 @@
-export interface Restaurant {
+export interface IRestaurant {
   id: number;
   verification_status: "approved" | "pending" | "rejected";
   is_available: boolean;

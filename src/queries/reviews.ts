@@ -1,5 +1,5 @@
 import { apiClient } from "@/libs/axios";
-import type { ReviewResponse, DriverReviewResponse } from "@/types/review";
+import type { DriverReviewResponse,ReviewResponse } from "@/types/review";
 
 export interface GetRestaurantReviewsParams {
   restaurantId: number;
