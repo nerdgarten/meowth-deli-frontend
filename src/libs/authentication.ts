@@ -1,11 +1,12 @@
 import { apiClient } from "@/libs/axios";
+import type { Role } from "@/types/role";
 
-export const isAuthenticated = async(): Promise<boolean> => {
+export const authenticatedAs = async (): Promise<Role | null> => {
   try {
-    const response = await apiClient.get("/authenticated/isAuthenticated");
+    const response = await apiClient.get("/authenticated/authenticatedAs");
 
-    return response.status === 200;
+    return response.data.role;
   } catch {
-    return false;
+    return null;
   }
 };

@@ -1,33 +1,35 @@
 "use client";
 
 import { Menu, User } from "lucide-react";
-import { useState } from "react";
+import { use, useState } from "react";
 import toast from "react-hot-toast";
 
 import { EditProfileDialog } from "@/components/Navigation/EditProfileDialog";
 import { MenuDialog } from "@/components/Navigation/MenuDialog";
-import { isAuthenticated } from "@/libs/authentication";
+import { authenticatedAs } from "@/libs/authentication";
 
 import BreadcrumbNav from "./BreadCrumbNav";
 import { LoginDialog } from "./LoginDialog";
+import { useRouter } from "next/navigation";
 
 export const Navigation = () => {
+  const router = useRouter();
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState<boolean>(false);
   const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] =
     useState<boolean>(false);
   const [isMenuDialogOpen, setIsMenuDialogOpen] = useState<boolean>(false);
 
-  const handleProfileClick = async() => {
-    const authenticated = await isAuthenticated();
+  const handleProfileClick = async () => {
+    const authenticated = await authenticatedAs();
     if (authenticated) {
-      setIsEditProfileDialogOpen(true);
+      router.push("/customer/profile");
     } else {
       setIsLoginDialogOpen(true);
     }
   };
 
-  const handleMenuClick = async() => {
-    const authenticated = await isAuthenticated();
+  const handleMenuClick = async () => {
+    const authenticated = await authenticatedAs();
     if (authenticated) {
       setIsMenuDialogOpen(true);
     } else {
