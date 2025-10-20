@@ -25,7 +25,7 @@ export const Navigation = () => {
   const handleProfileClick = async () => {
     const authenticated = await authenticatedAs();
     if (authenticated) {
-      router.push("/customer/profile");
+      router.push("/profile");
     } else {
       setIsLoginDialogOpen(true);
     }
