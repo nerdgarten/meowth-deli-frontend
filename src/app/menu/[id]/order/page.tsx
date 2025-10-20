@@ -70,7 +70,7 @@ export default function OrderPage({
   };
 
   return (
-    <main className="h-230 w-full overflow-auto p-16">
+    <main className="h-230 w-full p-16">
       <OrderSummary
         cartItem={cartItem}
         restaurantName={restaurantQuery.data?.name ?? ""}
