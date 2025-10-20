@@ -21,13 +21,13 @@ export default function OrderPage({ params }: { params: { id: string }}) {
     enabled: !!params.id,
   });
 
-  const cartItem = getCartItems();
+  const cartItem = getCartItems(params.id);
   return (
     <main className="h-230 w-full overflow-auto p-16">
       <OrderSummary
         cartItem={cartItem}
         restaurantName={data?.name ?? ""}
-        TotalPrice={getTotalPrice()}
+        TotalPrice={getTotalPrice(params.id)}
       />
     </main>
   );

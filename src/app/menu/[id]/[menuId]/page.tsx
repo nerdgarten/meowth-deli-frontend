@@ -13,7 +13,7 @@ export default function MenuPage({ params }: { params: { id: string; menuId: str
   
 
   const addCart = (dish:IDish, quantity:number) => {
-    addToCart(dish, quantity);
+    addToCart(params.id, dish, quantity);
     console.log("test")
 
   }
