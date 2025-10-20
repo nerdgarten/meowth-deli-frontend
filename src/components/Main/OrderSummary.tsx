@@ -1,5 +1,16 @@
 import { ChevronLeft } from "lucide-react";
-export const OrderSummary = () => {
+import { CartItem } from "@/types/order";
+interface OrderSummaryProps {
+  cartItem: CartItem[];
+  restaurantName: string;
+  TotalPrice: number;
+}
+export const OrderSummary = ({
+    cartItem,
+    restaurantName,
+    TotalPrice
+  } : OrderSummaryProps
+) => {
   const dummyItems = [
     {
       restaurant: "Sushi",
@@ -22,35 +33,33 @@ export const OrderSummary = () => {
     const fee = 2.99;
   return (
     <div className="flex flex-col rounded-sm bg-white p-4">
-      {dummyItems.map((item, index) => (
-        <div key={index} className="h-full border-b p-4">
-          <div>
-            <h2 className="text-4xl font-bold">{item.restaurant}</h2>
-            <h3 className="text-md font-semibold text-gray-400">{item.time}</h3>
-            <div className="mx-4 mt-12 flex flex-col gap-4">
-              <div className="flex justify-between">
-                <h3 className="text-2xl font-bold">Order Summary</h3>
-                <h4 className="text-xl font-bold text-purple-700">Add Items</h4>
-              </div>
-
-              {item.menu.map((menuItem, idx) => (
-                <div key={idx} className="mt-4 flex h-full justify-between">
-                  <div className="flex gap-6">
-                    <div className="aspect-square h-24 rounded-sm bg-slate-200" />
-                    <div className="text-lg font-bold">
-                      <h4 className="text-black">{menuItem.name}</h4>
-                      <h4 className="text-purple-700">Edit</h4>
-                    </div>
-                  </div>
-                  <h4 className="text-lg font-semibold">
-                    {(menuItem.quantity * menuItem.price).toFixed(2)} THB
-                  </h4>
-                </div>
-              ))}
+      <div className="h-full border-b p-4">
+        <div>
+          <h2 className="text-4xl font-bold">{restaurantName}</h2>
+          {/* <h3 className="text-md font-semibold text-gray-400">{item.time}</h3> */}
+          <div className="mx-4 mt-12 flex flex-col gap-4">
+            <div className="flex justify-between">
+              <h3 className="text-2xl font-bold">Order Summary</h3>
+              <h4 className="text-xl font-bold text-purple-700">Add Items</h4>
             </div>
+
+            {cartItem.map((menuItem, idx) => (
+              <div key={idx} className="mt-4 flex h-full justify-between">
+                <div className="flex gap-6">
+                  <div className="aspect-square h-24 rounded-sm bg-slate-200" />
+                  <div className="text-lg font-bold">
+                    <h4 className="text-black">{menuItem.dish.name} x {menuItem.quantity}</h4>
+                    <h4 className="text-purple-700">Edit</h4>
+                  </div>
+                </div>
+                <h4 className="text-lg font-semibold">
+                  {(menuItem.quantity * menuItem.dish.price).toFixed(2)} THB
+                </h4>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
+      </div>
       <div className="mx-8 mt-10 flex flex-col gap-4">
         <div className="flex h-full justify-between">
           <h2 className="text-lg font-bold">Subtotal</h2>
@@ -59,7 +68,7 @@ export const OrderSummary = () => {
 
         <div className="flex h-full justify-between">
           <h2 className="text-lg font-bold">Delivery Fee</h2>
-          <h2 className="text-lg font-semibold">{fee}</h2>
+          {/* <h2 className="text-lg font-semibold">{fee}</h2> */}
         </div>
         <div className="flex h-16 w-full items-center justify-between rounded-md border border-slate-300 p-8 transition hover:bg-gray-100 active:bg-gray-300">
           <h2 className="mx-4 text-lg font-bold">Map</h2>
@@ -67,7 +76,7 @@ export const OrderSummary = () => {
         </div>
         <div className="flex h-full justify-between">
           <h2 className="text-lg font-bold">Total</h2>
-          <h2 className="text-lg font-semibold">{price + fee}</h2>
+          <h2 className="text-lg font-semibold">{TotalPrice.toFixed(2)}</h2>
         </div>
         <div className="mt-8 grid grid-cols-2 grid-rows-6">
           <h1 className="col-span-1 row-span-1 text-lg font-bold">

@@ -1,4 +1,4 @@
-export default function StatusLayout({
+export default function OrderLayout({
   children,
 }: {
   children: React.ReactNode;

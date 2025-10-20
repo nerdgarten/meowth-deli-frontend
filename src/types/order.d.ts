@@ -9,3 +9,8 @@ export interface IOrder {
   total_amount: number;
   driver_fee: number;
 }
+
+export interface CartItem {
+  dish: IDish;
+  quantity: number;
+}

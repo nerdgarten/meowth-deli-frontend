@@ -6,10 +6,18 @@ import { getDishById } from "@/libs/dish";
 import { getDishRestuarantId } from "@/libs/restaurant";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { useCart } from "@/components/context/CartProvider";
 
 export default function MenuPage({ params }: { params: { id: string; menuId: string } }) {
+  const {addToCart} = useCart();
+  
 
-  // Fetch dish details
+  const addCart = (dish:IDish, quantity:number) => {
+    addToCart(dish, quantity);
+    console.log("test")
+
+  }
+
   const {
     data: dish,
     isLoading: dishLoading,
@@ -26,8 +34,6 @@ export default function MenuPage({ params }: { params: { id: string; menuId: str
 
   const {
     data: recommendations,
-    isLoading: recLoading,
-    isError: recError,
   } = useQuery({
     queryKey: ["restaurant-dishes", params.id],
     queryFn: ({ queryKey }) => {
@@ -45,6 +51,7 @@ export default function MenuPage({ params }: { params: { id: string; menuId: str
       <SelectMenu
         dish={dish as IDish}
         recommendations={recommendations ?? []}
+        addToCart={addCart}
       />
     </main>
   );

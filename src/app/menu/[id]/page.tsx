@@ -15,6 +15,7 @@ export default function RestaurantPage({ params }: { params: { id: string } }) {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No id provided");
       return getRestaurantById(restaurantId as string);
+      
     },
     enabled: !!params.id,
   });

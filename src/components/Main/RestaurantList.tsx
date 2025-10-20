@@ -58,7 +58,7 @@ export const RestaurantList = ({
           {dishes.map((item) => (
             <div
               key={item.id}
-              className="h-full w-72 flex-shrink-0 overflow-hidden rounded-lg bg-white p-2 shadow-2xl"
+              className="h-full w-72 flex-shrink-0 overflow-hidden rounded-lg bg-white p-2 shadow-2xl hover:bg-gray-100 active:bg-gray-400 transition"
               onClick={() => onDishClick(item)}
             >
               <div className="h-3/5 rounded-lg bg-slate-800"></div>

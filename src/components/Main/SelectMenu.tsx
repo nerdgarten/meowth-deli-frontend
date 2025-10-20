@@ -3,30 +3,28 @@
 import { Icon } from "lucide-react";
 import { Plus, Minus } from "lucide-react";
 import { IDish } from "@/types/dish";
+import { useState } from "react";
 
 interface SelectMenuProps {
   dish: IDish;
   recommendations: IDish[];
+  addToCart: (dish: IDish, quantity: number) => void;
 }
-
 
 export const SelectMenu = ({
   dish,
   recommendations,
+  addToCart,
 } : SelectMenuProps
   
 ) => {
-    const detailed = {
-        id: 1,
-        name: "Sushimi Size XL",
-        tags: ["Sushi", "Cheap"],
-        price: 1299,
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-        note: "Best served with soy sauce and wasabi.",
+
+
+    const [quantity, setQuantity] = useState<number>(1);
+    const handleAddToCart = () =>{
+      addToCart(dish, quantity);
     }
-    const dummyArray = [
-        1,2,3,4, 5,6
-    ]
+
     if (!dish) {
       return (
         <div className="grid-row-2 mx-4 grid h-full grid-cols-1 gap-4 rounded-sm bg-white p-4">
@@ -44,20 +42,18 @@ export const SelectMenu = ({
           <div className="col-span-1 row-span-2 text-4xl">
             <h1 className="font-bold">{dish.name}</h1>
             <div className="fond-semibold mt-2 flex gap-2 text-sm">
-              {detailed.tags.map((tag) => (
+              {/* {detailed.tags.map((tag) => (
                 <div
                   key={tag}
                   className="flex w-14 items-center justify-center rounded-sm bg-slate-200"
                 >
                   {tag}
                 </div>
-              ))}
+              ))} */}
             </div>
           </div>
           <div className="col-span-1 row-span-2 flex flex-col items-end">
-            <h2 className="text-4xl font-bold text-black">
-              {dish.price} THB
-            </h2>
+            <h2 className="text-4xl font-bold text-black">{dish.price} THB</h2>
             <h2 className="text-xl text-slate-500">Base Price</h2>
           </div>
           <div className="col-span-2 row-span-2">
@@ -83,15 +79,30 @@ export const SelectMenu = ({
           </div>
           <div className="col-span-2 row-span-1 grid grid-cols-7 grid-rows-1 gap-12">
             <div className="col-span-3 row-span-1 flex items-center justify-between">
-              <div className="flex aspect-square h-full items-center justify-center rounded-full border-4 border-black transition active:scale-90">
+              <div
+                className="flex aspect-square h-full items-center justify-center rounded-full border-4 border-black transition active:scale-90"
+                onClick={() => {
+                  if (quantity >= 2) {
+                    setQuantity(quantity - 1);
+                  }
+                }}
+              >
                 <Minus size={40} />
               </div>
-              <h1 className="text-4xl font-bold">1</h1>
-              <div className="flex aspect-square h-full items-center justify-center rounded-full border-4 border-black transition active:scale-90">
+              <h1 className="text-4xl font-bold">{quantity}</h1>
+              <div
+                className="flex aspect-square h-full items-center justify-center rounded-full border-4 border-black transition active:scale-90"
+                onClick={() => {
+                  setQuantity(quantity + 1);
+                }}
+              >
                 <Plus size={40} />
               </div>
             </div>
-            <button className="bg-app-yellow active:bg-app-bronze col-span-4 row-span-1 rounded-full transition hover:bg-amber-500">
+            <button
+              className="bg-app-yellow active:bg-app-bronze col-span-4 row-span-1 rounded-full transition hover:bg-amber-500"
+              onClick={handleAddToCart}
+            >
               <h1 className="text-2xl font-bold text-white">Add to Basket</h1>
             </button>
           </div>

@@ -1,11 +1,22 @@
 "use client";
 
-import { OrderSummary } from "@/components/Main/OrderSummary";
+import { OrderStatusMenu } from "@/components/Main/OrderStatus";
+import { IOrder } from "@/types/order";
 
-export default function OrderPage() {
+export default function StatusPage() {
+  const order = {
+    id: 0,
+    customer_id: 0,
+    driver_id: 0,
+    location: "Home",
+    status: "pending",
+    remark: "Dontknow",
+    total_amount: 20,
+    driver_fee: 5,
+  } as IOrder;
   return (
     <main className="h-230 w-full overflow-auto p-16">
-      <OrderSummary />
+      <OrderStatusMenu order={order}/>
     </main>
   );
 }
