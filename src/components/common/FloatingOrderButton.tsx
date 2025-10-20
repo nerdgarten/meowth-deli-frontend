@@ -16,8 +16,8 @@ export function FloatingOrderButton({
   const pathname = usePathname();
   const { getItemCount, getTotalPrice } = useCart();
 
-  const itemCount = getItemCount();
-  const totalPrice = getTotalPrice();
+  const itemCount = getItemCount(restaurantId);
+  const totalPrice = getTotalPrice(restaurantId);
 
   // Check if current path is the order page
   const isOrderPage = pathname === `/menu/${restaurantId}/order`;

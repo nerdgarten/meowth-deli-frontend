@@ -1,7 +1,7 @@
 "use client";
 
 import { SelectMenu } from "@/components/Main/SelectMenu";
-import { IDish } from "@/types/dish";
+import type { IDish } from "@/types/dish";
 import { getDishById } from "@/libs/dish";
 import { getDishRestuarantId } from "@/libs/restaurant";
 import { useSearchParams } from "next/navigation";
@@ -13,7 +13,7 @@ export default function MenuPage({ params }: { params: { id: string; menuId: str
   
 
   const addCart = (dish:IDish, quantity:number) => {
-    addToCart(dish, quantity);
+    addToCart(params.id, dish, quantity);
     console.log("test")
 
   }

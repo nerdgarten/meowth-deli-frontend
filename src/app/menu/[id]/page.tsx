@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
 import { RestaurantList } from "@/components/Main/RestaurantList";
-import { IDish } from "@/types/dish";
+import type { IDish } from "@/types/dish";
 import { getDishRestuarantId, getRestaurantById } from "@/libs/restaurant";
 import { useQuery } from "@tanstack/react-query";
 
