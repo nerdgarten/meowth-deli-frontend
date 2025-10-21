@@ -101,6 +101,13 @@ export interface IRegisterResponse {
   role: Role;
 }
 
+export interface ILocation {
+  id: number;
+  userId: number;
+  address: string;
+  is_default: boolean;
+}
+
 export async function registerCustomerMutation(
   data: z.infer<typeof CustomerRegisterFormSchema>
 ) {
@@ -156,6 +163,15 @@ export async function registerDriverMutation(
       accepted_pdpa: data.agreePDPA,
       location: data.location,
     }
+  );
+  await apiClient.post<ILocation>(
+    "/location",
+    {
+      customer_id: response.data.id,
+      address: data.address,
+      is_default: true,
+    },
+    { withCredentials: true }
   );
 
   return response.data;
