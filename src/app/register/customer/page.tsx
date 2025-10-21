@@ -66,7 +66,7 @@ const CustomerRegisterForm = () => {
       firstname: "",
       lastname: "",
       tel: "",
-      address: "",
+      location: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -220,7 +220,7 @@ const CustomerRegisterForm = () => {
             />
             <FormField
               control={customerRegisterFrom.control}
-              name="address"
+              name="location"
               render={({ field }) => (
                 <FormItem className="pb-4">
                   <FormLabel>Address</FormLabel>

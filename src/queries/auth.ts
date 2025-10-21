@@ -31,7 +31,55 @@ export const CustomerRegisterFormSchema = z
       .string()
       .min(6, "Invalid phone number")
       .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
-    address: z.string().min(1, "Address is required"),
+    location: z.string().min(1, "Address is required"),
+    email: z.email(),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string(),
+    agreeTOS: z.boolean().refine((v) => v === true, {
+      message: "You must agree to the Terms of Services",
+    }),
+    agreePDPA: z
+      .boolean()
+      .refine((v) => v === true, { message: "You must agree to PDPA" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export const RestaurantRegisterFormSchema = z
+  .object({
+    name: z.string().min(1, "Name is required"),
+    description: z.string(),
+    tel: z
+      .string()
+      .min(6, "Invalid phone number")
+      .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
+    location: z.string().min(1, "Address is required"),
+    email: z.email(),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string(),
+    agreeTOS: z.boolean().refine((v) => v === true, {
+      message: "You must agree to the Terms of Services",
+    }),
+    agreePDPA: z
+      .boolean()
+      .refine((v) => v === true, { message: "You must agree to PDPA" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export const DriverRegisterFormSchema = z
+  .object({
+    firstname: z.string().min(1, "First name is required"),
+    lastname: z.string().min(1, "Lastname is required"),
+    tel: z
+      .string()
+      .min(6, "Invalid phone number")
+      .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
+    location: z.string().min(1, "Address is required"),
     email: z.email(),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
@@ -73,7 +121,47 @@ export async function registerCustomerMutation(
       password: data.password,
       accepted_term_of_service: data.agreeTOS,
       accepted_pdpa: data.agreePDPA,
-      address: data.address,
+      location: data.location,
+    }
+  );
+
+  return response.data;
+}
+
+export async function registerRestaurantMutation(
+  data: z.infer<typeof RestaurantRegisterFormSchema>
+) {
+  const response = await apiClient.post<IRegisterResponse>(
+    "/auth/signup/restaurant",
+    {
+      name: data.name,
+      description: data.description,
+      tel: data.tel,
+      email: data.email,
+      password: data.password,
+      accepted_term_of_service: data.agreeTOS,
+      accepted_pdpa: data.agreePDPA,
+      location: data.location,
+    }
+  );
+
+  return response.data;
+}
+
+export async function registerDriverMutation(
+  data: z.infer<typeof DriverRegisterFormSchema>
+) {
+  const response = await apiClient.post<IRegisterResponse>(
+    "/auth/signup/driver",
+    {
+      firstname: data.firstname,
+      lastname: data.lastname,
+      tel: data.tel,
+      email: data.email,
+      password: data.password,
+      accepted_term_of_service: data.agreeTOS,
+      accepted_pdpa: data.agreePDPA,
+      location: data.location,
     }
   );
   await apiClient.post<ILocation>(

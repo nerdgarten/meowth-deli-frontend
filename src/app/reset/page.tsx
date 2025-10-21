@@ -1,7 +1,5 @@
 "use client";
 
-import { Suspense } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@ui/button";
@@ -11,6 +9,7 @@ import { isAxiosError } from "axios";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
