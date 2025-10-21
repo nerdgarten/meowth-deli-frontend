@@ -76,13 +76,15 @@ export async function registerCustomerMutation(
       address: data.address,
     }
   );
-  console.log("Registered user:", response.data.id);
-  console.log(data.address);
-  const locationResponse = await apiClient.post<ILocation>("/location", {
-    customer_id: response.data.id,
-    address: data.address,
-    is_default: true,
-  });
+  await apiClient.post<ILocation>(
+    "/location",
+    {
+      customer_id: response.data.id,
+      address: data.address,
+      is_default: true,
+    },
+    { withCredentials: true }
+  );
 
   return response.data;
 }

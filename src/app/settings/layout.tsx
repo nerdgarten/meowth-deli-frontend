@@ -12,7 +12,7 @@ import {
   User,
 } from "lucide-react";
 
-const basePath = "/settings/customer";
+const basePath = "/settings";
 
 const items: SettingNavItem[] = [
   {
@@ -27,12 +27,12 @@ const items: SettingNavItem[] = [
     href: `${basePath}/addresses`,
     icon: MapPin,
   },
-  {
-    key: "preferences",
-    label: "Preferences",
-    href: `${basePath}/preferences`,
-    icon: SlidersHorizontal,
-  },
+  // {
+  //   key: "preferences",
+  //   label: "Preferences",
+  //   href: `${basePath}/preferences`,
+  //   icon: SlidersHorizontal,
+  // },
   {
     key: "security",
     label: "Security",
@@ -53,10 +53,12 @@ export default function CustomerSettingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="bg-app-background flex h-full flex-col items-center pt-[4rem]">
-      <div className="flex flex-col items-center justify-center gap-32 p-4">
-        <SettingNavigationMenu items={items} />
-        {children}
+    <main className="bg-app-background flex h-full flex-col pt-[6rem]">
+      <div className="flex w-full flex-col p-4">
+        <div className="flex flex-col items-center justify-center">
+          <SettingNavigationMenu items={items} />
+          <div className="w-full">{children}</div>
+        </div>
       </div>
     </main>
   );
