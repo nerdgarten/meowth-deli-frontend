@@ -16,7 +16,7 @@ export async function loginSubmitMutation(
     {
       email: data.email,
       password: data.password,
-      role: "customer",
+      role: "driver",
     }
   );
 
@@ -168,7 +168,7 @@ export async function registerDriverMutation(
     "/location",
     {
       customer_id: response.data.id,
-      address: data.address,
+      address: data.location,
       is_default: true,
     },
     { withCredentials: true }
