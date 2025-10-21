@@ -1,11 +1,6 @@
 "use client";
 
-import * as React from "react";
-
-import { Package } from "lucide-react";
-
-import type { IOrder } from "@/types/order";
-
+import { Button } from "@ui/button";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@ui/dialog";
-import { Button } from "@ui/button";
+import { Package } from "lucide-react";
+import * as React from "react";
+
+import type { IOrder } from "@/types/order";
 
 const orders: IOrder[] = [
   {

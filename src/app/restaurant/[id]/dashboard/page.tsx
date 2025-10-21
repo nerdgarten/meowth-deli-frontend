@@ -1,10 +1,10 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { BarChart3, Menu, TrendingUp, User, Users } from "lucide-react";
-
-import { SidebarTrigger } from "@ui/sidebar";
 import { useQuery } from "@tanstack/react-query";
+import { SidebarTrigger } from "@ui/sidebar";
+import { BarChart3, Menu, TrendingUp, User, Users } from "lucide-react";
+import { useParams } from "next/navigation";
+
 import { getRestaurant } from "@/queries/restaurant";
 
 export default function DashboardPage() {

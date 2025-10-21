@@ -31,6 +31,7 @@ export default function OrderSuccessPage() {
     enabled: !!restaurantId,
   });
 
+
   const restaurant: IRestaurant | undefined = restaurantQuery.data;
 
   // ✅ Load latest order from localStorage
