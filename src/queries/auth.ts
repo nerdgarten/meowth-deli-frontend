@@ -16,7 +16,7 @@ export async function loginSubmitMutation(
     {
       email: data.email,
       password: data.password,
-      role: "driver",
+      role: "customer",
     }
   );
 

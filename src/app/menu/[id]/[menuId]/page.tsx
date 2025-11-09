@@ -2,20 +2,34 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 import { useCart } from "@/components/context/CartProvider";
 import { SelectMenu } from "@/components/Main/SelectMenu";
 import { getDishById } from "@/libs/dish";
 import { getDishRestaurantId } from "@/libs/restaurant";
+import { checkFavouriteDish } from "@/libs/favourite";
 import type { IDish } from "@/types/dish";
+import { useRouter } from "next/navigation";
 
-export default function MenuPage({ params }: { params: Promise<{ id: string; menuId: string }> }) {
-  const [resolvedParams, setResolvedParams] = useState<{ id: string; menuId: string } | null>(null);
-
+export default function MenuPage({
+  params,
+}: {
+  params: Promise<{ id: string; menuId: string }>;
+}) {
+  const [resolvedParams, setResolvedParams] = useState<{
+    id: string;
+    menuId: string;
+  } | null>(null);
+  const router = useRouter();
   useEffect(() => {
     params.then(setResolvedParams).catch(console.error);
   }, [params]);
 
+  const onDishClick = (dish: IDish) => {
+    if (!resolvedParams) return;
+    router.push(`/menu/${resolvedParams.id}/${dish.id}`);
+  };
   const { addToCart } = useCart();
 
   const addCart = (dish: IDish, quantity: number) => {
@@ -44,8 +58,20 @@ export default function MenuPage({ params }: { params: Promise<{ id: string; men
     enabled: !!resolvedParams?.id,
   });
 
-  if (!resolvedParams) {
-    return <div>Loading...</div>;
+  const { data: favourite_dish } = useQuery({
+    queryKey: ["favourite-dish", resolvedParams?.menuId],
+    queryFn: ({ queryKey }) => {
+      const [, dishId] = queryKey;
+      if (!dishId) throw new Error("No dish ID provided");
+      return checkFavouriteDish(Number(dishId));
+    },
+    enabled: !!resolvedParams?.menuId,
+  });
+
+  if (!resolvedParams || favourite_dish === undefined) {
+    return (
+      <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
+    );
   }
 
   return (
@@ -54,6 +80,8 @@ export default function MenuPage({ params }: { params: Promise<{ id: string; men
         dish={dish!}
         recommendations={recommendations ?? []}
         addToCart={addCart}
+        onDishClick={onDishClick}
+        favourite_dish={favourite_dish ?? false}
       />
     </main>
   );
