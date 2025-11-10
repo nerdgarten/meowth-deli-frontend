@@ -10,7 +10,7 @@ import {
   SlidersHorizontal,
   User,
 } from "lucide-react";
-
+import { useContext, createContext, useState } from "react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -24,32 +24,49 @@ type SettingNavItem = {
   href: string;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 };
+interface SettingNavContextType {
+  select_key: string;
+}
+export const SettingNavContext = createContext<
+  SettingNavContextType | undefined
+>(undefined);
+
 export type { SettingNavItem };
 
 export const SettingNavigationMenu = ({
   items,
+  children,
 }: {
   items: SettingNavItem[];
+  children?: React.ReactNode;
 }) => {
   const pathname = usePathname();
+  const [select, setSelect] = useState<string>(items[0]?.key || "");
 
   return (
-    <NavigationMenu>
-      <NavigationMenuList className="bg-app-white flex-wrap rounded-md p-1">
-        {items.map(({ key, label, href, icon: Icon }) => (
-          <NavItem
-            key={key}
-            href={href}
-            isActive={
-              Boolean(pathname) &&
-              (pathname === href || pathname.startsWith(`${href}/`))
-            }
-          >
-            <Icon className="mr-1 size-4 stroke-2" /> {label}
-          </NavItem>
-        ))}
-      </NavigationMenuList>
-    </NavigationMenu>
+    <SettingNavContext.Provider value={{ select_key: select }}>
+      <NavigationMenu>
+        <NavigationMenuList className="bg-app-white flex-wrap rounded-md p-1">
+          {items.map(({ key, label, href, icon: Icon }) => (
+            <div
+              key={key}
+              onClick={() => {
+                setSelect(key);
+              }}
+            >
+              <NavItem
+                key={key}
+                href={href}
+                isActive={select !== "" && key === select}
+              >
+                <Icon className="mr-1 size-4 stroke-2" /> {label}
+              </NavItem>
+            </div>
+          ))}
+        </NavigationMenuList>
+      </NavigationMenu>
+      {children}
+    </SettingNavContext.Provider>
   );
 };
 
@@ -71,11 +88,22 @@ const NavItem = ({
   }
   return (
     <NavigationMenuItem>
-      <NavigationMenuLink asChild>
-        <Link href={href}>
+      <div className="text-app-brown flex items-center">{children}</div>
+      {/* <NavigationMenuLink asChild> */}
+      {/* <Link href={href}>
           <div className="text-app-brown flex items-center">{children}</div>
-        </Link>
-      </NavigationMenuLink>
+        </Link> */}
+      {/* </NavigationMenuLink> */}
     </NavigationMenuItem>
   );
+};
+
+export const useNavContext = () => {
+  const context = useContext(SettingNavContext);
+  if (!context) {
+    throw new Error(
+      "useNavContext must be used within a SettingNavContextProvider"
+    );
+  }
+  return context;
 };
