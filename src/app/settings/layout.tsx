@@ -1,5 +1,6 @@
 "use client";
-
+import { useQuery } from "@tanstack/react-query";
+import { authenticatedAs } from "@/libs/authentication";
 import {
   SettingNavigationMenu,
   type SettingNavItem,
@@ -27,12 +28,6 @@ const items: SettingNavItem[] = [
     href: `${basePath}/addresses`,
     icon: MapPin,
   },
-  // {
-  //   key: "preferences",
-  //   label: "Preferences",
-  //   href: `${basePath}/preferences`,
-  //   icon: SlidersHorizontal,
-  // },
   {
     key: "security",
     label: "Security",
@@ -52,12 +47,20 @@ export default function CustomerSettingLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { data: role, isLoading } = useQuery({
+    queryKey: ["authenticated-role"],
+    queryFn: authenticatedAs,
+    staleTime: 60_000,
+  });
+
+  
   return (
     <main className="bg-app-background flex h-full flex-col pt-[6rem]">
       <div className="flex w-full flex-col p-4">
         <div className="flex flex-col items-center justify-center">
-          <SettingNavigationMenu items={items} />
-          <div className="w-full">{children}</div>
+          <SettingNavigationMenu items={items}>
+            <div className="w-full">{children}</div>
+          </SettingNavigationMenu>
         </div>
       </div>
     </main>
