@@ -7,7 +7,10 @@ import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { RestaurantList } from "@/components/Main/RestaurantList";
 import { getDishRestaurantId, getRestaurantById } from "@/libs/restaurant";
 import type { IDish } from "@/types/dish";
-import { checkFavouriteRestaurant, getFavouriteDishesByRestaurant } from "@/libs/favourite";
+import {
+  checkFavouriteRestaurant,
+  getFavouriteDishesByRestaurant,
+} from "@/libs/favourite";
 
 export default function RestaurantPage({
   params,
@@ -44,14 +47,13 @@ export default function RestaurantPage({
     },
     enabled: !!resolvedParams?.id,
   });
-  const {data: favourite_dish} = useQuery({
+  const { data: favourite_dish } = useQuery({
     queryKey: ["restaurant-favourite-dish", resolvedParams?.id],
     queryFn: ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No id provided");
       return getFavouriteDishesByRestaurant(Number(restaurantId));
-    }
-    ,
+    },
     enabled: !!resolvedParams?.id,
   });
 
@@ -77,7 +79,7 @@ export default function RestaurantPage({
   }
 
   return (
-    <main className="h-300 w-full overflow-auto p-16">
+    <main className="w-full overflow-auto p-16">
       <RestaurantList
         dishes={dishes ?? []}
         favourite_dish={favourite_dish ?? []}

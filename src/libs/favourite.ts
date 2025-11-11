@@ -95,6 +95,11 @@ export const getFavouriteDishesByRestaurant = async (
     const response = await apiClient.get<IDish[]>(
       `/favourite/restaurant/${restaurant_id}/dish`
     );
+    console.log(response.data);
+    if (response.data[0] === null) {
+      return [];
+    }
+
     return response.data;
   } catch (error) {
     console.error("Error fetching favourite dishes by restaurant:", error);

@@ -25,6 +25,7 @@ import {
   EditProfileFormSchema,
   updateCustomerProfileMutation,
 } from "@/queries/profile";
+import { id } from "zod/v4/locales";
 
 export function CustomerOrderPage() {
   return (
@@ -35,11 +36,31 @@ export function CustomerOrderPage() {
     </main>
   );
 }
+const order = [
+  {
+    id: "ORD123456",
+    restaurant: "Pizza Palace",
+    status: "Delivered",
+    price: 24.99,
+  },
+  {
+    id: "ORD789012",
+    restaurant: "Sushi World",
+    status: "In Transit",
+    price: 29.99,
+  },
+  {
+    id: "ORD345678",
+    restaurant: "Burger Barn",
+    status: "Preparing",
+    price: 15.99,
+  },
+];
 
 export function CustomerOrderList() {
   return (
     <section className="rounded-3xl border border-black/10 bg-white shadow-[0_15px_40px_rgba(64,56,49,0.08)]">
-      <div className="px-4 py-6 md:px-8 md:py-8">
+      <div className="flex flex-col gap-6 px-4 py-6 md:px-8 md:py-8">
         <div className="flex flex-wrap items-start gap-4">
           <span className="text-app-dark-brown flex size-12 items-center justify-center rounded-full">
             <ShoppingBag className="size-6" aria-hidden />
@@ -53,12 +74,41 @@ export function CustomerOrderList() {
             </p>
           </div>
         </div>
-        <Button
-          type="submit"
-          className="bg-app-dark-brown mt-16 w-full rounded-xl text-sm font-semibold text-white shadow-[0_12px_28px_rgba(64,56,49,0.18)] transition hover:bg-[#2F2721]"
-        >
-          + Add New Address
-        </Button>
+        {order.map((item, index) => (
+          <div
+            key={index}
+            className="m-2 flex items-center justify-between rounded-lg border-gray-200 p-8 shadow-sm"
+          >
+            <div className="mx-4 flex h-full flex-col justify-between gap-2 rounded-lg">
+              <div className="flex gap-2">
+                <h3 className="text-app-dark-brown text-lg font-medium">
+                  {item.id}
+                </h3>
+                <span
+                  className={`rounded-full px-3 py-1 text-sm font-semibold ${
+                    item.status === "Delivered"
+                      ? "bg-green-100 text-green-800"
+                      : item.status === "In Transit"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-blue-100 text-blue-800"
+                  }`}
+                >
+                  {item.status}
+                </span>
+              </div>
+              <h3 className="text-app-dark-brown text-lg font-medium">
+                {item.restaurant}
+              </h3>
+              <p className="text-app-brown text-sm font-medium">
+                Total Price: ${item.price.toFixed(2)}
+              </p>
+            </div>
+
+            <button className="border-app-brown hover:bg-app-brown active:bg-app-dark-brown m-2 rounded-lg border-2 p-2 font-medium text-black transition-transform hover:text-white active:scale-95">
+              View Detailed
+            </button>
+          </div>
+        ))}
       </div>
     </section>
   );

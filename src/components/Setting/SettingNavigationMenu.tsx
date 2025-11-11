@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   ShoppingBag,
   SlidersHorizontal,
+  Settings,
   User,
 } from "lucide-react";
 import { useContext, createContext, useState } from "react";
@@ -40,13 +41,12 @@ export const SettingNavigationMenu = ({
   items: SettingNavItem[];
   children?: React.ReactNode;
 }) => {
-  const pathname = usePathname();
   const [select, setSelect] = useState<string>(items[0]?.key || "");
 
   return (
     <SettingNavContext.Provider value={{ select_key: select }}>
       <NavigationMenu>
-        <NavigationMenuList className="bg-app-white flex-wrap rounded-md p-1">
+        <NavigationMenuList className="bg-app-white flex justify-center gap-4 rounded-md p-1 transition-colors">
           {items.map(({ key, label, href, icon: Icon }) => (
             <div
               key={key}
@@ -81,14 +81,14 @@ const NavItem = ({
 }) => {
   if (isActive) {
     return (
-      <NavigationMenuItem className="bg-app-brown text-app-white flex flex-col gap-1 rounded-sm px-4 py-2 text-sm transition-all outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4">
+      <NavigationMenuItem className="cursor-pointer bg-app-brown text-app-white flex flex-col gap-1 rounded-sm px-4 py-2 text-sm outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4">
         <div className="flex items-center">{children}</div>
       </NavigationMenuItem>
     );
   }
   return (
-    <NavigationMenuItem>
-      <div className="text-app-brown flex items-center">{children}</div>
+    <NavigationMenuItem className="cursor-pointer text-app-brown flex flex-col gap-1 rounded-sm px-4 py-2 text-sm outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4">
+      <div className="flex items-center">{children}</div>
       {/* <NavigationMenuLink asChild> */}
       {/* <Link href={href}>
           <div className="text-app-brown flex items-center">{children}</div>

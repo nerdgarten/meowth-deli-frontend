@@ -129,7 +129,7 @@ export const LoginDialog = ({
             <div className="mt-10 flex w-full justify-center">
               <Button
                 type="submit"
-                className="bg-app-yellow w-1/3 rounded-full py-5 text-lg font-semibold"
+                className="bg-app-yellow hover:bg-app-yellow/60 active:bg-app-yellow/40 w-1/3 cursor-pointer rounded-full py-5 text-lg font-semibold active:scale-95"
               >
                 Login
               </Button>
