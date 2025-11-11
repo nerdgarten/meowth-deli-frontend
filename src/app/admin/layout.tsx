@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { LayoutDashboard, ShoppingBag, Home, Flag, Shield } from "lucide-react";
 import Image from "next/image";
-
 import {
   Sidebar,
   SidebarContent,

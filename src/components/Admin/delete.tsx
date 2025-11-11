@@ -1,35 +1,57 @@
 "use client";
 import Link from "next/link";
+import { useState } from "react";
 import { useParams, usePathname } from "next/navigation";
-import {
-  ForkKnifeCrossed,
-  Flag,
-  Car,
-  Users2,
-  TriangleAlert,
-} from "lucide-react";
+import { Trash2, TriangleAlert } from "lucide-react";
+import { useWarningDialog } from "./WarningDialog";
 
 import Image from "next/image";
 const DeleteRoleCard = ({
   src,
   header,
   content,
-  color = "yellow-100",
+  color,
   onClick,
+  active,
 }: {
   src: string;
   header: string;
   content: string;
-  color: string;
+  color: "red" | "sky" | "yellow";
   onClick?: () => void;
+  active?: boolean;
 }) => {
+  let mapColor = "";
+  switch (color) {
+    case "red":
+      mapColor = "red-500";
+      break;
+    case "sky":
+      mapColor = "sky-400";
+      break;
+    case "yellow":
+      mapColor = "yellow-500";
+      break;
+    default:
+      mapColor = "gray-500";
+  }
   return (
     <div
-      className={`w-full rounded-lg bg-${color} flex flex-col items-center justify-center gap-2 p-4`}
+      className={`w-full rounded-lg border-3 bg-${mapColor} flex flex-col items-center justify-center gap-2 p-4 ${
+        active ? "border-black" : "border-transparent"
+      }`}
     >
       <h1 className="text-xl font-bold text-white">{header}</h1>
       <div className="flex gap-2">
-        <Image src={src} alt="Eater Role" width={110} height={110} />
+        <div className="relative h-35 w-45">
+          <Image
+            src={src}
+            alt="Eater Role"
+            width={110}
+            height={110}
+            className="absolute"
+          />
+        </div>
         <div className="flex flex-col items-center justify-center gap-2">
           <p className="text-md font-medium text-white">{content}</p>
           <button
@@ -44,6 +66,8 @@ const DeleteRoleCard = ({
   );
 };
 export function AdminDelete() {
+  const [select, setSelect] = useState<number>(0);
+  const { open } = useWarningDialog();
   return (
     <div className="flex w-full flex-col gap-8 p-8">
       <div className="flex w-full flex-col gap-6 rounded-2xl bg-white/30 p-8 shadow-md">
@@ -72,22 +96,31 @@ export function AdminDelete() {
               src="/images/meowth-eating.webp"
               header="Customer"
               content="Close wallet credits, saved addresses, and promo streeams for diners"
-              color="red-500"
-              onClick={() => {}}
+              color="red"
+              onClick={() => {
+                setSelect(1);
+              }}
+              active={1 == select}
             />
             <DeleteRoleCard
               src="/images/meowth-driving.webp"
               header="Driver"
               content="Revoke fleet credentials and freeze active delivery slots."
-              color="sky-400"
-              onClick={() => {}}
+              color="sky"
+              onClick={() => {
+                setSelect(2);
+              }}
+              active={2 == select}
             />
             <DeleteRoleCard
               src="/images/meowth-cooking.webp"
               header="Restaurant"
               content="Detach menus, earnings, and kitchen from network"
-              color="yellow-500"
-              onClick={() => {}}
+              color="yellow"
+              onClick={() => {
+                setSelect(3);
+              }}
+              active={3 == select}
             />
           </div>
 
@@ -95,6 +128,23 @@ export function AdminDelete() {
             Select one role to continue for deletion
           </p>
         </div>
+        <div className="border-app-tan/30 bg-app-peanut/20 grid w-full rounded-xl border border-dashed p-4 shadow-xl">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-xl font-semibold">Checklist before deletion</h1>
+            <ul className="list-inside list-disc px-4 py-2">
+              <li>Make sure the customer has no pending orders or payments.</li>
+              <li>Check if any wallet balance or discount is left.</li>
+              <li>Send a goodbye message to the customer automatically.</li>
+            </ul>
+          </div>
+        </div>
+        <button
+          className="border-app-tan/30 flex w-full items-center justify-center gap-4 rounded-full border bg-red-800/90 px-8 py-2 text-white shadow-md hover:bg-red-900 active:bg-red-950"
+          onClick={() => open("user", "Customer")}
+        >
+          <Trash2 />
+          Delete
+        </button>
       </div>
     </div>
   );
