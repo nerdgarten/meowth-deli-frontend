@@ -12,6 +12,8 @@ const config = {
         "app-tan": "#CCAD98",
         "app-white": "#FFFCF8",
         "app-bronze": "#A67244",
+        "app-peanut": "#EAB188",
+        "app-bamboo": "#DBF3C2",
         "restaurant-font": "#FCB438",
         "customer-font": "#FF5B32",
         "driver-font": "#50D0FF",
