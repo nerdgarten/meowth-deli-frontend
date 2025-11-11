@@ -9,6 +9,7 @@ import {
   MapPin,
   ShieldCheck,
   ShoppingBag,
+  Settings,
   SlidersHorizontal,
   User,
 } from "lucide-react";
@@ -27,6 +28,12 @@ const items: SettingNavItem[] = [
     label: "Addresses",
     href: `${basePath}/addresses`,
     icon: MapPin,
+  },
+  {
+    key: "preferences",
+    label: "Preferences",
+    href: `${basePath}/preferences`,
+    icon: Settings,
   },
   {
     key: "security",
@@ -53,7 +60,6 @@ export default function CustomerSettingLayout({
     staleTime: 60_000,
   });
 
-  
   return (
     <main className="bg-app-background flex h-full flex-col pt-[6rem]">
       <div className="flex w-full flex-col p-4">

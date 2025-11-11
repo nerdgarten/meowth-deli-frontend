@@ -5,6 +5,7 @@ import { RestaurantProfilePage } from "@/components/Setting/Profile/restaurant";
 import { CustomerAddressPage } from "@/components/Setting/Address/customer";
 import { CustomerOrderPage } from "@/components/Setting/Order/customer";
 import { CustomerSecurityPage } from "@/components/Setting/Security/customer";
+import { CustomerPreferencePage } from "@/components/Setting/Preference/customer";
 import { useNavContext } from "@/components/Setting/SettingNavigationMenu";
 import { useQuery } from "@tanstack/react-query";
 
@@ -30,6 +31,8 @@ export default function SettingsPage() {
       return <DriverProfilePage />;
     case "addresses-customer":
       return <CustomerAddressPage />;
+    case "preferences-customer":
+      return <CustomerPreferencePage />;
     case "security-customer":
       return <CustomerSecurityPage />;
     case "orders-customer":
