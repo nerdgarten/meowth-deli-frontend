@@ -43,16 +43,6 @@ export default function DashboardLayout({
       href: `/restaurant/${restaurantId}/dashboard/orders`,
       icon: ShoppingBag,
     },
-    // {
-    //   title: "Reviews",
-    //   href: `/restaurant/${restaurantId}/dashboard/reviews`,
-    //   icon: MessageSquare,
-    // },
-    // {
-    //   title: "Settings",
-    //   href: `/restaurant/${restaurantId}/dashboard/settings`,
-    //   icon: Settings,
-    // },
   ] as const;
 
   return (

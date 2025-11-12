@@ -3,22 +3,18 @@ import { createContext, useContext, useState } from "react";
 import { boolean } from "zod";
 import { X, TriangleAlert } from "lucide-react";
 interface ResolveReportContextProps {
-  open: (s: string, role: string) => void;
+  open: () => void;
   close: () => void;
 }
 const ResolveReportContext = createContext<ResolveReportContextProps>({
-  open: (s: string, role: string) => {},
+  open: () => {},
   close: () => {},
 });
 
 export function ResolveReport({ children }: { children?: React.ReactNode }) {
-  const [open, setOpen] = useState<boolean>(true);
-  const [role, setRole] = useState<string>("Customer");
-  const [content, setContent] = useState<string>("user");
-  const updateOpen = (s: string, role: string) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const updateOpen = () => {
     setOpen(true);
-    setContent(s);
-    setRole(role);
   };
   const updateClose = () => {
     setOpen(false);
@@ -55,7 +51,7 @@ export function ResolveReport({ children }: { children?: React.ReactNode }) {
                 onClick={updateClose}
                 className="flex-1 rounded-full bg-red-600 px-4 py-2 font-semibold text-white shadow-md hover:bg-red-700 active:bg-red-800"
               >
-                Soft Delete
+                Resolve
               </button>
             </div>
           </div>
