@@ -17,6 +17,7 @@ const config = {
         "restaurant-font": "#FCB438",
         "customer-font": "#FF5B32",
         "driver-font": "#50D0FF",
+        "app-black": "#544C45",
       },
     },
   },

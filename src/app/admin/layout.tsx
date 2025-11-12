@@ -58,7 +58,7 @@ export default function AdminLayout({
   return (
     <SidebarProvider className="min-h-screen bg-[#2c241f]">
       <Sidebar className="mt-[4rem] border-0 bg-[#f7e3bd] text-[#2a1a0f] shadow-xl">
-        <SidebarContent className="bg-app-bamboo flex h-full flex-col items-center pt-8">
+        <SidebarContent className="bg-app-bamboo relative flex h-full flex-col items-center pt-8">
           <Image
             src="/images/meowth-cooking.webp"
             alt="Meowth Delivery Logo"
@@ -103,7 +103,7 @@ export default function AdminLayout({
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-          <div className="bottom-0 mt-12 w-full p-4 text-[12px]">
+          <div className="absoulute bottom-20 mt-12 w-full p-4 text-[12px]">
             <p className="font-semibold text-black">
               Meowth Delivery Admin Dashboard
             </p>

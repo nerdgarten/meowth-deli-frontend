@@ -1,3 +1,5 @@
+import { useResolveReport } from "@/components/Admin/ResolveReport";
+import { AdminLicense } from "@/components/Admin/license";
 export default function AdminLicensePage() {
-  return <div>Admin License Home Page</div>;
+  return <AdminLicense />;
 }
