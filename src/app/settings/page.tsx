@@ -1,26 +1,26 @@
 "use client";
-import { DriverProfilePage } from "@/components/Setting/Profile/driver";
+
 import { CustomerProfilePage } from "@/components/Setting/Profile/customer";
-import { RestaurantProfilePage } from "@/components/Setting/Profile/restaurant";
 import { CustomerAddressPage } from "@/components/Setting/Address/customer";
 import { CustomerOrderPage } from "@/components/Setting/Order/customer";
 import { CustomerSecurityPage } from "@/components/Setting/Security/customer";
 import { CustomerPreferencePage } from "@/components/Setting/Preference/customer";
+
+import { RestaurantProfilePage } from "@/components/Setting/Profile/restaurant";
+import { RestaurantAddressPage } from "@/components/Setting/Address/restaurant";
+import { RestaurantSecurityPage } from "@/components/Setting/Security/restaurant";
+
+import { DriverProfilePage } from "@/components/Setting/Profile/driver";
+import { DriverSecurityPage } from "@/components/Setting/Security/driver";
+import { DriverVehiclePage } from "@/components/Setting/Vehicle/driver";
+
 import { useNavContext } from "@/components/Setting/SettingNavigationMenu";
 import { useQuery } from "@tanstack/react-query";
 
 import { authenticatedAs } from "@/libs/authentication";
 
 export default function SettingsPage() {
-  const { data: role, isLoading } = useQuery({
-    queryKey: ["authenticated-role"],
-    queryFn: authenticatedAs,
-    staleTime: 60_000,
-  });
-  if (isLoading) {
-    console.log(role);
-  }
-  const { select_key } = useNavContext();
+  const { select_key, role } = useNavContext();
 
   switch (`${select_key}-${role}`) {
     case "profile-customer":
@@ -31,12 +31,22 @@ export default function SettingsPage() {
       return <DriverProfilePage />;
     case "addresses-customer":
       return <CustomerAddressPage />;
+    case "addresses-restaurant":
+      return <RestaurantAddressPage />;
     case "preferences-customer":
       return <CustomerPreferencePage />;
     case "security-customer":
       return <CustomerSecurityPage />;
+    case "security-restaurant":
+      return <RestaurantSecurityPage />;
+    case "security-driver":
+      return <DriverSecurityPage />;
     case "orders-customer":
       return <CustomerOrderPage />;
+    case "vehicle-driver":
+      return <DriverVehiclePage />;
+    case "vehicle-restaurant":
+      return <DriverVehiclePage />;
     default:
       return (
         <div className="p-4">
