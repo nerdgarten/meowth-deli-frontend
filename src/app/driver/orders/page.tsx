@@ -28,6 +28,7 @@ interface OrderDetails extends IOrder {
 const orders: OrderDetails[] = [
   {
     id: 2380,
+    restaurant_id: 1,
     customer_id: 102,
     driver_id: null,
     location: "Pizza Com บ้าน",
@@ -58,6 +59,7 @@ const orders: OrderDetails[] = [
   },
   {
     id: 2381,
+    restaurant_id: 2,
     customer_id: 219,
     driver_id: 18,
     location: "Pizza อีก",
@@ -78,6 +80,7 @@ const orders: OrderDetails[] = [
   },
   {
     id: 2382,
+    restaurant_id: 3,
     customer_id: 356,
     driver_id: 24,
     location: "โดนเบ Pizza",
@@ -98,6 +101,7 @@ const orders: OrderDetails[] = [
   },
   {
     id: 2383,
+    restaurant_id: 1,
     customer_id: 410,
     driver_id: 33,
     location: "โดนเบ Pizza",
@@ -222,11 +226,11 @@ export default function OrdersPage() {
         </section>
       </div>
 
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+      <DialogContent className="max-h-[75vh] overflow-y-scroll sm:max-w-[425px]">
         {activeOrder ? (
           <>
-            <DialogHeader className="border-b pb-4">
-              <div className="flex items-center justify-between">
+            <DialogHeader className="border-b pr-8 pb-4">
+              <div className="flex items-baseline justify-between gap-2">
                 <DialogTitle className="text-2xl font-bold">
                   Customer Order
                 </DialogTitle>
