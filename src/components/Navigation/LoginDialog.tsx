@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { type z } from "zod";
-
+import { useAuth } from "../context/AuthContext";
 import { LoginFormSchema, loginSubmitMutation } from "@/queries/auth";
 interface LoginDialogProps {
   isLoginDialogOpen: boolean;
@@ -34,9 +34,10 @@ export const LoginDialog = ({
   setIsLoginDialogOpen,
   onForgotPassword,
 }: LoginDialogProps) => {
+  const { login } = useAuth();
   const router = useRouter();
   const loginMutation = useMutation({
-    mutationFn: loginSubmitMutation,
+    mutationFn: login,
     onSuccess: () => {
       toast.success("Login successful!");
       setIsLoginDialogOpen(false);
