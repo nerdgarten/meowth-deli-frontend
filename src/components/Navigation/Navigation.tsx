@@ -3,7 +3,7 @@
 import { Menu, User } from "lucide-react";
 import { use, useState } from "react";
 import toast from "react-hot-toast";
-
+import { LayoutDashboard } from "lucide-react";
 import { EditProfileDialog } from "@/components/Navigation/EditProfileDialog";
 import { MenuDialog } from "@/components/Navigation/MenuDialog";
 import { authenticatedAs } from "@/libs/authentication";
@@ -12,9 +12,11 @@ import BreadcrumbNav from "./BreadCrumbNav";
 import { LoginDialog } from "./LoginDialog";
 import { useRouter } from "next/navigation";
 import { ResetPasswordDialog } from "@/components/Navigation/ResetPasswordDialog";
+import { useAuth } from "../context/AuthContext";
 
 export const Navigation = () => {
   const router = useRouter();
+  const { isAuthenticated, role } = useAuth();
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState<boolean>(false);
   const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] =
     useState<boolean>(false);
@@ -57,7 +59,8 @@ export const Navigation = () => {
           <BreadcrumbNav />
         </div>
         <div className="flex w-full items-center justify-end">
-          <div className="mr-3 flex gap-x-6">
+          <div className="mr-3 flex gap-x-6"></div>
+          <div className="flex gap-x-4">
             <button onClick={handleProfileClick} className="cursor-pointer">
               <User className="h-[1.75rem] text-white" />
             </button>
