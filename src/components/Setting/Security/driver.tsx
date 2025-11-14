@@ -43,17 +43,17 @@ const changePassword = async (_payload: ChangePasswordFormValues) => {
   await new Promise((resolve) => setTimeout(resolve, 600));
 };
 
-export function CustomerSecurityPage() {
+export function DriverSecurityPage() {
   return (
     <main className="bg-app-background flex h-full flex-col items-center pt-8">
       <div className="mx-auto w-full max-w-5xl px-4 md:px-6 lg:px-8">
-        <CustomerSecurityFormCard />
+        <DriverSecurityFormCard />
       </div>
     </main>
   );
 }
 
-export function CustomerSecurityFormCard() {
+export function DriverSecurityFormCard() {
   return (
     <section className="rounded-3xl border border-black/10 bg-white shadow-[0_15px_40px_rgba(64,56,49,0.08)]">
       <div className="px-4 py-6 md:px-8 md:py-8">
@@ -70,13 +70,13 @@ export function CustomerSecurityFormCard() {
             </p>
           </div>
         </div>
-        <CustomerSecurityForm />
+        <DriverSecurityForm />
       </div>
     </section>
   );
 }
 
-const CustomerSecurityForm = () => {
+const DriverSecurityForm = () => {
   const securityForm = useForm<ChangePasswordFormValues>({
     resolver: zodResolver(ChangePasswordFormSchema),
     mode: "onChange",

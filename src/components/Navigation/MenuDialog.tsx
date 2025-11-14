@@ -22,7 +22,7 @@ export const MenuDialog = ({
     },
     onError: () => {
       toast.error("Failed to logout. Please try again.");
-    }
+    },
   });
 
   return (
@@ -33,7 +33,12 @@ export const MenuDialog = ({
             Menu
           </DialogTitle>
         </DialogHeader>
-        <Button onClick={() => logoutMutation.mutate()}>Logout</Button>
+        <Button
+          className="text-black hover:bg-gray-200 active:scale-95 active:bg-gray-300"
+          onClick={() => logoutMutation.mutate()}
+        >
+          Logout
+        </Button>
       </DialogContent>
     </Dialog>
   );

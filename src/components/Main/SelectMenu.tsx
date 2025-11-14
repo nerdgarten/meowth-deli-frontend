@@ -1,7 +1,8 @@
-"use client"
+"use client";
 
-import { Minus,Plus } from "lucide-react";
+import { Minus, Plus, Heart } from "lucide-react";
 import { useState } from "react";
+import { createFavouriteDish, deleteFavouriteDish } from "@/libs/favourite";
 
 import type { IDish } from "@/types/dish";
 
@@ -9,51 +10,54 @@ interface SelectMenuProps {
   dish: IDish;
   recommendations: IDish[];
   addToCart: (dish: IDish, quantity: number) => void;
+  onDishClick: (dish: IDish) => void;
+  favourite_dish: boolean;
 }
 
 export const SelectMenu = ({
   dish,
   recommendations,
   addToCart,
-} : SelectMenuProps
-  
-) => {
-
-
-    const [quantity, setQuantity] = useState<number>(1);
-    const handleAddToCart = () =>{
-      addToCart(dish, quantity);
-    }
-
-    if (!dish) {
-      return (
-        <div className="grid-row-2 mx-4 grid h-full grid-cols-1 gap-4 rounded-sm bg-white p-4">
-          <div className="text-center text-gray-500">
-            No dish data available
-          </div>
-        </div>
-      );
-    }
+  onDishClick,
+  favourite_dish,
+}: SelectMenuProps) => {
+  const [quantity, setQuantity] = useState<number>(1);
+  const handleAddToCart = () => {
+    addToCart(dish, quantity);
+  };
+  const [fav, setFav] = useState<boolean>(favourite_dish);
+  if (!dish) {
+    return (
+      <div className="grid-row-2 mx-4 grid h-full grid-cols-1 gap-4 rounded-sm bg-white p-4">
+        <div className="text-center text-gray-500">No dish data available</div>
+      </div>
+    );
+  }
   return (
     <div className="grid-row-2 mx-4 grid h-full grid-cols-1 gap-4 rounded-sm bg-white p-4">
       <div className="col-span-1 row-span-1 grid grid-cols-3 grid-rows-1 overflow-hidden rounded-2xl p-4">
         <div className="bg-app-blue h-full w-full rounded-2xl"></div>
         <div className="col-span-2 grid w-full grid-cols-2 grid-rows-7 gap-4 p-8">
-          <div className="col-span-1 row-span-2 text-4xl">
+          <div className="col-span-1 row-span-2 flex gap-2 text-4xl">
             <h1 className="font-bold">{dish.name}</h1>
-            <div className="fond-semibold mt-2 flex gap-2 text-sm">
-              {/* {detailed.tags.map((tag) => (
-                <div
-                  key={tag}
-                  className="flex w-14 items-center justify-center rounded-sm bg-slate-200"
-                >
-                  {tag}
-                </div>
-              ))} */}
-            </div>
+            <Heart
+              size={30}
+              className={`${fav ? "text-pink-600" : "text-black"}`}
+              onClick={() => {
+                if (!fav) {
+                  createFavouriteDish(Number(dish.id));
+                  setFav(true);
+                } else {
+                  deleteFavouriteDish(Number(dish.id));
+                  setFav(false);
+                }
+              }}
+            />
           </div>
           <div className="col-span-1 row-span-2 flex flex-col items-end">
-            <h2 className="text-4xl font-bold text-black">{dish.price} THB</h2>
+            <h2 className="text-4xl font-bold text-black">
+              {dish.price.toFixed(2)} THB
+            </h2>
             <h2 className="text-xl text-slate-500">Base Price</h2>
           </div>
           <div className="col-span-2 row-span-2">
@@ -118,7 +122,7 @@ export const SelectMenu = ({
             <div
               key={item.id}
               className="h-full w-72 flex-shrink-0 overflow-hidden rounded-lg bg-white p-2 shadow-2xl"
-              // onClick={() => onDishClick(item)}
+              onClick={() => onDishClick(item)}
             >
               <div className="h-3/5 rounded-lg bg-slate-800"></div>
               <div className="grid h-2/5 grid-cols-3 grid-rows-2 text-black">
@@ -126,7 +130,7 @@ export const SelectMenu = ({
                   {item.name}
                 </h4>
                 <h3 className="col-span-1 row-span-1 text-right text-2xl font-bold">
-                  ${item.price.toFixed(2)}
+                  ฿{item.price.toFixed(2)}
                 </h3>
                 <p className="col-span-2 row-span-1">{item.detail}</p>
               </div>

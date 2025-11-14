@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import { QueryProvider } from "@/components/common/QueryProvider";
 import { CartProvider } from "@/components/context/CartProvider";
 import { Navigation } from "@/components/Navigation/Navigation";
+import { AuthProvider } from "@/components/context/AuthContext";
 
 export const metadata: Metadata = {
   title: "Meowth Delivery",
@@ -26,20 +27,22 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable}`}>
       <body className="bg-app-background min-h-screen w-full font-sans">
         <QueryProvider>
-          <CartProvider>
-            <Navigation />
-            {children}
-            <Toaster
-              position="top-center"
-              reverseOrder={true}
-              toastOptions={{
-                style: {
-                  backgroundColor: "#685B4B",
-                  color: "#FEECC4",
-                },
-              }}
-            />
-          </CartProvider>
+          <AuthProvider>
+            <CartProvider>
+              <Navigation />
+              {children}
+              <Toaster
+                position="top-center"
+                reverseOrder={true}
+                toastOptions={{
+                  style: {
+                    backgroundColor: "#685B4B",
+                    color: "#FEECC4",
+                  },
+                }}
+              />
+            </CartProvider>
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>

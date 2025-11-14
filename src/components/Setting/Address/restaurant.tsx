@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
@@ -26,18 +26,25 @@ import {
   updateCustomerProfileMutation,
 } from "@/queries/profile";
 import { AddressCard } from "./addressCard";
+import { useSettingFloatPanel } from "../SettingFloatPanelProvider";
 
-export function CustomerAddressPage() {
+export function RestaurantAddressPage() {
   return (
     <main className="bg-app-background flex h-full flex-col items-center pt-8">
       <div className="mx-auto w-full max-w-5xl px-4 md:px-6 lg:px-8">
-        <CustomerAddressList />
+        <RestaurantrAddressList />
       </div>
     </main>
   );
 }
+import { AddAddressCard } from "./addAddressCard";
 
-export function CustomerAddressList() {
+export function RestaurantrAddressList() {
+  const { showPanel, hidePanel } = useSettingFloatPanel();
+  const handleAddAddress = () => {
+    showPanel(<AddAddressCard onClose={hidePanel} />);
+  };
+
   return (
     <section className="rounded-3xl border border-black/10 bg-white shadow-[0_15px_40px_rgba(64,56,49,0.08)]">
       <div className="px-4 py-6 md:px-8 md:py-8">
@@ -56,6 +63,9 @@ export function CustomerAddressList() {
         </div>
         <Button
           type="submit"
+          onClick={() => {
+            handleAddAddress();
+          }}
           className="bg-app-dark-brown mt-16 w-full rounded-xl text-sm font-semibold text-white shadow-[0_12px_28px_rgba(64,56,49,0.18)] transition hover:bg-[#2F2721] active:bg-[#2c2621]"
         >
           + Add New Address

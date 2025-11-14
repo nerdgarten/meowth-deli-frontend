@@ -33,13 +33,13 @@ export default function SettingsProfilePage() {
   }
 
   if (role === "customer") {
-    return <CustomerProfilePage />;
+    // return <CustomerProfilePage />;
   }
   if (role === "restaurant") {
-    return <RestaurantProfilePage />;
+    // return <RestaurantProfilePage />;
   }
   if (role === "driver") {
-    return <DriverProfilePage />;
+    // return <DriverProfilePage />;
   }
 
   return (

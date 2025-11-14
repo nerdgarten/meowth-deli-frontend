@@ -1,11 +1,6 @@
 "use client";
-import type {ReactNode} from "react";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import type { ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import type { IDish } from "@/types/dish";
 
@@ -45,7 +40,10 @@ const serializeCarts = (carts: RestaurantCarts): string => {
 
 const deserializeCarts = (serialized: string): RestaurantCarts => {
   try {
-    const parsed = JSON.parse(serialized) as Record<string, [string, CartItem][]>;
+    const parsed = JSON.parse(serialized) as Record<
+      string,
+      [string, CartItem][]
+    >;
     const carts: RestaurantCarts = {};
     Object.keys(parsed).forEach((restaurantId) => {
       const entries = parsed[restaurantId];
@@ -77,34 +75,34 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = (restaurantId: string, dish: IDish, quantity: number) => {
     if (!validateRestaurantId(restaurantId)) {
-      console.warn('Invalid restaurantId provided to addToCart');
+      console.warn("Invalid restaurantId provided to addToCart");
       return;
     }
-
+    if (!Number.isFinite(quantity) || quantity <= 0) {
+      console.warn("addToCart called with invalid quantity:", quantity);
+      return;
+    }
     setRestaurantCarts((prev) => {
       const newCarts = { ...prev };
-      const cart = newCarts[restaurantId] ?? new Map();
-      const existingItem = cart.get(dish.id) as CartItem | undefined;
-
+      const prevCart = newCarts[restaurantId];
+      const cart = prevCart ? new Map(prevCart) : new Map<string, CartItem>();
+      const existingItem = cart.get(dish.id);
       if (existingItem) {
         cart.set(dish.id, {
           ...existingItem,
           quantity: existingItem.quantity + quantity,
         });
       } else {
-        cart.set(dish.id, {
-          dish,
-          quantity: quantity,
-        });
+        cart.set(dish.id, { dish, quantity });
       }
-      newCarts[restaurantId] = new Map<string, CartItem>(cart);
+      newCarts[restaurantId] = new Map(cart);
       return newCarts;
     });
   };
 
   const removeFromCart = (restaurantId: string, dishId: string) => {
     if (!validateRestaurantId(restaurantId)) {
-      console.warn('Invalid restaurantId provided to removeFromCart');
+      console.warn("Invalid restaurantId provided to removeFromCart");
       return;
     }
 
@@ -136,7 +134,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     quantity: number
   ) => {
     if (!validateRestaurantId(restaurantId)) {
-      console.warn('Invalid restaurantId provided to updateQuantity');
+      console.warn("Invalid restaurantId provided to updateQuantity");
       return;
     }
 
@@ -165,7 +163,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = (restaurantId: string) => {
     if (!validateRestaurantId(restaurantId)) {
-      console.warn('Invalid restaurantId provided to clearCart');
+      console.warn("Invalid restaurantId provided to clearCart");
       return;
     }
 
