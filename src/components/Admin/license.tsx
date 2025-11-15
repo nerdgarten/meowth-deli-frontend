@@ -39,17 +39,6 @@ const ReportCard = ({
       </h1>
       <div className="flex justify-between gap-12">
         <div className="flex w-5/8 flex-col gap-4">
-          {/* <div className="flex items-center gap-4">
-            {Icon && (
-              <div className="relative">
-                <div className="bg-app-tan/90 ring-app-brown/20 flex h-14 w-14 items-center justify-center rounded-lg shadow-inner ring-2">
-                  <Icon className="text-app-dark-brown h-8 w-8 stroke-2" />
-                </div>
-
-                <div className="bg-app-peanut/20 absolute inset-0 -z-10 rounded-lg blur-lg" />
-              </div>
-            )}
-          </div> */}
           <h2>
             {data.vehicleName
               ? data.vehicleName
@@ -88,10 +77,10 @@ const ReportCard = ({
               {data.type == "driver" ? data.driverName : data.restaurantName}
             </h2> */}
         </div>
-        <div
+        {/* <div
           className="text-md my-4 h-full w-full rounded-lg bg-red-100 px-16 font-semibold text-red-900 shadow-md"
           onClick={onClick}
-        ></div>
+        ></div> */}
       </div>
 
       <div className="bg-app-yellow mt-auto h-1 w-0 rounded-full transition-all duration-300" />

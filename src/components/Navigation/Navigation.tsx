@@ -16,7 +16,6 @@ import { useAuth } from "../context/AuthContext";
 
 export const Navigation = () => {
   const router = useRouter();
-  const { isAuthenticated, role } = useAuth();
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState<boolean>(false);
   const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] =
     useState<boolean>(false);

@@ -48,7 +48,7 @@ export default function OrderPage({
 
   const createOrderMutation = useMutation({
     mutationFn: (orderData: {
-      location: string;
+      delivery_location_id: number;
       dishes: IOrderDish[];
       restaurant_id: number;
     }) => createOrder(orderData),
@@ -136,7 +136,7 @@ export default function OrderPage({
 
     try {
       await createOrderMutation.mutateAsync({
-        location: "Home",
+        delivery_location_id: 1,
         dishes: sending,
         restaurant_id: Number(resolvedParams.id),
       });

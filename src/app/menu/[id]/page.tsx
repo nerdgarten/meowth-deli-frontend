@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 import { RestaurantList } from "@/components/Main/RestaurantList";
-import { getDishRestaurantId, getRestaurantById } from "@/libs/restaurant";
+import { getRestaurantById } from "@/libs/restaurant";
+import { getDishRestaurantId } from "@/libs/dish";
 import type { IDish } from "@/types/dish";
 import {
   checkFavouriteRestaurant,
@@ -72,11 +73,11 @@ export default function RestaurantPage({
     router.push(`/menu/${resolvedParams.id}/${dish.id}`);
   };
 
-  if (!resolvedParams || favourite_restaurant === undefined) {
-    return (
-      <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
-    );
-  }
+  // if (!resolvedParams || favourite_restaurant === undefined) {
+  //   return (
+  //     <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
+  //   );
+  // }
 
   return (
     <main className="w-full overflow-auto p-16">

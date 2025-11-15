@@ -17,14 +17,45 @@ export const EditProfileFormSchema = z.object({
     .min(6, "Invalid phone number")
     .regex(/^\+?[1-9][0-9]{7,14}$/, "Invalid phone number"),
 });
+const fileSchema = z.custom<File>(
+  (v) => typeof File !== "undefined" && v instanceof File,
+  { message: "Not a file" }
+);
+
+const FileOrUrlSchema = z
+  .union([
+    fileSchema,
+    z.string().min(1), // remove url()/or() duplication; still requires non-empty
+  ])
+  .nullable()
+  .optional();
+
+export const ProfileFormSchema = EditProfileFormSchema.extend({
+  profilePicture: FileOrUrlSchema,
+});
 
 export async function updateCustomerProfileMutation(
-  data: z.infer<typeof EditProfileFormSchema>
+  data: z.infer<typeof ProfileFormSchema>
 ) {
-  const response = await apiClient.patch<ICustomerProfile>(
-    "/customer/profile",
-    data
-  );
+  const { firstname, lastname, tel, profilePicture } = data;
+  if (profilePicture instanceof File) {
+    const form = new FormData();
+    form.append("firstname", firstname);
+    form.append("lastname", lastname);
+    form.append("tel", tel);
+    form.append("profilePicture", profilePicture); // adjust key if backend expects another name
 
-  return response.data;
+    console.log(form.get("profilePicture"));
+    const response = await apiClient.patch<ICustomerProfile>(
+      "/customer/profile",
+      form,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+      // Do NOT set Content-Type; axios will set the multipart boundary
+    );
+    return response.data;
+  }
 }
