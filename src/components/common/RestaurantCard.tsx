@@ -2,6 +2,7 @@
 
 // import { Badge } from "@/components/ui/badge";
 import { MapPin } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import {
@@ -37,13 +38,18 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
               className="h-full w-full object-cover"
             />
           ) : ( */}
-            <div className="flex h-full w-full items-center justify-center bg-gray-200">
-              <span className="text-gray-500">No Image</span>
-            </div>
+          <div className="flex h-full w-full items-center justify-center bg-gray-200">
+            <Image
+              src={restaurant.banner}
+              alt={restaurant.name}
+              fill
+              className="object-cover"
+            />
+          </div>
           {/* )} */}
           <div className="absolute top-2 right-2">
             {/* <Badge variant={restaurant.isOpen ? "default" : "destructive"}> */}
-              {/* {restaurant.isOpen ? "Open" : "Closed"} */}
+            {/* {restaurant.isOpen ? "Open" : "Closed"} */}
             {/* </Badge> */}
           </div>
         </div>
@@ -59,18 +65,17 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
         </p>
 
         <div className="mt-2 flex items-center gap-4 text-sm text-gray-500">
-          <div className="flex items-center gap-1">
-          </div>
+          <div className="flex items-center gap-1"></div>
           <div className="flex items-center gap-1">
             <MapPin className="h-3 w-3" />
-            <span className="max-w-[120px] truncate">{restaurant.location}</span>
+            <span className="max-w-[120px] truncate">
+              {restaurant.location}
+            </span>
           </div>
         </div>
       </CardContent>
 
-      <CardFooter className="p-4 pt-0">
-
-      </CardFooter>
+      <CardFooter className="p-4 pt-0"></CardFooter>
     </Card>
   );
 }
