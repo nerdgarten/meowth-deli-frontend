@@ -7,7 +7,7 @@ import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { useCart } from "@/components/context/CartProvider";
 import { SelectMenu } from "@/components/Main/SelectMenu";
 import { getDishById } from "@/libs/dish";
-import { getDishRestaurantId } from "@/libs/restaurant";
+import { getDishRestaurantId } from "@/libs/dish";
 import { checkFavouriteDish } from "@/libs/favourite";
 import type { IDish } from "@/types/dish";
 import { useRouter } from "next/navigation";
@@ -68,14 +68,8 @@ export default function MenuPage({
     enabled: !!resolvedParams?.menuId,
   });
 
-  if (!resolvedParams || favourite_dish === undefined) {
-    return (
-      <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
-    );
-  }
-
   return (
-    <main className="h-230 w-full overflow-auto p-16">
+    <main className="min-h-300 w-full overflow-auto p-16">
       <SelectMenu
         dish={dish!}
         recommendations={recommendations ?? []}

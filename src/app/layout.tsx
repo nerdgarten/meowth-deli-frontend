@@ -8,6 +8,7 @@ import { QueryProvider } from "@/components/common/QueryProvider";
 import { CartProvider } from "@/components/context/CartProvider";
 import { Navigation } from "@/components/Navigation/Navigation";
 import { AuthProvider } from "@/components/context/AuthContext";
+import { AllowedProvider } from "@/components/context/AllowedContext";
 
 export const metadata: Metadata = {
   title: "Meowth Delivery",
@@ -30,17 +31,19 @@ export default function RootLayout({
           <AuthProvider>
             <CartProvider>
               <Navigation />
-              {children}
-              <Toaster
-                position="top-center"
-                reverseOrder={true}
-                toastOptions={{
-                  style: {
-                    backgroundColor: "#685B4B",
-                    color: "#FEECC4",
-                  },
-                }}
-              />
+              <AllowedProvider>
+                {children}
+                <Toaster
+                  position="top-center"
+                  reverseOrder={true}
+                  toastOptions={{
+                    style: {
+                      backgroundColor: "#685B4B",
+                      color: "#FEECC4",
+                    },
+                  }}
+                />
+              </AllowedProvider>
             </CartProvider>
           </AuthProvider>
         </QueryProvider>

@@ -16,7 +16,7 @@ export async function loginSubmitMutation(
     {
       email: data.email,
       password: data.password,
-      role: "restaurant",
+      // role: "restaurant",
     }
   );
 
@@ -164,16 +164,6 @@ export async function registerDriverMutation(
       location: data.location,
     }
   );
-  await apiClient.post<ILocation>(
-    "/location",
-    {
-      customer_id: response.data.id,
-      address: data.location,
-      is_default: true,
-    },
-    { withCredentials: true }
-  );
-
   return response.data;
 }
 

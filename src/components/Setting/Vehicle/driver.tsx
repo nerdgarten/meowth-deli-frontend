@@ -1,12 +1,19 @@
 "use client";
 
 import { useForm, type FieldErrors } from "react-hook-form";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { MapPin } from "lucide-react";
+import {
+  VehicleFormSchema,
+  queryVehicle,
+  updateDriverProfileMutation,
+  updateVehicleProfileMutation,
+} from "@/libs/driver";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import type { IVehicle } from "@/types/user";
 
 const ChangePasswordFormSchema = z.object({
   vehicleType: z
@@ -72,63 +80,57 @@ export function DriverVehicleFormCard() {
   );
 }
 
+// ...existing imports...
+
 const DriverVehicleForm = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const vehicleForm = useForm<ChangePasswordFormValues>({
-    resolver: zodResolver(ChangePasswordFormSchema),
+  const { data: profileData } = useQuery<IVehicle>({
+    queryKey: ["vehicle-profile"],
+    queryFn: queryVehicle,
+  });
+
+  const vehicleForm = useForm<z.infer<typeof VehicleFormSchema>>({
+    resolver: zodResolver(VehicleFormSchema),
     mode: "onChange",
     reValidateMode: "onChange",
-    defaultValues: {
-      vehicleType: "",
-      numberPlate: "",
-      description: "",
+    defaultValues: profileData ?? {
+      vehicle: "",
+      licence: "",
     },
   });
 
-  const securityMutation = useMutation({
-    mutationFn: changePassword,
+  useEffect(() => {
+    if (profileData) {
+      vehicleForm.reset(profileData);
+    }
+  }, [profileData, vehicleForm]);
+
+  const handleMutation = useMutation({
+    mutationFn: updateVehicleProfileMutation,
     onSuccess: () => {
-      toast.success("Password updated successfully!");
-      vehicleForm.reset();
+      toast.success("Vehicle updated.");
     },
     onError: (error: unknown) => {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Password update failed. Please try again.");
-      }
+      toast.error(error instanceof Error ? error.message : "Update failed.");
     },
   });
 
-  const onSubmit = vehicleForm.handleSubmit(async (data) => {
-    setIsSubmitting(true);
-    try {
-      // replace with real API call
-      console.log("submit payload", { ...data });
-      // await api.saveAddress({ ...data, default: setAsDefault });
-
-      vehicleForm.reset();
-    } catch (err) {
-      console.error(err);
-      // optionally show toast / error state
-    } finally {
-      setIsSubmitting(false);
-    }
-  });
+  const onSubmit = (data: z.infer<typeof VehicleFormSchema>) => {
+    handleMutation.mutate(data);
+  };
 
   return (
     <Form {...vehicleForm}>
       <form
         className="w-full rounded-2xl px-6 py-5 shadow-none"
-        onSubmit={onSubmit}
+        onSubmit={vehicleForm.handleSubmit(onSubmit)}
       >
         <div className="mb-4 flex flex-col gap-4">
           <div className="flex flex-col gap-4">
             <FormField
               control={vehicleForm.control}
-              name="vehicleType"
+              name="vehicle"
               render={({ field }) => (
-                <FormItem className="text-app-dark-brown flex w-60 flex-col space-y-4 text-lg font-semibold">
+                <FormItem className="text-app-dark-brown flex w-60 flex-col space-y-2 text-sm font-semibold">
                   <FormLabel>Vehicle Name</FormLabel>
                   <FormControl>
                     <input
@@ -142,12 +144,11 @@ const DriverVehicleForm = () => {
                 </FormItem>
               )}
             />
-
             <FormField
               control={vehicleForm.control}
-              name="numberPlate"
+              name="licence"
               render={({ field }) => (
-                <FormItem className="text-app-dark-brown flex w-60 flex-col space-y-4 text-lg font-semibold">
+                <FormItem className="text-app-dark-brown flex w-60 flex-col space-y-2 text-sm font-semibold">
                   <FormLabel>Plate Number</FormLabel>
                   <FormControl>
                     <input
@@ -155,25 +156,6 @@ const DriverVehicleForm = () => {
                       type="text"
                       className="border-app-brown/20 placeholder:text-app-brown/40 text-app-dark-brown bg-app-white focus:border-app-dark-brown focus:ring-app-dark-brown/20 w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition focus:ring-2 focus:outline-none"
                       placeholder="Plate Number"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={vehicleForm.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem className="text-app-dark-brown flex w-full flex-col space-y-4 text-lg font-semibold">
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <textarea
-                      {...field}
-                      rows={4}
-                      className="border-app-brown/20 placeholder:text-app-brown/40 text-app-dark-brown bg-app-white focus:border-app-dark-brown focus:ring-app-dark-brown/20 flex w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition focus:ring-2 focus:outline-none"
-                      placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
                     />
                   </FormControl>
                   <FormMessage />
@@ -188,16 +170,19 @@ const DriverVehicleForm = () => {
             type="button"
             variant="outline"
             className="text-app-dark-brown hover:bg-app-brown/10 rounded-xl px-4 py-3 text-sm font-semibold shadow-sm transition"
-            disabled={isSubmitting}
+            disabled={handleMutation.isPending}
+            onClick={() =>
+              vehicleForm.reset(profileData ?? { vehicle: "", licence: "" })
+            }
           >
             Cancel
           </Button>
           <Button
             type="submit"
             className="bg-app-dark-brown rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(64,56,49,0.18)] transition hover:bg-[#2F2721] active:bg-[#2c2621]"
-            disabled={isSubmitting}
+            disabled={handleMutation.isPending}
           >
-            {isSubmitting ? "Saving..." : "Save Address"}
+            {handleMutation.isPending ? "Saving..." : "Save Vehicle"}
           </Button>
         </div>
       </form>

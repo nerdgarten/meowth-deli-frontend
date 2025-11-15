@@ -3,23 +3,22 @@ import type { IOrder } from "@/types/order";
 import type { IOrderDish } from "@/types/order";
 import type { IRestaurant } from "@/types/restaurant";
 
-
 export const createOrder = async ({
-  location,
+  delivery_location_id,
   dishes,
   restaurant_id,
 }: {
-  location: string;
+  delivery_location_id: number;
   dishes: IOrderDish[];
   restaurant_id: number;
 }): Promise<IOrder> => {
   const data = {
-    location: location,
+    delivery_location_id: delivery_location_id,
     dishes: dishes,
     restaurant_id: restaurant_id,
   };
   try {
-    const response = await apiClient.post<IOrder>(`/customer/orders`, data);
+    const response = await apiClient.post<IOrder>(`/order`, data);
     return response.data;
   } catch (error) {
     console.error("Error creating order:", error);
@@ -27,11 +26,9 @@ export const createOrder = async ({
   }
 };
 
-export const getOrderById = async (
-  order_id: number
-): Promise<IOrder> => {
+export const getOrderById = async (order_id: number): Promise<IOrder> => {
   try {
-    const response = await apiClient.get<IOrder>(`/customer/my-orders-hist/${order_id}`);
+    const response = await apiClient.get<IOrder>(`/order/${order_id}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching dish:", error);

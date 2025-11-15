@@ -42,12 +42,12 @@ const customer_items: SettingNavItem[] = [
     href: `${basePath}/security`,
     icon: ShieldCheck,
   },
-  {
-    key: "orders",
-    label: "Orders",
-    href: `${basePath}/orders`,
-    icon: ShoppingBag,
-  },
+  // {
+  //   key: "orders",
+  //   label: "Orders",
+  //   href: `${basePath}/orders`,
+  //   icon: ShoppingBag,
+  // },
 ];
 const restaurant_items: SettingNavItem[] = [
   {
@@ -67,12 +67,6 @@ const restaurant_items: SettingNavItem[] = [
     label: "Security",
     href: `${basePath}/security`,
     icon: ShieldCheck,
-  },
-  {
-    key: "vehicle",
-    label: "Vehicle",
-    href: `${basePath}/vehicle`,
-    icon: MapPin,
   },
 ];
 
@@ -110,6 +104,7 @@ export default function CustomerSettingLayout({
   if (isLoading) {
     return <div>Loading...</div>;
   }
+  console.log("role in layout:", role);
   return (
     <main className="bg-app-background flex h-full flex-col pt-[6rem]">
       <div className="flex w-full flex-col p-4">

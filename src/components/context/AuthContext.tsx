@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
 import type { User } from "@/types/review";
-import { z } from "zod";
+import { set, z } from "zod";
 import { loginSubmitMutation } from "@/queries/auth";
 import { LoginFormSchema } from "@/queries/auth";
 import { authenticatedAs } from "@/libs/authentication";
@@ -12,6 +12,8 @@ interface AuthContextType {
   role: string;
   login: (data: z.infer<typeof LoginFormSchema>) => Promise<void>;
   logout: () => Promise<void>;
+  pathMap: Map<string, string>;
+  allowedPaths: Map<string, string[]>;
 }
 import { usePathname } from "next/navigation";
 import path from "path";
@@ -25,6 +27,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
+  const pathMap = new Map<string, string>([
+    ["admin", "/admin"],
+    ["restaurant", "/restaurant_2"],
+    ["customer", "/"],
+    ["driver", "/restaurant_2"],
+  ]);
   const login = async (data: z.infer<typeof LoginFormSchema>) => {
     await loginSubmitMutation(data);
     setIsAuthenticated(true);
@@ -33,6 +41,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (d) {
       setIsAuthenticated(true);
     }
+    if (!d) return;
+    router.replace(pathMap.get(d) || "/");
   };
   const logout = async () => {
     // Logout logic would go here
@@ -41,11 +51,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
   };
   // Authentication logic would go here
-  const pathMap = new Map<string, string>([
-    ["admin", "/admin"],
-    ["restaurant", "/restaurant"],
-    ["customer", "/customer"],
-    ["driver", "/driver"],
+
+  const allowedPaths = new Map<string, string[]>([
+    ["admin", ["/admin"]],
+    ["restaurant", ["/restaurant_2", "/settings"]],
+    ["customer", ["/", "/settings"]],
+    ["driver", ["/restaurant_2", "/settings"]],
   ]);
   useEffect(() => {
     const checkAuth = async () => {
@@ -57,20 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
     checkAuth();
   }, []);
-  useEffect(() => {
-    console.log("Role changed:", role);
-    const path = pathMap.get(role);
-    if (path) {
-      console.log("Mapped path:", path);
-    }
-    if (path?.startsWith(path) === false) {
-      console.log("Current pathname:", pathname);
-    }
-    if (path && pathname.startsWith(path) === false) {
-      console.log("Redirecting to:", path);
-      router.push(path);
-    }
-  }, [pathname, role]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -79,6 +77,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         role,
         login,
         logout,
+        pathMap,
+        allowedPaths,
       }}
     >
       {children}

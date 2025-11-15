@@ -5,7 +5,7 @@ export interface IRestaurant {
   name: string;
   image: string;
   fee_rate: number;
-  location: string;
+  location?: string;
   detail: string;
   tel: string;
   created_at: string;
