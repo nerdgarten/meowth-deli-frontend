@@ -7,15 +7,18 @@ export const createOrder = async ({
   delivery_location_id,
   dishes,
   restaurant_id,
+  driver_fee,
 }: {
   delivery_location_id: number;
   dishes: IOrderDish[];
   restaurant_id: number;
+  driver_fee: number;
 }): Promise<IOrder> => {
   const data = {
     delivery_location_id: delivery_location_id,
-    dishes: dishes,
+    orderDishes: dishes,
     restaurant_id: restaurant_id,
+    driver_fee: driver_fee,
   };
   try {
     const response = await apiClient.post<IOrder>(`/order`, data);
