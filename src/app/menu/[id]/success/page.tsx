@@ -95,7 +95,6 @@ export default function OrderSuccessPage() {
           </p>
         </div>
 
-        {/* ✅ Order Summary Card */}
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -129,7 +128,6 @@ export default function OrderSuccessPage() {
           </CardContent>
         </Card>
 
-        {/* ✅ Action Buttons */}
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <Button
             onClick={handleCheckStatus}
