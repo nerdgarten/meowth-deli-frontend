@@ -188,19 +188,19 @@ const CustomerSecurityForm = () => {
           />
         </div>
 
-        <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">
+        <div className="mt-8 flex justify-end gap-4">
           <Button
-            type="button"
-            variant="outline"
+            type="submit"
             onClick={() => securityForm.reset()}
-            className="text-app-dark-brown hover:bg-app-brown/10 rounded-xl border-black/10 bg-white px-6 py-3 text-sm font-semibold shadow-none transition"
+            variant="outline"
             disabled={securityMutation.isPending}
+            className="rounded-xl bg-white px-8 py-5 text-sm font-semibold text-black shadow-[0_12px_28px_rgba(64,56,49,0.18)] transition hover:bg-gray-200 active:scale-95 active:bg-gray-300"
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            className="bg-app-dark-brown rounded-xl px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(64,56,49,0.18)] transition hover:bg-[#2F2721]"
+            className="bg-app-dark-brown rounded-xl px-8 py-5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(64,56,49,0.18)] transition hover:bg-[#2F2721] active:scale-95 active:bg-[#2c2621]"
             disabled={securityMutation.isPending}
           >
             {securityMutation.isPending ? "Saving..." : "Save Changes"}

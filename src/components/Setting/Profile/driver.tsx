@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import type { IDriverProfile } from "@/types/user";
+import Image from "next/image";
 
 import { useQuery } from "@tanstack/react-query";
 import { UserRound } from "lucide-react";
@@ -22,21 +24,22 @@ import type { ICustomerProfile } from "@/types/user";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  EditProfileFormSchema,
-  updateCustomerProfileMutation,
-} from "@/queries/profile";
+  updateDriverProfileMutation,
+  queryDriverProfile,
+  DriverProfileFormSchema,
+} from "@/libs/driver";
 
 export function DriverProfilePage() {
   return (
     <main className="bg-app-background flex h-full flex-col items-center pt-8">
       <div className="mx-auto w-full max-w-5xl px-4 md:px-6 lg:px-8">
-        <CustomerProfileFormCard />
+        <DriverProfileFormCard />
       </div>
     </main>
   );
 }
 
-export function CustomerProfileFormCard() {
+export function DriverProfileFormCard() {
   return (
     <section className="rounded-3xl border border-black/10 bg-white shadow-[0_15px_40px_rgba(64,56,49,0.08)]">
       <div className="px-4 py-6 md:px-8 md:py-8">
@@ -60,22 +63,23 @@ export function CustomerProfileFormCard() {
 }
 
 const CustomerProfileForm = () => {
-  const { data: profileData } = useQuery<ICustomerProfile>({
-    queryKey: ["customer-profile"],
+  const { data: profileData } = useQuery<IDriverProfile>({
+    queryKey: ["driver-profile"],
     queryFn: async () => {
-      const profile = await queryCustomerProfile();
+      const profile = await queryDriverProfile();
       return profile;
     },
   });
 
-  const customerProfileForm = useForm<z.infer<typeof EditProfileFormSchema>>({
-    resolver: zodResolver(EditProfileFormSchema),
+  const driverProfileForm = useForm<z.infer<typeof DriverProfileFormSchema>>({
+    resolver: zodResolver(DriverProfileFormSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: profileData ?? {
       firstname: "",
       lastname: "",
       tel: "",
+      profilePicture: null,
     },
   });
 
@@ -83,11 +87,11 @@ const CustomerProfileForm = () => {
     if (!profileData) {
       return;
     }
-    customerProfileForm.reset(profileData);
-  }, [profileData, customerProfileForm]);
+    driverProfileForm.reset(profileData);
+  }, [profileData, driverProfileForm]);
 
-  const profileMutation = useMutation({
-    mutationFn: updateCustomerProfileMutation,
+  const drivereMutation = useMutation({
+    mutationFn: updateDriverProfileMutation,
     onSuccess: () => {
       toast.success("Profile updated successfully!");
     },
@@ -100,8 +104,16 @@ const CustomerProfileForm = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof EditProfileFormSchema>) =>
-    profileMutation.mutate(data);
+  const onSubmit = (data: z.infer<typeof DriverProfileFormSchema>) => {
+    const { profilePicture, firstname, lastname, tel } = data;
+    console.log("image", profilePicture);
+    drivereMutation.mutate({
+      firstname,
+      lastname,
+      tel,
+      profilePicture, // image can be File or string (depending on your schema)
+    });
+  };
 
   // State for file upload
   const [uploading, setUploading] = useState(false);
@@ -131,16 +143,85 @@ const CustomerProfileForm = () => {
     }
   };
 
+  const imageValue = driverProfileForm.watch("profilePicture");
+  const [preview, setPreview] = useState<string>("");
+  useEffect(() => {
+    if (!imageValue) {
+      // fallback to existing backend URL if present
+      setPreview(
+        typeof profileData?.image === "string" ? profileData.image : ""
+      );
+      return;
+    }
+    if (typeof imageValue === "string") {
+      setPreview(imageValue);
+      return;
+    }
+    // File selected
+    const url = URL.createObjectURL(imageValue);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [imageValue, profileData?.image]);
+
   return (
-    <Form {...customerProfileForm}>
+    <Form {...driverProfileForm}>
       <form
         className="mt-10 space-y-10"
-        onSubmit={customerProfileForm.handleSubmit(onSubmit)}
+        onSubmit={driverProfileForm.handleSubmit(onSubmit)}
         noValidate
       >
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <FormField
-            control={customerProfileForm.control}
+            control={driverProfileForm.control}
+            name="profilePicture"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel className="text-app-dark-brown text-sm font-semibold">
+                  Profile Picture
+                </FormLabel>
+                <div className="flex items-center gap-4 border-b-2 border-gray-500/40 pb-4">
+                  <div className="size-20 overflow-hidden rounded-lg bg-gray-200">
+                    {preview ? (
+                      <Image
+                        src={preview}
+                        alt="Profile"
+                        width={80}
+                        height={80}
+                        className="size-20 object-cover"
+                        unoptimized
+                      />
+                    ) : null}
+                  </div>
+                  <FormControl>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0] ?? null;
+                        field.onChange(f);
+                      }}
+                      className="text-app-dark-brown file:bg-app-dark-brown mt-2 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-white hover:file:bg-[#2F2721]"
+                    />
+                  </FormControl>
+                  {field.value && typeof field.value !== "string" && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() =>
+                        driverProfileForm.setValue("profilePicture", null)
+                      }
+                      className="rounded-lg"
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </div>
+                <FormMessage className="text-app-brown/70 text-xs" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={driverProfileForm.control}
             name="firstname"
             render={({ field }) => (
               <FormItem>
@@ -161,7 +242,7 @@ const CustomerProfileForm = () => {
           />
 
           <FormField
-            control={customerProfileForm.control}
+            control={driverProfileForm.control}
             name="lastname"
             render={({ field }) => (
               <FormItem>
@@ -182,7 +263,7 @@ const CustomerProfileForm = () => {
           />
 
           <FormField
-            control={customerProfileForm.control}
+            control={driverProfileForm.control}
             name="tel"
             render={({ field }) => (
               <FormItem>
@@ -227,7 +308,7 @@ const CustomerProfileForm = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => customerProfileForm.reset()}
+            onClick={() => driverProfileForm.reset()}
             className="text-app-dark-brown hover:bg-app-brown/10 rounded-xl border-black/10 bg-white px-6 py-3 text-sm font-semibold shadow-none transition"
           >
             Cancel

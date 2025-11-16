@@ -64,9 +64,10 @@ export default function OrderPage({
 
   const createOrderMutation = useMutation({
     mutationFn: (orderData: {
-      location: string;
+      delivery_location_id: number;
       dishes: IOrderDish[];
       restaurant_id: number;
+      driver_fee: number;
     }) => createOrder(orderData),
 
     onSuccess: (data) => {
@@ -152,9 +153,10 @@ export default function OrderPage({
 
     try {
       await createOrderMutation.mutateAsync({
-        location: loc[0]!.address,
+        delivery_location_id: 1,
         dishes: sending,
         restaurant_id: Number(resolvedParams.id),
+        driver_fee: 30,
       });
 
       clearCart(resolvedParams.id);
