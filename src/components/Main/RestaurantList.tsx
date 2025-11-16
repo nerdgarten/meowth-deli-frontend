@@ -27,7 +27,7 @@ export const RestaurantList = ({
   const [fav, setFav] = useState<boolean>(favourite_restaurant);
   return (
     <div className="g mx-4 flex flex-col gap-4 rounded-sm bg-white p-4">
-      <div className="grid grid-cols-2 gap-4 h-80">
+      <div className="grid h-80 grid-cols-2 gap-4">
         <div className="bg-app-background relative overflow-hidden rounded-2xl">
           {restaurant?.banner && (
             <Image
@@ -52,16 +52,16 @@ export const RestaurantList = ({
             }}
           />
         </div>
-        <div className="bg-app-background flex flex-col justify-center gap-4 p-8 rounded-2xl">
+        <div className="bg-app-background flex flex-col justify-center gap-4 rounded-2xl p-8">
           <h2 className="text-4xl font-bold text-gray-900">
             {restaurant?.name}
           </h2>
-          <p className="text-lg text-gray-700">
-            {restaurant?.detail}
-          </p>
+          <p className="text-lg text-gray-700">{restaurant?.detail}</p>
           <div className="flex gap-4 text-sm text-gray-600">
             <span>📞 {restaurant?.tel}</span>
-            {restaurant?.location && <span>📍 {restaurant?.location}</span>}
+            {restaurant?.location && (
+              <span>📍 {restaurant.location.address}</span>
+            )}
           </div>
         </div>
       </div>
@@ -75,7 +75,7 @@ export const RestaurantList = ({
               className="h-full w-72 flex-shrink-0 overflow-hidden rounded-lg bg-white p-2 shadow-2xl transition hover:bg-gray-100 active:bg-gray-400"
               onClick={() => onDishClick(item)}
             >
-              <div className="relative h-3/5 rounded-lg bg-slate-200 overflow-hidden">
+              <div className="relative h-3/5 overflow-hidden rounded-lg bg-slate-200">
                 {item.image && (
                   <Image
                     src={item.image}
@@ -111,7 +111,7 @@ export const RestaurantList = ({
                   className="h-full w-72 flex-shrink-0 overflow-hidden rounded-lg bg-white p-2 shadow-2xl"
                   onClick={() => onDishClick(item)}
                 >
-                  <div className="relative h-3/5 rounded-lg bg-slate-200 overflow-hidden">
+                  <div className="relative h-3/5 overflow-hidden rounded-lg bg-slate-200">
                     {item.image && (
                       <Image
                         src={item.image}

@@ -96,3 +96,30 @@ export const getFavouriteDishesByRestaurant = async (
     throw error;
   }
 };
+
+export const createFavouriteRestaurant = async (
+  restaurant_id: number
+): Promise<void> => {
+  try {
+    const response = await apiClient.post<void>(`/favourite/restaurant`, {
+      id: restaurant_id,
+    });
+    return Promise.resolve();
+  } catch (error) {
+    console.error("Error creating favourite restaurant:", error);
+    throw error;
+  }
+};
+export const deleteFavouriteRestaurant = async (
+  restaurant_id: number
+): Promise<void> => {
+  try {
+    const response = await apiClient.delete<void>(
+      `/favourite/restaurant/${restaurant_id}`
+    );
+    return Promise.resolve();
+  } catch (error) {
+    console.error("Error deleting favourite restaurant:", error);
+    throw error;
+  }
+};

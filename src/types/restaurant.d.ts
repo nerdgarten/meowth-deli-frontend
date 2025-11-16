@@ -9,6 +9,8 @@ export interface IRestaurant {
     latitude: number;
     longitude: number;
     address?: string;
+    created_at?: Date;
+    updated_at?: Date;
   };
   detail: string;
   tel: string;
