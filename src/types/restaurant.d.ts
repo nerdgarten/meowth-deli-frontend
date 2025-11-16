@@ -1,3 +1,12 @@
+export interface IRestaurantLocation {
+  id: number;
+  latitude: number;
+  longitude: number;
+  address: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface IRestaurant {
   id: number;
   verification_status: "approved" | "pending" | "rejected";
@@ -9,8 +18,6 @@ export interface IRestaurant {
     latitude: number;
     longitude: number;
     address?: string;
-    created_at?: Date;
-    updated_at?: Date;
   };
   detail: string;
   tel: string;

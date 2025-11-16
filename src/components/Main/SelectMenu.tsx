@@ -1,8 +1,8 @@
-import { Minus, Plus, Heart } from "lucide-react";
-import { useState } from "react";
-import { createFavouriteDish, deleteFavouriteDish } from "@/libs/favourite";
+import { Heart,Minus, Plus } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
+import { createFavouriteDish, deleteFavouriteDish } from "@/libs/favourite";
 import type { IDish } from "@/types/dish";
 
 interface SelectMenuProps {
