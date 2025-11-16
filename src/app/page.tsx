@@ -7,7 +7,8 @@ import { RestaurantCard } from "@/components/common/RestaurantCard";
 import { LandingCarousel } from "@/components/Landing/Carousel";
 import { Toolbar } from "@/components/Landing/Toolbar";
 import { getAllRestaurant } from "@/libs/restaurant";
-import { getFavouriteRestaurant } from "@/libs/favourite";
+import { authenticatedAs } from "@/libs/authentication";
+import { getFavouriteRestaurants } from "@/libs/favourite";
 
 export default function HomePage() {
   const { data: restaurant } = useQuery({
@@ -16,11 +17,16 @@ export default function HomePage() {
       return getAllRestaurant();
     },
   });
+  const { data: authenticatedAsRole } = useQuery({
+    queryKey: ["authenticate"],
+    queryFn: authenticatedAs,
+  });
   const { data: favourite_restaurant, isLoading } = useQuery({
     queryKey: ["favourite-restaurant"],
     queryFn: () => {
-      return getFavouriteRestaurant();
+      return getFavouriteRestaurants();
     },
+    enabled: !!authenticatedAsRole,
   });
 
   return (
@@ -38,7 +44,9 @@ export default function HomePage() {
           </div>
         </div>
       ))}
-      {!isLoading ? (
+      {isLoading ? (
+        <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
+      ) : authenticatedAsRole ? (
         <>
           <h1 className="mt-10 mb-5 text-center text-5xl font-bold">
             Your Favourite
@@ -63,9 +71,7 @@ export default function HomePage() {
             </div>
           ))}
         </>
-      ) : (
-        <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
-      )}
+      ) : null}
     </main>
   );
 }

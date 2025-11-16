@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await loginSubmitMutation(data);
     setIsAuthenticated(true);
     const d = await authenticatedAs();
-    setRole(d || "");
+    setRole(d ?? "");
     if (d) {
       setIsAuthenticated(true);
     }

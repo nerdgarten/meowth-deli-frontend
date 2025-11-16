@@ -1,8 +1,8 @@
-// ...existing code...
-import { Minus, Plus, Heart } from "lucide-react";
+import { Heart,Minus, Plus } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
-import { createFavouriteDish, deleteFavouriteDish } from "@/libs/favourite";
 
+import { createFavouriteDish, deleteFavouriteDish } from "@/libs/favourite";
 import type { IDish } from "@/types/dish";
 
 interface SelectMenuProps {
@@ -69,7 +69,17 @@ export const SelectMenu = ({
   return (
     <div className="grid-row-2 mx-4 grid h-full grid-cols-1 gap-4 rounded-2xl bg-white p-4">
       <div className="col-span-1 row-span-1 grid grid-cols-3 grid-rows-1 overflow-hidden rounded-2xl border border-black/5 p-4">
-        <div className="h-full w-full rounded-2xl bg-gradient-to-br from-gray-200 to-gray-300" />
+        <div className="relative h-full w-full rounded-2xl bg-slate-200 overflow-hidden">
+          {dish.image && (
+            <Image
+              src={dish.image}
+              alt={dish.name}
+              fill
+              className="object-cover"
+              priority
+            />
+          )}
+        </div>
         <div className="col-span-2 grid w-full grid-cols-2 grid-rows-7 gap-4 p-6 md:p-8">
           <div className="col-span-1 row-span-2 flex items-start gap-3">
             <h1 className="text-3xl font-bold text-balance md:text-4xl">
@@ -169,7 +179,16 @@ export const SelectMenu = ({
               onClick={() => onDishClick(item)}
               aria-label={`View ${item.name}`}
             >
-              <div className="h-40 w-full rounded-lg bg-slate-200" />
+              <div className="relative h-40 w-full rounded-lg bg-slate-200 overflow-hidden">
+                {item.image && (
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                  />
+                )}
+              </div>
               <div className="grid h-24 grid-cols-3 grid-rows-2 text-black">
                 <h4 className="col-span-2 row-span-1 truncate font-semibold">
                   {item.name}
