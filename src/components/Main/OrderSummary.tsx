@@ -3,8 +3,10 @@ import { useState } from "react";
 import Image from "next/image";
 
 import type { CartItem } from "@/types/order";
+import type { ICreateLocation } from "@/types/location";
 
 interface OrderSummaryProps {
+  location: ICreateLocation[];
   cartItem: CartItem[];
   restaurantName: string;
   TotalPrice: number;
