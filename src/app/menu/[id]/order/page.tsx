@@ -9,6 +9,7 @@ import { OrderSummary } from "@/components/Main/OrderSummary";
 import { createOrder } from "@/libs/orders";
 import { getRestaurantById } from "@/libs/restaurant";
 import type { IOrderDish } from "@/types/order";
+import { getCustomerLocations } from "@/libs/location";
 
 // Interface for storing order data in localStorage
 interface StoredOrder {
@@ -44,6 +45,12 @@ export default function OrderPage({
       return getRestaurantById(restaurantId);
     },
     enabled: !!resolvedParams?.id,
+  });
+  const {data: getLocation} = useQuery({
+    queryKey: ["location-info"],
+    queryFn: async () => {
+      return getCustomerLocations();
+    },
   });
 
   const createOrderMutation = useMutation({
@@ -156,6 +163,7 @@ export default function OrderPage({
   return (
     <main className="h-230 w-full p-16">
       <OrderSummary
+        location={getLocation ?? []}
         cartItem={cartItem}
         restaurantName={restaurantQuery.data?.name ?? ""}
         TotalPrice={getTotalPrice(resolvedParams.id)}
