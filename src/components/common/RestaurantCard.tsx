@@ -4,6 +4,7 @@
 import { MapPin } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useAllowed } from "../context/AllowedContext";
 
 import {
   Card,
@@ -12,6 +13,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import type { IRestaurant } from "@/types/restaurant";
+import toast from "react-hot-toast";
 
 interface RestaurantCardProps {
   restaurant: IRestaurant;
@@ -19,9 +21,14 @@ interface RestaurantCardProps {
 
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const router = useRouter();
+  const { checkAllowed } = useAllowed();
 
   const handleCardClick = () => {
-    router.push(`/menu/${restaurant.id}`);
+    if (checkAllowed(`/menu/${restaurant.id}`)) {
+      router.push(`/menu/${restaurant.id}`);
+      return;
+    }
+    toast.error("You have to be logged in to access the menu.");
   };
 
   return (
