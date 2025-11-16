@@ -28,7 +28,6 @@ export default function RestaurantPage({
 
   const router = useRouter();
 
-  // Fetch restaurant info
   const { data: restaurant } = useQuery({
     queryKey: ["restaurant-info", resolvedParams?.id],
     queryFn: ({ queryKey }) => {
