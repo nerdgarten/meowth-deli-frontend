@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
@@ -26,6 +26,10 @@ import {
   updateCustomerProfileMutation,
 } from "@/queries/profile";
 import { AddressCard } from "./addressCard";
+import { useSettingFloatPanel } from "../SettingFloatPanelProvider";
+import { AddAddressCard } from "./addAddressCard";
+import { getCustomerLocations } from "@/libs/location";
+import type { ICreateLocation } from "@/types/location";
 
 export function CustomerAddressPage() {
   return (
@@ -38,6 +42,22 @@ export function CustomerAddressPage() {
 }
 
 export function CustomerAddressList() {
+  const { data: profile } = useQuery({
+    queryKey: ["address-profile"],
+    queryFn: getCustomerLocations,
+  });
+  const [addressList, setAddressList] = useState<ICreateLocation[]>([]);
+  const { showPanel, setShowCloseButton, hidePanel } = useSettingFloatPanel();
+
+  // populate addressList when profile (data) arrives
+  useEffect(() => {
+    if (profile) setAddressList(profile);
+  }, [profile]);
+
+  if (profile === undefined) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <section className="rounded-3xl border border-black/10 bg-white shadow-[0_15px_40px_rgba(64,56,49,0.08)]">
       <div className="px-4 py-6 md:px-8 md:py-8">
@@ -54,7 +74,28 @@ export function CustomerAddressList() {
             </p>
           </div>
         </div>
+        <div className="mt-8 flex flex-col gap-4">
+          {addressList.length === 0 ? (
+            <p className="text-app-brown/80">No addresses found.</p>
+          ) : (
+            addressList.map((address) => (
+              <AddressCard key={address.id} address={address.address} />
+            ))
+          )}
+        </div>
         <Button
+          onClick={() => {
+            setShowCloseButton(true);
+            showPanel(
+              <AddAddressCard
+                type="customer"
+                onClose={(data: ICreateLocation) => {
+                  setAddressList((prev) => [...prev, data]);
+                  hidePanel();
+                }}
+              />
+            );
+          }}
           type="submit"
           className="bg-app-dark-brown mt-16 w-full rounded-xl text-sm font-semibold text-white shadow-[0_12px_28px_rgba(64,56,49,0.18)] transition hover:bg-[#2F2721] active:bg-[#2c2621]"
         >
