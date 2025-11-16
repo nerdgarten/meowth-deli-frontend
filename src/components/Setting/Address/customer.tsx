@@ -1,12 +1,13 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-
 import { useQuery } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,19 +18,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { getCustomerLocations } from "@/libs/location";
 import { queryCustomerProfile } from "@/queries/profile";
-import type { ICustomerProfile } from "@/types/user";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   EditProfileFormSchema,
   updateCustomerProfileMutation,
 } from "@/queries/profile";
-import { AddressCard } from "./addressCard";
+import type { ICreateLocation } from "@/types/location";
+import type { ICustomerProfile } from "@/types/user";
+
 import { useSettingFloatPanel } from "../SettingFloatPanelProvider";
 import { AddAddressCard } from "./addAddressCard";
-import { getCustomerLocations } from "@/libs/location";
-import type { ICreateLocation } from "@/types/location";
+import { AddressCard } from "./addressCard";
 
 export function CustomerAddressPage() {
   return (

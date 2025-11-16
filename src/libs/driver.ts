@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import { apiClient } from "@/libs/axios";
 import type { IDish } from "@/types/dish";
 import type { IRestaurant } from "@/types/restaurant";
@@ -6,8 +8,6 @@ import type {
   IRestaurantProfile,
   IVehicle,
 } from "@/types/user";
-
-import { z } from "zod";
 export const EditDriverSchema = z.object({
   firstname: z.string(),
   lastname: z.string(),

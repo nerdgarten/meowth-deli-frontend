@@ -1,14 +1,14 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-import type { IDriverProfile } from "@/types/user";
-import Image from "next/image";
-
 import { useQuery } from "@tanstack/react-query";
 import { UserRound } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { type z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,15 +19,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { queryCustomerProfile } from "@/queries/profile";
-import type { ICustomerProfile } from "@/types/user";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  updateDriverProfileMutation,
-  queryDriverProfile,
   DriverProfileFormSchema,
+  queryDriverProfile,
+  updateDriverProfileMutation,
 } from "@/libs/driver";
+import { queryCustomerProfile } from "@/queries/profile";
+import type { IDriverProfile } from "@/types/user";
+import type { ICustomerProfile } from "@/types/user";
 
 export function DriverProfilePage() {
   return (

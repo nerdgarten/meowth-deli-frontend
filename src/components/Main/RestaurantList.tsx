@@ -1,12 +1,13 @@
 "use client";
-import type { IDish } from "@/types/dish";
+import { Heart } from "lucide-react";
 import { useState } from "react";
+
 import {
   checkFavouriteRestaurant,
   createFavouriteRestaurant,
   deleteFavouriteRestaurant,
 } from "@/libs/favourite";
-import { Heart } from "lucide-react";
+import type { IDish } from "@/types/dish";
 import type { IRestaurant } from "@/types/restaurant";
 interface RestaurantListProps {
   dishes: IDish[];

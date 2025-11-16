@@ -1,19 +1,20 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { authenticatedAs } from "@/libs/authentication";
+import {
+  MapPin,
+  Settings,
+  ShieldCheck,
+  ShoppingBag,
+  SlidersHorizontal,
+  User,
+} from "lucide-react";
+
+import { SettingFloatPanelProvider } from "@/components/Setting/SettingFloatPanelProvider";
 import {
   SettingNavigationMenu,
   type SettingNavItem,
 } from "@/components/Setting/SettingNavigationMenu";
-import { SettingFloatPanelProvider } from "@/components/Setting/SettingFloatPanelProvider";
-import {
-  MapPin,
-  ShieldCheck,
-  ShoppingBag,
-  Settings,
-  SlidersHorizontal,
-  User,
-} from "lucide-react";
+import { authenticatedAs } from "@/libs/authentication";
 
 const basePath = "/settings";
 

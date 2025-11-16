@@ -1,27 +1,48 @@
 "use client";
+import { TriangleAlert, X } from "lucide-react";
 import { createContext, useContext, useState } from "react";
-import { boolean } from "zod";
-import { X, TriangleAlert } from "lucide-react";
+
+interface UserInfo {
+  id?: number;
+  email?: string;
+  name?: string;
+  role?: string;
+}
+
 interface WarningDialogContextProps {
-  open: (s: string, role: string) => void;
+  open: (userInfo: UserInfo, onConfirm?: () => void) => void;
   close: () => void;
 }
+
 const WarningDialogContext = createContext<WarningDialogContextProps>({
-  open: (s: string, role: string) => {},
+  open: (userInfo: UserInfo) => {},
   close: () => {},
 });
 
 export function WarningDialog({ children }: { children?: React.ReactNode }) {
   const [open, setOpen] = useState<boolean>(false);
-  const [role, setRole] = useState<string>("Customer");
-  const [content, setContent] = useState<string>("user");
-  const updateOpen = (s: string, role: string) => {
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    role: "Customer",
+    email: "",
+    name: "",
+    id: 0,
+  });
+  const [confirmCallback, setConfirmCallback] = useState<
+    (() => void) | undefined
+  >(undefined);
+  const updateOpen = (info: UserInfo, onConfirm?: () => void) => {
     setOpen(true);
-    setContent(s);
-    setRole(role);
+    setUserInfo(info);
+    setConfirmCallback(() => onConfirm);
   };
   const updateClose = () => {
     setOpen(false);
+    setConfirmCallback(undefined);
+    setUserInfo({ role: "Customer", email: "", name: "", id: 0 });
+  };
+  const onConfirm = () => {
+    if (confirmCallback) confirmCallback();
+    updateClose();
   };
   return (
     <WarningDialogContext.Provider
@@ -42,7 +63,8 @@ export function WarningDialog({ children }: { children?: React.ReactNode }) {
             </div>
             <div className="flex w-full flex-col gap-2">
               <h1 className="text-3xl font-semibold">
-                Delete {content} profile
+                Delete {userInfo.name || userInfo.email || "user"}{" "}
+                {userInfo.role?.toLowerCase()} profile?
               </h1>
               <p className="text-app-tan font-light">
                 This action will remove device tokens.
@@ -53,20 +75,36 @@ export function WarningDialog({ children }: { children?: React.ReactNode }) {
             </div>
             <div className="w-full rounded-2xl border border-red-200 bg-white/30 p-4 shadow-md">
               <div className="flex flex-col gap-2">
-                <p className="text-app-tan font-medium">FOCUSED ROLE</p>
-                <h1 className="text-3xl font-semibold">{role}</h1>
-                <p className="text-app-tan pr-10 font-medium">
+                <p className="text-app-tan text-sm font-medium">FOCUSED ROLE</p>
+                <h1 className="text-2xl font-semibold capitalize">
+                  {userInfo.role || "Customer"}
+                </h1>
+                <p className="text-app-tan pr-10 text-sm font-light">
                   Closed account including name and email, saved addresses, and
                   phone number for diners.
                 </p>
+                {userInfo.email && (
+                  <div className="mt-2">
+                    <p className="text-app-tan text-sm font-medium">
+                      Acting on:{" "}
+                      <span className="font-semibold text-gray-700">
+                        {userInfo.name || userInfo.email}
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-600">{userInfo.email}</p>
+                    {userInfo.id && (
+                      <p className="text-sm text-gray-500">ID: {userInfo.id}</p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
             <div className="w-full rounded-2xl border bg-white/30 p-4 shadow-md">
               <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-semibold">
+                <h1 className="text-xl font-semibold">
                   Checklist before deletion
                 </h1>
-                <ul className="list-inside list-disc space-y-1">
+                <ul className="list-inside list-disc space-y-1 text-sm">
                   <li>
                     Make sure the customer has no pending orders or payments.
                   </li>
@@ -74,6 +112,12 @@ export function WarningDialog({ children }: { children?: React.ReactNode }) {
                   <li>Send a goodbye message to the customer automatically.</li>
                 </ul>
               </div>
+            </div>
+            <div className="w-full rounded-2xl border border-orange-200 bg-orange-50/50 p-3">
+              <p className="text-app-tan text-sm font-medium">ACTION SUMMARY</p>
+              <p className="text-sm font-semibold text-gray-700">
+                The account will be temporarily deleted.
+              </p>
             </div>
             <div className="text-md flex w-full gap-4">
               <button
@@ -83,10 +127,10 @@ export function WarningDialog({ children }: { children?: React.ReactNode }) {
                 Keep user active
               </button>
               <button
-                onClick={updateClose}
+                onClick={onConfirm}
                 className="flex-1 rounded-full bg-red-600 px-4 py-2 font-semibold text-white shadow-md hover:bg-red-700 active:bg-red-800"
               >
-                Soft Delete
+                Delete
               </button>
             </div>
           </div>

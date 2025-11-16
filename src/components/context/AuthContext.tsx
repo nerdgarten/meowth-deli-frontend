@@ -1,11 +1,12 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
-import type { User } from "@/types/review";
-import { set, z } from "zod";
-import { loginSubmitMutation } from "@/queries/auth";
-import { LoginFormSchema } from "@/queries/auth";
-import { authenticatedAs } from "@/libs/authentication";
 import { useRouter } from "next/navigation";
+import { createContext, useContext, useEffect, useState } from "react";
+import { set, type z } from "zod";
+
+import { authenticatedAs } from "@/libs/authentication";
+import { loginSubmitMutation } from "@/queries/auth";
+import { type LoginFormSchema } from "@/queries/auth";
+import type { User } from "@/types/review";
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User;

@@ -1,8 +1,9 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { useAuth } from "./AuthContext";
 import path from "path";
+import { createContext, useContext, useEffect,useState } from "react";
+
+import { useAuth } from "./AuthContext";
 interface AllowedContextType {
   isAllowed: boolean;
 }
@@ -41,7 +42,7 @@ export const AllowedProvider = ({
       allowedPaths &&
       typeof (allowedPaths as any)?.get === "function"
     ) {
-      bases = (allowedPaths as Map<string, string[]>).get(role) ?? [];
+      bases = (allowedPaths).get(role) ?? [];
     }
 
     // Fallback: include the role’s base path from pathMap

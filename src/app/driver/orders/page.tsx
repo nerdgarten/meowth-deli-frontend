@@ -1,12 +1,11 @@
 "use client";
 
-import * as React from "react";
+import { Button } from "@ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/dialog";
 import Image from "next/image";
+import * as React from "react";
 
 import type { IOrder } from "@/types/order";
-
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/dialog";
-import { Button } from "@ui/button";
 
 interface OrderItem {
   name: string;

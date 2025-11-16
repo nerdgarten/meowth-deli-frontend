@@ -1,15 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { useParams, usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  MessageSquare,
-  Settings,
-  ShoppingBag,
-} from "lucide-react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -28,7 +18,16 @@ import {
   Settings,
   ShoppingBag,
 } from "lucide-react";
+import {
+  LayoutDashboard,
+  MessageSquare,
+  Settings,
+  ShoppingBag,
+} from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import Link from "next/link";
+import { useParams, usePathname } from "next/navigation";
 import { useParams, usePathname } from "next/navigation";
 
 export default function DashboardLayout({

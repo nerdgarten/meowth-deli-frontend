@@ -1,16 +1,16 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 import { useCart } from "@/components/context/CartProvider";
 import { SelectMenu } from "@/components/Main/SelectMenu";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { getDishById } from "@/libs/dish";
 import { getDishRestaurantId } from "@/libs/dish";
 import { checkFavouriteDish } from "@/libs/favourite";
 import type { IDish } from "@/types/dish";
-import { useRouter } from "next/navigation";
 
 export default function MenuPage({
   params,

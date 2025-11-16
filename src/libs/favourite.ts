@@ -1,7 +1,8 @@
+import { check } from "zod";
+
 import { apiClient } from "@/libs/axios";
 import type { IDish } from "@/types/dish";
 import type { IRestaurant } from "@/types/restaurant";
-import { check } from "zod";
 export const createFavouriteDish = async (dish_id: number): Promise<void> => {
   try {
     await apiClient.post<void>(`/favourite/dish`, { id: dish_id });

@@ -2,16 +2,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 import { RestaurantList } from "@/components/Main/RestaurantList";
-import { getRestaurantById } from "@/libs/restaurant";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { getDishRestaurantId } from "@/libs/dish";
-import type { IDish } from "@/types/dish";
 import {
   checkFavouriteRestaurant,
   getFavouriteDishesByRestaurant,
 } from "@/libs/favourite";
+import { getRestaurantById } from "@/libs/restaurant";
+import type { IDish } from "@/types/dish";
 
 export default function RestaurantPage({
   params,

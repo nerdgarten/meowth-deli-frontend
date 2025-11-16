@@ -6,8 +6,8 @@ import { Spinner } from "@ui/shadcn-io/spinner";
 import { RestaurantCard } from "@/components/common/RestaurantCard";
 import { LandingCarousel } from "@/components/Landing/Carousel";
 import { Toolbar } from "@/components/Landing/Toolbar";
-import { getAllRestaurant } from "@/libs/restaurant";
 import { getFavouriteRestaurant } from "@/libs/favourite";
+import { getAllRestaurant } from "@/libs/restaurant";
 
 export default function HomePage() {
   const { data: restaurant } = useQuery({
