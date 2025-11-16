@@ -5,7 +5,11 @@ export interface IRestaurant {
   name: string;
   banner: string;
   fee_rate: number;
-  location?: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+    address?: string;
+  };
   detail: string;
   tel: string;
   created_at: string;

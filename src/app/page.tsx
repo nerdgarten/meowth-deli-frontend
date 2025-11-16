@@ -7,7 +7,7 @@ import { RestaurantCard } from "@/components/common/RestaurantCard";
 import { LandingCarousel } from "@/components/Landing/Carousel";
 import { Toolbar } from "@/components/Landing/Toolbar";
 import { getAllRestaurant } from "@/libs/restaurant";
-import { getFavouriteRestaurant } from "@/libs/favourite";
+import { getFavouriteRestaurants } from "@/libs/favourite";
 
 export default function HomePage() {
   const { data: restaurant } = useQuery({
@@ -19,7 +19,7 @@ export default function HomePage() {
   const { data: favourite_restaurant, isLoading } = useQuery({
     queryKey: ["favourite-restaurant"],
     queryFn: () => {
-      return getFavouriteRestaurant();
+      return getFavouriteRestaurants();
     },
   });
 
