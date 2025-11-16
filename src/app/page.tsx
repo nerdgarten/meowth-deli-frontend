@@ -48,9 +48,11 @@ export default function HomePage() {
               <div className="flex flex-nowrap gap-4 py-4">
                 <div className="min-w-5"></div>
                 {favourite_restaurant && favourite_restaurant?.length > 0 ? (
-                  favourite_restaurant.map((data, index_2) => {
-                    return <RestaurantCard key={index_2} restaurant={data} />;
-                  })
+                  favourite_restaurant
+                    .filter((r) => r.banner)
+                    .map((data, index_2) => {
+                      return <RestaurantCard key={index_2} restaurant={data} />;
+                    })
                 ) : (
                   <p className="text-app-brown mx-auto my-10 text-center">
                     Please find your favourite restaurant and add them to your

@@ -3,10 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useMutation } from "node_modules/@tanstack/react-query/build/modern/useMutation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
+import { type z } from "zod";
 
 import { PDPADialogButton } from "@/components/Register/PDPADialog";
 import { ToSDialogButton } from "@/components/Register/ToSDialog";
@@ -24,11 +26,9 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  RestaurantRegisterFormSchema,
   registerRestaurantMutation,
+  RestaurantRegisterFormSchema,
 } from "@/queries/auth";
-import { useMutation } from "node_modules/@tanstack/react-query/build/modern/useMutation";
-import { toast } from "react-hot-toast";
 
 export default function RestaurantRegisterPage() {
   return (

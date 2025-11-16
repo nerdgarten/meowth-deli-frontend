@@ -33,7 +33,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
 
   return (
     <Card
-      className="h-[300px] w-[375px] cursor-pointer transition-all hover:scale-105 hover:shadow-lg"
+      className="h-[300px] w-[375px] cursor-pointer transition-all hover:scale-105 hover:shadow-lg flex-shrink-0"
       onClick={handleCardClick}
     >
       <CardHeader className="p-0">
@@ -47,7 +47,11 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           ) : ( */}
           <div className="flex h-full w-full items-center justify-center bg-gray-200">
             <Image
-              src={restaurant.banner}
+              src={
+                restaurant.banner
+                  ? restaurant.banner
+                  : "http://localhost:3030/uploads/dish_pictures/restaurant/128/image_128_1763221253977_e81b156b6bf.jpg"
+              }
               alt={restaurant.name}
               fill
               className="object-cover"

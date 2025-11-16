@@ -1,7 +1,33 @@
 import { apiClient } from "@/libs/axios";
 import type { IDish } from "@/types/dish";
 import type { IRestaurant } from "@/types/restaurant";
-import { check } from "zod";
+
+export const getFavouriteRestaurants = async (): Promise<IRestaurant[]> => {
+  try {
+    const response = await apiClient.get<IRestaurant[]>(`/restaurant/favorite`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching favourite restaurants:", error);
+    throw error;
+  }
+};
+
+export const updateFavouriteRestaurant = async (
+  restaurantId: number,
+  isFavourite: boolean
+): Promise<void> => {
+  try {
+    await apiClient.post<void>(`/restaurant/favorite`, {
+      restaurantId: restaurantId,
+      isFavourite: isFavourite,
+    });
+    return Promise.resolve();
+  } catch (error) {
+    console.error("Error updating favourite restaurants:", error);
+    throw error;
+  }
+};
+
 export const createFavouriteDish = async (dish_id: number): Promise<void> => {
   try {
     await apiClient.post<void>(`/favourite/dish`, { id: dish_id });
@@ -29,43 +55,7 @@ export const getFavouriteDish = async (): Promise<IDish[]> => {
     throw error;
   }
 };
-export const createFavouriteRestaurant = async (
-  restaurant_id: number
-): Promise<void> => {
-  try {
-    const response = await apiClient.post<void>(`/favourite/restaurant`, {
-      id: restaurant_id,
-    });
-    return Promise.resolve();
-  } catch (error) {
-    console.error("Error creating favourite restaurant:", error);
-    throw error;
-  }
-};
-export const deleteFavouriteRestaurant = async (
-  restaurant_id: number
-): Promise<void> => {
-  try {
-    const response = await apiClient.delete<void>(
-      `/favourite/restaurant/${restaurant_id}`
-    );
-    return Promise.resolve();
-  } catch (error) {
-    console.error("Error deleting favourite restaurant:", error);
-    throw error;
-  }
-};
-export const getFavouriteRestaurant = async (): Promise<IRestaurant[]> => {
-  try {
-    const response = await apiClient.get<IRestaurant[]>(
-      `/favourite/restaurant`
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching favourite restaurant:", error);
-    throw error;
-  }
-};
+
 export const checkFavouriteDish = async (dish_id: number): Promise<boolean> => {
   try {
     const response = await apiClient.get<boolean>(`/favourite/dish/${dish_id}`);

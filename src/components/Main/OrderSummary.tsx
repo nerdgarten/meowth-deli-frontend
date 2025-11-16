@@ -10,7 +10,12 @@ interface OrderSummaryProps {
   cartItem: CartItem[];
   restaurantName: string;
   TotalPrice: number;
+<<<<<<< HEAD
   onSubmit: (remark: string) => void;
+=======
+  location: string;
+  onSubmit: () => void;
+>>>>>>> main
 }
 
 // Safe type guard for dish
@@ -27,6 +32,8 @@ export const OrderSummary = ({
   cartItem,
   restaurantName,
   TotalPrice,
+  location,
+
   onSubmit,
 }: OrderSummaryProps) => {
   // Safely calculate subtotal
@@ -93,7 +100,7 @@ export const OrderSummary = ({
         </div>
 
         <div className="flex h-16 w-full items-center justify-between rounded-md border border-slate-300 p-8 transition hover:bg-gray-100 active:bg-gray-300">
-          <h2 className="mx-4 text-lg font-bold">Map</h2>
+          <h2 className="mx-4 text-lg font-bold">{location}</h2>
           <ChevronLeft size={20} />
         </div>
 

@@ -6,5 +6,10 @@ export interface IDish {
   allergy: string;
   restaurant_id: string;
   is_out_of_stock: boolean;
+<<<<<<< HEAD
   image: string;
 }
+=======
+  image?: string;
+}
+>>>>>>> main
