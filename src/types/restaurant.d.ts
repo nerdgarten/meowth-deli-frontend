@@ -3,9 +3,9 @@ export interface IRestaurant {
   verification_status: "approved" | "pending" | "rejected";
   is_available: boolean;
   name: string;
-  image: string;
+  banner: string;
   fee_rate: number;
-  location: string;
+  location?: string;
   detail: string;
   tel: string;
   created_at: string;

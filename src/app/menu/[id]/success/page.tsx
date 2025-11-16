@@ -42,8 +42,7 @@ export default function OrderSuccessPage() {
         ? (JSON.parse(rawOrders) as StoredOrder[])
         : [];
 
-      const order =
-        orders.find((o) => o.restaurantId === restaurantId) ?? null;
+      const order = orders.find((o) => o.restaurantId === restaurantId) ?? null;
       setLatestOrder(order);
     } catch (error) {
       console.error("Error retrieving order from localStorage:", error);

@@ -1,6 +1,8 @@
 "use client";
 
 import { Carousel, CarouselContent, CarouselItem } from "@ui/carousel";
+// import landing1 from "@/public/images/landing-carousel-1.jpg";
+import Image from "next/image";
 import {
   Carousel as LandingCarouselContainer,
   type CarouselApi as LandingCarouselApi,
@@ -47,7 +49,13 @@ export const LandingCarousel = () => {
       >
         <LandingCarouselContent>
           <LandingCarouselItem key="1">
-            <div className="h-[calc(100svh-4rem)] w-full bg-gray-300" />
+            <div className="h-[calc(100svh-4rem)] w-full bg-gray-300">
+              <Image
+                src={"/images/landing-carousel-1.jpg"}
+                alt="Landing Carousel 1"
+                fill={true}
+              />
+            </div>
           </LandingCarouselItem>
           <LandingCarouselItem key="2">
             <div className="h-[calc(100svh-4rem)] w-full bg-gray-400" />
@@ -69,7 +77,7 @@ export const LandingCarousel = () => {
           </button>
         ))}
       </div>
-      <div className="absolute top-[5.5rem] right-4 flex w-3/8 flex-col gap-y-6">
+      <div className="absolute top-[5.5rem] right-4 flex w-140 flex-col gap-y-6">
         <TopCarouselCard>
           <div className="text-app-dark-brown flex flex-row items-center gap-x-2">
             <Coffee className="h-8 w-8 stroke-2" />
@@ -105,7 +113,7 @@ export const LandingCarousel = () => {
             <h2 className="text-2xl font-bold">Reviews</h2>
           </div>
           <div className="mt-3 flex flex-row gap-x-4">
-            <div className="bg-app-brown h-[25vh] w-[25vh] shrink-0 rounded-md" />
+            <div className="bg-app-brown h-25 w-25 shrink-0 rounded-md" />
             <p className="text-app-brown text-lg font-semibold">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa
               minima, repellendus asperiores impedit cum quasi tenetur sequi,
