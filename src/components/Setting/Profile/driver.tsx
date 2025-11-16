@@ -106,7 +106,6 @@ const CustomerProfileForm = () => {
 
   const onSubmit = (data: z.infer<typeof DriverProfileFormSchema>) => {
     const { profilePicture, firstname, lastname, tel } = data;
-    console.log("image", profilePicture);
     drivereMutation.mutate({
       firstname,
       lastname,

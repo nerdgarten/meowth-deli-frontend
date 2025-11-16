@@ -107,8 +107,6 @@ const RestaurantProfileForm = () => {
   });
 
   const onSubmit = (data: z.infer<typeof RestaurantProfileFormSchema>) => {
-    // const { profilePicture, firstname, lastname, tel } = data;
-    // console.log("image", profilePicture);
     const { name, detail, tel, is_available, restaurantBanner } = data;
     restaurantMutation.mutate({
       name,

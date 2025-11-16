@@ -105,7 +105,6 @@ const CustomerProfileForm = () => {
 
   const onSubmit = (data: z.infer<typeof ProfileFormSchema>) => {
     const { profilePicture, firstname, lastname, tel } = data;
-    console.log("image", profilePicture);
     profileMutation.mutate({
       firstname,
       lastname,

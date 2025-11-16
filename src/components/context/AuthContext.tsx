@@ -12,6 +12,7 @@ interface AuthContextType {
   role: string;
   login: (data: z.infer<typeof LoginFormSchema>) => Promise<void>;
   logout: () => Promise<void>;
+  isLoading?: boolean;
   pathMap: Map<string, string>;
 }
 import { usePathname } from "next/navigation";
@@ -19,6 +20,7 @@ import path from "path";
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
+import { logoutFunctionMutation } from "@/queries/logout";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -44,13 +46,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.replace(pathMap.get(d) || "/");
   };
   const logout = async () => {
-    // Logout logic would go here
+    await logoutFunctionMutation();
     setIsAuthenticated(false);
     setRole("");
     setUser(null);
+    router.replace("/");
   };
   // Authentication logic would go here
-
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const checkAuth = async () => {
       const d = await authenticatedAs();
@@ -58,6 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsAuthenticated(true);
         setRole(d);
       }
+      setIsLoading(false);
     };
     checkAuth();
   }, []);
@@ -71,6 +75,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login,
         logout,
         pathMap,
+        isLoading,
       }}
     >
       {children}

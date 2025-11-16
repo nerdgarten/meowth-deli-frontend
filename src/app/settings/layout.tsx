@@ -104,7 +104,6 @@ export default function CustomerSettingLayout({
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  console.log("role in layout:", role);
   return (
     <main className="bg-app-background flex h-full flex-col pt-[6rem]">
       <div className="flex w-full flex-col p-4">
