@@ -23,9 +23,15 @@ export const AllowedProvider = ({
   children: React.ReactNode;
 }) => {
   const [isAllowed, setAllowed] = useState(true);
+  const allowedPaths = new Map<string, string[]>([
+    ["admin", ["/admin"]],
+    ["restaurant", ["/restaurant_2", "/settings"]],
+    ["customer", ["/", "/settings"]],
+    ["driver", ["/restaurant_2", "/settings"]],
+  ]);
 
   const pathname = usePathname();
-  const { role, pathMap, allowedPaths } = useAuth();
+  const { role, pathMap } = useAuth();
   useEffect(() => {
     // allowedPaths can be string[] or Map<Role, string[]>
     let bases: string[] = [];
