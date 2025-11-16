@@ -1,6 +1,7 @@
 import { apiClient } from "@/libs/axios";
 import type { IDish } from "@/types/dish";
 import type { IRestaurant } from "@/types/restaurant";
+import type { IAuthenticatedAs } from "@/libs/authentication";
 
 export const getFavouriteRestaurants = async (): Promise<IRestaurant[]> => {
   try {
@@ -28,8 +29,6 @@ export const updateFavouriteRestaurant = async (
   }
 };
 
-import { check } from "zod";
-import type { IAuthenticatedAs } from "@/libs/authentication";
 export const createFavouriteDish = async (dish_id: number): Promise<void> => {
   try {
     await apiClient.post<void>(`/favourite/dish`, { id: dish_id });
@@ -84,12 +83,21 @@ export const deleteFavouriteRestaurant = async (
     throw error;
   }
 };
+
+// Type guard to check if an item is a valid restaurant
+const isValidRestaurant = (item: unknown): item is IRestaurant => {
+  return (
+    item !== null &&
+    typeof item === 'object' &&
+    'name' in item &&
+    'location' in item &&
+    typeof (item as Record<string, unknown>).location === 'object' &&
+    (item as Record<string, unknown>).location !== null
+  );
+};
+
 export const getFavouriteRestaurant = async (): Promise<IRestaurant[]> => {
   try {
-    const isUser = await apiClient.get<IAuthenticatedAs>("/authenticate");
-    if(!isUser) {
-      return [];
-    }
     const response = await apiClient.get<IRestaurant[]>(
       `/favourite/restaurant`
     );
@@ -101,15 +109,10 @@ export const getFavouriteRestaurant = async (): Promise<IRestaurant[]> => {
     }
 
     // Ensure each item has the expected restaurant properties
-    const validRestaurants = response.data.filter((item: any) =>
-      item && typeof item === 'object' && item.name && item.location && typeof item.location === 'object'
-    );
+    const validRestaurants = response.data.filter(isValidRestaurant);
 
     return validRestaurants;
-  } catch (error: any) {
-    if (error?.response?.status === 401) {
-      return [];
-    }
+  } catch (error) {
     console.error("Error fetching favourite restaurant:", error);
     throw error;
   }
@@ -117,16 +120,9 @@ export const getFavouriteRestaurant = async (): Promise<IRestaurant[]> => {
 
 export const checkFavouriteDish = async (dish_id: number): Promise<boolean> => {
   try {
-    const isUser = await apiClient.get<IAuthenticatedAs>("/authenticate");
-    if(!isUser) {
-      return false;
-    }
     const response = await apiClient.get<boolean>(`/favourite/dish/${dish_id}`);
     return response.data;
-  } catch (error: any) {
-    if (error?.response?.status === 401) {
-      return false;
-    }
+  } catch (error) {
     console.error("Error checking favourite dish:", error);
     throw error;
   }
@@ -135,18 +131,11 @@ export const checkFavouriteRestaurant = async (
   restaurant_id: number
 ): Promise<boolean> => {
   try {
-    const isUser = await apiClient.get<IAuthenticatedAs>("/authenticate");
-    if(!isUser) {
-      return false;
-    }
     const response = await apiClient.get<boolean>(
       `/favourite/restaurant/${restaurant_id}`
     );
     return response.data;
-  } catch (error: any) {
-    if (error?.response?.status === 401) {
-      return false;
-    }
+  } catch (error) {
     console.error("Error checking favourite restaurant:", error);
     throw error;
   }
@@ -168,10 +157,7 @@ export const getFavouriteDishesByRestaurant = async (
     }
 
     return response.data;
-  } catch (error: any) {
-    if (error?.response?.status === 401) {
-      return [];
-    }
+  } catch (error) {
     console.error("Error fetching favourite dishes by restaurant:", error);
     throw error;
   }

@@ -1,17 +1,18 @@
 "use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 import { RestaurantList } from "@/components/Main/RestaurantList";
-import { getRestaurantById } from "@/libs/restaurant";
+import { authenticatedAs } from "@/libs/authentication";
 import { getDishRestaurantId } from "@/libs/dish";
-import type { IDish } from "@/types/dish";
 import {
   checkFavouriteRestaurant,
   getFavouriteDishesByRestaurant,
 } from "@/libs/favourite";
+import { getRestaurantById } from "@/libs/restaurant";
+import type { IDish } from "@/types/dish";
 
 export default function RestaurantPage({
   params,
@@ -38,6 +39,11 @@ export default function RestaurantPage({
     enabled: !!resolvedParams?.id,
   });
 
+  const { data: authenticatedAsRole } = useQuery({
+    queryKey: ["authenticate"],
+    queryFn: authenticatedAs,
+  });
+
   const { data: favourite_restaurant } = useQuery({
     queryKey: ["restaurant-favourite", resolvedParams?.id],
     queryFn: ({ queryKey }) => {
@@ -45,7 +51,7 @@ export default function RestaurantPage({
       if (!restaurantId) throw new Error("No id provided");
       return checkFavouriteRestaurant(Number(restaurantId));
     },
-    enabled: !!resolvedParams?.id,
+    enabled: !!resolvedParams?.id && !!authenticatedAsRole,
   });
   const { data: favourite_dish } = useQuery({
     queryKey: ["restaurant-favourite-dish", resolvedParams?.id],
@@ -54,7 +60,7 @@ export default function RestaurantPage({
       if (!restaurantId) throw new Error("No id provided");
       return getFavouriteDishesByRestaurant(Number(restaurantId));
     },
-    enabled: !!resolvedParams?.id,
+    enabled: !!resolvedParams?.id && !!authenticatedAsRole,
   });
 
   const { data: dishes } = useQuery({
@@ -72,11 +78,7 @@ export default function RestaurantPage({
     router.push(`/menu/${resolvedParams.id}/${dish.id}`);
   };
 
-  // if (!resolvedParams || favourite_restaurant === undefined) {
-  //   return (
-  //     <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
-  //   );
-  // }
+  console.log(dishes, restaurant);
 
   return (
     <main className="w-full overflow-auto p-16">
