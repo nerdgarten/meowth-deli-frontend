@@ -13,7 +13,6 @@ interface AuthContextType {
   login: (data: z.infer<typeof LoginFormSchema>) => Promise<void>;
   logout: () => Promise<void>;
   pathMap: Map<string, string>;
-  allowedPaths: Map<string, string[]>;
 }
 import { usePathname } from "next/navigation";
 import path from "path";
@@ -52,12 +51,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   // Authentication logic would go here
 
-  const allowedPaths = new Map<string, string[]>([
-    ["admin", ["/admin"]],
-    ["restaurant", ["/restaurant_2", "/settings"]],
-    ["customer", ["/", "/settings"]],
-    ["driver", ["/restaurant_2", "/settings"]],
-  ]);
   useEffect(() => {
     const checkAuth = async () => {
       const d = await authenticatedAs();
@@ -78,7 +71,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login,
         logout,
         pathMap,
-        allowedPaths,
       }}
     >
       {children}
