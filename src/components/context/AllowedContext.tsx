@@ -65,7 +65,11 @@ export const AllowedProvider = ({
   const router = useRouter();
 
   useEffect(() => {
-    if (role === "" && isLoading === false) {
+    if (
+      role === "" &&
+      isLoading === false &&
+      !isSubPath(pathname, "/register")
+    ) {
       router.replace("/");
       return;
     }
