@@ -3,18 +3,47 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
 } from "@ui/sidebar";
-import { LayoutDashboard, ShoppingBag } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Soup, Star } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
+
+const NAVIGATION_ITEMS = [
+  {
+    title: "Dashboard",
+    href: `/restaurant/dashboard`,
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Orders",
+    href: `/restaurant/orders`,
+    icon: ShoppingBag,
+  },
+  {
+    title: "Reviews",
+    href: `/restaurant/reviews`,
+    icon: Star,
+  },
+  {
+    title: "Menus",
+    href: `/restaurant/menus`,
+    icon: Soup,
+  },
+  // {
+  //   title: "Settings",
+  //   href: `/restaurant/settings`,
+  //   icon: Settings,
+  // },
+] as const;
 
 export default function DashboardLayout({
   children,
@@ -22,78 +51,65 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-
-  const NAVIGATION_ITEMS = [
-    {
-      title: "Dashboard",
-      href: `/restaurant/dashboard`,
-      icon: LayoutDashboard,
-    },
-    {
-      title: "Orders",
-      href: `/restaurant/orders`,
-      icon: ShoppingBag,
-    },
-    // {
-    //   title: "Reviews",
-    //   href: `/restaurant/reviews`,
-    //   icon: MessageSquare,
-    // },
-    // {
-    //   title: "Settings",
-    //   href: `/restaurant/settings`,
-    //   icon: Settings,
-    // },
-  ] as const;
-
   return (
-    <SidebarProvider className="min-h-screen bg-[#2c241f]">
-      <Sidebar className="mt-[4rem] border-0 bg-[#f7e3bd] text-[#2a1a0f] shadow-xl">
-        <SidebarContent className="flex h-full flex-col justify-between px-6 py-8">
-          <div className="space-y-6">
-            <div className="space-y-1">
-              <p className="text-xs font-semibold text-[#b08648] uppercase">
-                Restaurant Dashboard
-              </p>
-              <h2 className="text-xl font-bold tracking-tight text-[#201208]">
-                Meowth Delivery
-              </h2>
-              <p className="text-sm text-[#aa8551]">Restaurant Dashboard</p>
-            </div>
-
-            <SidebarGroup className="space-y-4">
-              <SidebarGroupLabel className="text-xs font-semibold text-[#b08648] uppercase">
-                Menu
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu className="space-y-2">
-                  {NAVIGATION_ITEMS.map((item) => {
-                    const Icon = item.icon;
-                    const isActive =
-                      item.href === `/restaurant/dashboard`
-                        ? pathname === item.href
-                        : pathname.startsWith(item.href);
-
-                    return (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
-                          asChild
-                          isActive={isActive}
-                          className="rounded-lg border border-transparent bg-transparent text-[#2a1a0f] transition hover:border-[#d3b989] hover:bg-[#f3d59b] data-[active=true]:border-[#b37a1f] data-[active=true]:bg-[#c8942c] data-[active=true]:text-white"
-                        >
-                          <Link href={item.href}>
-                            <Icon className="size-4" />
-                            <span>{item.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+    <SidebarProvider>
+      <Sidebar className="border-0 pt-[4rem] text-[#2a1a0f] shadow-xl">
+        <div className=""></div>
+        <SidebarContent className="relative flex h-full flex-col items-center pt-8">
+          <Image
+            src="/images/meowth-cooking.webp"
+            alt="Meowth Delivery Logo"
+            width={100}
+            height={100}
+            className="mt-4 rounded-full"
+          />
+          <div className="flex flex-col items-center gap-2">
+            <h2 className="text-xl font-bold tracking-tight text-[#201208] text-shadow-md">
+              Meowth Delivery
+            </h2>
+            <p className="text-xs font-semibold text-gray-500 uppercase">
+              Restaurant Dashboard
+            </p>
           </div>
+
+          <SidebarGroup className="mt-10 w-full p-0">
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {NAVIGATION_ITEMS.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href;
+
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        className="data-[active=true]:bg-app-peanut flex h-12 w-full rounded-none border-transparent bg-transparent pl-10 text-black hover:bg-black/10 active:bg-black/15 data-[active=true]:text-white data-[active=true]:shadow-sm data-[active=true]:hover:brightness-90 data-[active=true]:active:brightness-75"
+                      >
+                        <Link href={item.href}>
+                          <Icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
         </SidebarContent>
+        <SidebarFooter className="text-[12px]">
+          <SidebarMenu>
+            <SidebarMenuItem className="flex flex-col items-center gap-0 px-4 py-3">
+              <p className="font-semibold text-black">
+                Meowth Delivery Driver Dashboard
+              </p>
+              <p className="font-medium text-gray-500">
+                @2025 All Rights Reserved
+              </p>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
       </Sidebar>
       <SidebarInset className="bg-[#fff8eb]">
         <div className="justify center mt-[3rem] flex w-full flex-1 flex-col items-center gap-4 p-4">
