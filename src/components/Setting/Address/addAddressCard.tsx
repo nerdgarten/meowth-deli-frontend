@@ -13,23 +13,28 @@ import {
 } from "@/components/ui/form";
 
 const AddAddressSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Please enter your name Address.")
-    .max(128, "Password is too long."),
-  number: z
-    .string()
-    .min(10, "Your Number is Wrong.")
-    .max(10, "Your Number is Wrong."),
   address: z
     .string()
     .min(1, "Please enter your Address.")
     .max(128, "Address is too long."),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
 });
-
+import {
+  createCustomerLocation,
+  createRestaurantLocation,
+} from "@/libs/location";
+import toast from "react-hot-toast";
+import type { ICreateLocation } from "@/types/location";
 type AddAddressFormValues = z.infer<typeof AddAddressSchema>;
 
-export function AddAddressCard({ onClose }: { onClose: () => void }) {
+export function AddAddressCard({
+  type,
+  onClose,
+}: {
+  type: "customer" | "restaurant";
+  onClose: (data: ICreateLocation) => void;
+}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [setAsDefault, setSetAsDefault] = useState(false);
 
@@ -38,76 +43,87 @@ export function AddAddressCard({ onClose }: { onClose: () => void }) {
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
-      name: "",
-      number: "",
       address: "",
     },
   });
 
-  const onSubmit = addressForm.handleSubmit(async (data) => {
+  const getCurrentPosition = (
+    opts?: PositionOptions
+  ): Promise<GeolocationPosition> =>
+    new Promise((resolve, reject) => {
+      if (typeof navigator === "undefined" || !navigator.geolocation) {
+        reject(new Error("Geolocation not supported"));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(resolve, reject, opts);
+    });
+
+  const onSubmit = async (data: z.infer<typeof AddAddressSchema>) => {
     setIsSubmitting(true);
+    console.log("Submitting address:", data);
     try {
       // replace with real API call
       console.log("submit payload", { ...data, default: setAsDefault });
-      // await api.saveAddress({ ...data, default: setAsDefault });
 
       addressForm.reset();
-      onClose();
+
+      try {
+        console.log("Getting current position...");
+        const pos = await getCurrentPosition({
+          enableHighAccuracy: true,
+          timeout: 10000,
+        });
+        console.log("Position obtained:", pos);
+        const latitude = pos.coords.latitude;
+        const longitude = pos.coords.longitude;
+        if (latitude === undefined || longitude === undefined)
+          throw new Error("No coordinates found");
+        data.latitude = latitude!;
+        data.longitude = longitude!;
+        let d = null;
+        if (type === "customer") {
+          d = await createCustomerLocation({
+            address: data.address,
+            latitude: data.latitude!,
+            longitude: data.longitude!,
+          });
+        } else {
+          d = await createRestaurantLocation({
+            address: data.address,
+            latitude: data.latitude!,
+            longitude: data.longitude!,
+          });
+        }
+        // d = await createRestaurantLocation({
+        //   address: data.address,
+        //   latitude: data.latitude!,
+        //   longitude: data.longitude!,
+        // });
+        onClose(d);
+      } catch (err) {
+        toast.error(
+          "Could not get your location. Please enter address manually."
+        );
+        console.error("Error getting location:", err);
+      }
     } catch (err) {
       console.error(err);
-      // optionally show toast / error state
     } finally {
       setIsSubmitting(false);
     }
-  });
+  };
 
   return (
     <Form {...addressForm}>
       <form
         className="w-200 rounded-2xl px-6 py-5 shadow-none"
-        onSubmit={onSubmit}
+        onSubmit={addressForm.handleSubmit(onSubmit, (errs) => {
+          console.log("validation errors:", errs);
+        })}
       >
         <div className="flex flex-col gap-4">
           <div className="flex justify-between">
-            <div className="flex flex-col">
-              <FormField
-                control={addressForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem className="text-app-dark-brown flex w-60 flex-col space-y-4 text-lg font-semibold">
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <input
-                        {...field}
-                        type="text"
-                        className="border-app-brown/20 placeholder:text-app-brown/40 text-app-dark-brown bg-app-white focus:border-app-dark-brown focus:ring-app-dark-brown/20 w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition focus:ring-2 focus:outline-none"
-                        placeholder="Label (e.g., Home, Work)"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={addressForm.control}
-                name="number"
-                render={({ field }) => (
-                  <FormItem className="text-app-dark-brown flex w-60 flex-col space-y-4 text-lg font-semibold">
-                    <FormLabel>Number</FormLabel>
-                    <FormControl>
-                      <input
-                        {...field}
-                        type="text"
-                        className="border-app-brown/20 placeholder:text-app-brown/40 text-app-dark-brown bg-app-white focus:border-app-dark-brown focus:ring-app-dark-brown/20 w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition focus:ring-2 focus:outline-none"
-                        placeholder="Number"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+            <div className="flex flex-col gap-4">
               <FormField
                 control={addressForm.control}
                 name="address"
@@ -115,9 +131,9 @@ export function AddAddressCard({ onClose }: { onClose: () => void }) {
                   <FormItem className="text-app-dark-brown flex w-60 flex-col space-y-4 text-lg font-semibold">
                     <FormLabel>Address</FormLabel>
                     <FormControl>
-                      <input
+                      <textarea
+                        rows={3}
                         {...field}
-                        type="text"
                         className="border-app-brown/20 placeholder:text-app-brown/40 text-app-dark-brown bg-app-white focus:border-app-dark-brown focus:ring-app-dark-brown/20 w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition focus:ring-2 focus:outline-none"
                         placeholder="Address"
                       />
@@ -126,28 +142,19 @@ export function AddAddressCard({ onClose }: { onClose: () => void }) {
                   </FormItem>
                 )}
               />
+              <Button
+                type="button"
+                variant="outline"
+                className="text-app-dark-brown hover:bg-app-brown/10 shad rounded-xl px-4 py-3 text-sm font-semibold shadow-sm transition"
+                onClick={() => setSetAsDefault((s) => !s)}
+              >
+                {setAsDefault ? "Default ✓" : "Set as Default"}
+              </Button>
             </div>
-
-            <Button
-              type="submit"
-              variant="outline"
-              className="text-app-dark-brown hover:bg-app-brown/10 shad rounded-xl px-4 py-3 text-sm font-semibold shadow-sm transition"
-              onClick={onClose}
-            >
-              Set as Default
-            </Button>
+            <div className="h-80 w-1/2 rounded-2xl bg-amber-200">test</div>
           </div>
 
           <div className="flex w-full justify-end gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              className="text-app-dark-brown hover:bg-app-brown/10 rounded-xl px-4 py-3 text-sm font-semibold shadow-sm transition"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
             <Button
               type="submit"
               className="bg-app-dark-brown rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(64,56,49,0.18)] transition hover:bg-[#2F2721] active:bg-[#2c2621]"
