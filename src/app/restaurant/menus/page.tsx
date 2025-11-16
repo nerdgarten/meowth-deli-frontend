@@ -1,5 +1,9 @@
 "use client";
 
+import { AddMenuFormDialog } from "@/components/Restaurant/MenuFormDialog";
+import { RestaurantProfileFormCard } from "@/components/Setting/Profile/restaurant";
+import { Button } from "@/components/ui/button";
+
 type MenuItem = {
   id: number;
   title: string;
@@ -36,7 +40,7 @@ export default function RestaurantMenusPage() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
             <p className="text-xs font-semibold tracking-[0.24em] text-[#c0a476] uppercase">
-              Restaurant Menu Upload
+              Restaurant Menu
             </p>
             <h1 className="text-app-black text-3xl font-semibold">
               The Sushi Restaurant&apos;s Menus
@@ -47,12 +51,7 @@ export default function RestaurantMenusPage() {
             </p>
           </div>
 
-          <button
-            type="button"
-            className="bg-app-peanut rounded-full px-6 py-2 text-sm font-semibold text-white shadow-lg transition hover:brightness-95 active:translate-y-[1px] active:brightness-90"
-          >
-            Add Item
-          </button>
+          <AddMenuFormDialog />
         </div>
 
         <div className="mt-8 space-y-6">
@@ -88,18 +87,12 @@ export default function RestaurantMenusPage() {
                   </div>
                   <div className="flex-auto"></div>
                   <div className="flex flex-wrap gap-3">
-                    <button
-                      type="button"
-                      className="rounded-full bg-[#aeb7bd] px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 active:translate-y-[1px] active:brightness-90"
-                    >
+                    <Button className="rounded-full bg-[#aeb7bd] px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 active:translate-y-[1px] active:brightness-90">
                       Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="rounded-full bg-[#fb6d2c] px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 active:translate-y-[1px] active:brightness-90"
-                    >
+                    </Button>
+                    <Button className="rounded-full bg-[#fb6d2c] px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 active:translate-y-[1px] active:brightness-90">
                       Delete
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
