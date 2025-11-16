@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { type z } from "zod";
-
+import { useAuth } from "../context/AuthContext";
 import { LoginFormSchema, loginSubmitMutation } from "@/queries/auth";
 interface LoginDialogProps {
   isLoginDialogOpen: boolean;
@@ -34,9 +34,10 @@ export const LoginDialog = ({
   setIsLoginDialogOpen,
   onForgotPassword,
 }: LoginDialogProps) => {
+  const { login } = useAuth();
   const router = useRouter();
   const loginMutation = useMutation({
-    mutationFn: loginSubmitMutation,
+    mutationFn: login,
     onSuccess: () => {
       toast.success("Login successful!");
       setIsLoginDialogOpen(false);
@@ -129,7 +130,7 @@ export const LoginDialog = ({
             <div className="mt-10 flex w-full justify-center">
               <Button
                 type="submit"
-                className="bg-app-yellow w-1/3 rounded-full py-5 text-lg font-semibold"
+                className="bg-app-yellow hover:bg-app-yellow/60 active:bg-app-yellow/40 w-1/3 cursor-pointer rounded-full py-5 text-lg font-semibold active:scale-95"
               >
                 Login
               </Button>

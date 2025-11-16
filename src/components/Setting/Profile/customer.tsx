@@ -1,12 +1,13 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 import { useQuery } from "@tanstack/react-query";
 import { UserRound } from "lucide-react";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   EditProfileFormSchema,
   updateCustomerProfileMutation,
+  ProfileFormSchema,
 } from "@/queries/profile";
 
 export function CustomerProfilePage() {
@@ -68,14 +70,15 @@ const CustomerProfileForm = () => {
     },
   });
 
-  const customerProfileForm = useForm<z.infer<typeof EditProfileFormSchema>>({
-    resolver: zodResolver(EditProfileFormSchema),
+  const customerProfileForm = useForm<z.infer<typeof ProfileFormSchema>>({
+    resolver: zodResolver(ProfileFormSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: profileData ?? {
       firstname: "",
       lastname: "",
       tel: "",
+      profilePicture: null,
     },
   });
 
@@ -100,8 +103,47 @@ const CustomerProfileForm = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof EditProfileFormSchema>) =>
-    profileMutation.mutate(data);
+  const onSubmit = (data: z.infer<typeof ProfileFormSchema>) => {
+    const { profilePicture, firstname, lastname, tel } = data;
+    console.log("image", profilePicture);
+    profileMutation.mutate({
+      firstname,
+      lastname,
+      tel,
+      profilePicture, // image can be File or string (depending on your schema)
+    });
+  };
+  const [uploading, setUploading] = useState(false);
+  const handleFileUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+    } catch (error: any) {
+      toast.error(error.message || "File upload failed!");
+    } finally {
+      setUploading(false);
+    }
+  };
+  const imageValue = customerProfileForm.watch("profilePicture");
+  const [preview, setPreview] = useState<string>("");
+  useEffect(() => {
+    if (!imageValue) {
+      // fallback to existing backend URL if present
+      setPreview(
+        typeof profileData?.image === "string" ? profileData.image : ""
+      );
+      return;
+    }
+    if (typeof imageValue === "string") {
+      setPreview(imageValue);
+      return;
+    }
+    // File selected
+    const url = URL.createObjectURL(imageValue);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [imageValue, profileData?.image]);
 
   return (
     <Form {...customerProfileForm}>
@@ -111,6 +153,55 @@ const CustomerProfileForm = () => {
         noValidate
       >
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <FormField
+            control={customerProfileForm.control}
+            name="profilePicture"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel className="text-app-dark-brown text-sm font-semibold">
+                  Profile Picture
+                </FormLabel>
+                <div className="flex items-center gap-4 border-b-2 border-gray-500/40 pb-4">
+                  <div className="size-20 overflow-hidden rounded-lg bg-gray-200">
+                    {preview ? (
+                      <Image
+                        src={preview}
+                        alt="Profile"
+                        width={80}
+                        height={80}
+                        className="size-20 object-cover"
+                        unoptimized
+                      />
+                    ) : null}
+                  </div>
+                  <FormControl>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0] ?? null;
+                        field.onChange(f);
+                      }}
+                      className="text-app-dark-brown file:bg-app-dark-brown mt-2 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-white hover:file:bg-[#2F2721]"
+                    />
+                  </FormControl>
+                  {field.value && typeof field.value !== "string" && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() =>
+                        customerProfileForm.setValue("profilePicture", null)
+                      }
+                      className="rounded-lg"
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </div>
+                <FormMessage className="text-app-brown/70 text-xs" />
+              </FormItem>
+            )}
+          />
           <FormField
             control={customerProfileForm.control}
             name="firstname"
@@ -217,18 +308,18 @@ const CustomerProfileForm = () => {
           /> */}
         </div>
 
-        <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">
+        <div className="mt-8 flex justify-end gap-4">
           <Button
-            type="button"
-            variant="outline"
+            type="submit"
             onClick={() => customerProfileForm.reset()}
-            className="text-app-dark-brown hover:bg-app-brown/10 rounded-xl border-black/10 bg-white px-6 py-3 text-sm font-semibold shadow-none transition"
+            variant="outline"
+            className="rounded-xl bg-white px-8 py-5 text-sm font-semibold text-black shadow-[0_12px_28px_rgba(64,56,49,0.18)] transition hover:bg-gray-200 active:scale-95 active:bg-gray-300"
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            className="bg-app-dark-brown rounded-xl px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(64,56,49,0.18)] transition hover:bg-[#2F2721]"
+            className="bg-app-dark-brown rounded-xl px-8 py-5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(64,56,49,0.18)] transition hover:bg-[#2F2721] active:scale-95 active:bg-[#2c2621]"
           >
             Save Changes
           </Button>

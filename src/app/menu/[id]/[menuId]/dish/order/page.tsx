@@ -8,7 +8,7 @@ export default function StatusPage() {
     id: 0,
     customer_id: 0,
     driver_id: 0,
-    location: "Home",
+    delivery_location_id: 1,
     status: "pending",
     remark: "Dontknow",
     total_amount: 20,

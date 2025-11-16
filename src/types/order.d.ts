@@ -3,7 +3,7 @@ export interface IOrder {
   customer_id: number;
   driver_id?: number | null;
   restaurant_id: number;
-  location: string;
+  delivery_location_id: 1;
   status: "pending" | "preparing" | "delivered" | "rejected" | "success";
   remark?: string | null;
   total_amount: number;

@@ -1,12 +1,12 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
+import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
-import { UserRound } from "lucide-react";
+import { UserRound, ShoppingBag, Clock } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,19 +18,22 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { queryCustomerProfile } from "@/queries/profile";
-import type { ICustomerProfile } from "@/types/user";
+import type { ICustomerProfile, IRestaurantProfile } from "@/types/user";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  EditProfileFormSchema,
-  updateCustomerProfileMutation,
-} from "@/queries/profile";
 
-export function DriverProfilePage() {
+import {
+  queryRestaurantProfile,
+  RestaurantProfileFormSchema,
+  updateRestaurantProfileMutation,
+} from "@/libs/restaurant";
+import { restaurantUploadFile } from "@/queries/file";
+
+export function RestaurantProfilePage() {
   return (
-    <main className="bg-app-background flex h-full flex-col items-center pt-8">
-      <div className="mx-auto w-full max-w-5xl px-4 md:px-6 lg:px-8">
-        <CustomerProfileFormCard />
+    <main className="bg-app-background flex h-full w-full flex-col items-center pt-8">
+      <div className="w-full px-20">
+        <RestaurantProfileFormCard />
       </div>
     </main>
   );
@@ -38,56 +41,59 @@ export function DriverProfilePage() {
 
 export function RestaurantProfileFormCard() {
   return (
-    <section className="rounded-3xl border border-black/10 bg-white shadow-[0_15px_40px_rgba(64,56,49,0.08)]">
-      <div className="px-4 py-6 md:px-8 md:py-8">
-        <div className="flex flex-wrap items-start gap-4">
+    <section className="grid grid-cols-2 gap-4">
+      <div className="col-span-2 row-span-1 w-full rounded-2xl bg-white p-4 px-10">
+        <div className="flex flex-wrap items-center gap-4">
           <span className="text-app-dark-brown flex size-12 items-center justify-center rounded-full">
-            <UserRound className="size-6" aria-hidden />
+            <ShoppingBag className="size-6" aria-hidden />
           </span>
           <div>
             <h2 className="text-app-dark-brown text-xl font-semibold">
-              Profile Information
+              Store Profile
             </h2>
-            <p className="text-app-brown/80 mt-1 text-sm">
-              Update your personal information.
-            </p>
           </div>
         </div>
-        <CustomerProfileForm />
+        <p className="text-app-brown/80 mt-1 text-sm">
+          Update your personal information.
+        </p>
+        <RestaurantProfileForm />
       </div>
     </section>
   );
 }
-
-const CustomerProfileForm = () => {
-  const { data: profileData } = useQuery<ICustomerProfile>({
-    queryKey: ["customer-profile"],
+const RestaurantProfileForm = () => {
+  const { data: restaurantData } = useQuery<IRestaurantProfile>({
+    queryKey: ["restaurant-profile"],
     queryFn: async () => {
-      const profile = await queryCustomerProfile();
+      const profile = await queryRestaurantProfile();
       return profile;
     },
   });
 
-  const customerProfileForm = useForm<z.infer<typeof EditProfileFormSchema>>({
-    resolver: zodResolver(EditProfileFormSchema),
+  const restaurantProfileForm = useForm<
+    z.infer<typeof RestaurantProfileFormSchema>
+  >({
+    resolver: zodResolver(RestaurantProfileFormSchema),
     mode: "onChange",
     reValidateMode: "onChange",
-    defaultValues: profileData ?? {
-      firstname: "",
-      lastname: "",
+    defaultValues: restaurantData ?? {
+      name: "",
+      detail: "",
       tel: "",
+      is_available: false,
+      restaurantBanner: null,
     },
   });
 
-  useEffect(() => {
-    if (!profileData) {
-      return;
-    }
-    customerProfileForm.reset(profileData);
-  }, [profileData, customerProfileForm]);
+  // useEffect(() => {
+  //   if (!profileData) {
+  //     return;
+  //   }
+  //   restaurantProfileSchema.reset(profileData);
+  // }, [profileData, restaurantProfileSchema]);
 
-  const profileMutation = useMutation({
-    mutationFn: updateCustomerProfileMutation,
+  const restaurantMutation = useMutation({
+    mutationFn: updateRestaurantProfileMutation,
     onSuccess: () => {
       toast.success("Profile updated successfully!");
     },
@@ -100,8 +106,19 @@ const CustomerProfileForm = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof EditProfileFormSchema>) =>
-    profileMutation.mutate(data);
+  const onSubmit = (data: z.infer<typeof RestaurantProfileFormSchema>) => {
+    // const { profilePicture, firstname, lastname, tel } = data;
+    // console.log("image", profilePicture);
+    const { name, detail, tel, is_available, restaurantBanner } = data;
+    restaurantMutation.mutate({
+      name,
+      detail,
+      tel,
+      is_available,
+      restaurantBanner,
+    });
+  };
+  // profileMutation.mutate(data);
 
   // State for file upload
   const [uploading, setUploading] = useState(false);
@@ -110,19 +127,7 @@ const CustomerProfileForm = () => {
   const handleFileUpload = async (file: File) => {
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch("http://localhost:3030/file/upload", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
-      }
-
+      await restaurantUploadFile(file);
       toast.success("File uploaded successfully!");
     } catch (error: any) {
       toast.error(error.message || "File upload failed!");
@@ -130,104 +135,175 @@ const CustomerProfileForm = () => {
       setUploading(false);
     }
   };
-
+  const imageValue = restaurantProfileForm.watch("restaurantBanner");
+  const [preview, setPreview] = useState<string>("");
+  useEffect(() => {
+    if (!imageValue) {
+      // fallback to existing backend URL if present
+      setPreview(
+        typeof restaurantData?.banner === "string" ? restaurantData.banner : ""
+      );
+      return;
+    }
+    if (typeof imageValue === "string") {
+      setPreview(imageValue);
+      return;
+    }
+    // File selected
+    const url = URL.createObjectURL(imageValue);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [imageValue, restaurantData?.banner]);
   return (
-    <Form {...customerProfileForm}>
+    <Form {...restaurantProfileForm}>
       <form
-        className="mt-10 space-y-10"
-        onSubmit={customerProfileForm.handleSubmit(onSubmit)}
+        className="mt-10 w-full space-y-10"
+        onSubmit={restaurantProfileForm.handleSubmit(onSubmit)}
         noValidate
       >
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <FormField
-            control={customerProfileForm.control}
-            name="firstname"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-app-dark-brown text-sm font-semibold">
-                  First Name
-                </FormLabel>
+        <FormField
+          control={restaurantProfileForm.control}
+          name="restaurantBanner"
+          render={({ field }) => (
+            <FormItem className="col-span-2">
+              <FormLabel className="text-app-dark-brown text-sm font-semibold">
+                Profile Picture
+              </FormLabel>
+              <div className="flex items-center gap-4 border-b-2 border-gray-500/40 pb-4">
+                <div className="size-20 overflow-hidden rounded-lg bg-gray-200">
+                  {preview ? (
+                    <Image
+                      src={preview}
+                      alt="Profile"
+                      width={80}
+                      height={80}
+                      className="size-20 object-cover"
+                      unoptimized
+                    />
+                  ) : null}
+                </div>
                 <FormControl>
                   <input
-                    type="text"
-                    className="border-app-brown/20 placeholder:text-app-brown/40 text-app-dark-brown bg-app-white focus:border-app-dark-brown focus:ring-app-dark-brown/20 w-full rounded-xl border px-4 py-3 text-base shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition focus:ring-2 focus:outline-none"
-                    {...field}
-                    placeholder="John"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0] ?? null;
+                      field.onChange(f);
+                    }}
+                    className="text-app-dark-brown file:bg-app-dark-brown mt-2 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-white hover:file:bg-[#2F2721]"
                   />
                 </FormControl>
-                <FormMessage className="text-app-brown/70 text-xs" />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={customerProfileForm.control}
-            name="lastname"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-app-dark-brown text-sm font-semibold">
-                  Last Name
-                </FormLabel>
-                <FormControl>
-                  <input
-                    type="text"
-                    className="border-app-brown/20 placeholder:text-app-brown/40 text-app-dark-brown bg-app-white focus:border-app-dark-brown focus:ring-app-dark-brown/20 w-full rounded-xl border px-4 py-3 text-base shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition focus:ring-2 focus:outline-none"
-                    {...field}
-                    placeholder="Doe"
-                  />
-                </FormControl>
-                <FormMessage className="text-app-brown/70 text-xs" />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={customerProfileForm.control}
-            name="tel"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-app-dark-brown text-sm font-semibold">
-                  Phone
-                </FormLabel>
-                <FormControl>
-                  <input
-                    type="tel"
-                    className="border-app-brown/20 placeholder:text-app-brown/40 text-app-dark-brown bg-app-white focus:border-app-dark-brown focus:ring-app-dark-brown/20 w-full rounded-xl border px-4 py-3 text-base shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition focus:ring-2 focus:outline-none"
-                    {...field}
-                    placeholder="+66 12 345 6789"
-                  />
-                </FormControl>
-                <FormMessage className="text-app-brown/70 text-xs" />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* File Upload Section */}
-        <div className="mt-6">
-          <FormLabel className="text-app-dark-brown text-sm font-semibold">
-            Upload File (PDF)
-          </FormLabel>
-          <input
-            type="file"
-            accept="application/pdf"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleFileUpload(file);
-            }}
-            className="text-app-dark-brown file:bg-app-dark-brown mt-2 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-white hover:file:bg-[#2F2721]"
-            disabled={uploading}
-          />
-          {uploading && (
-            <p className="text-app-brown/70 mt-2 text-sm">Uploading...</p>
+                {field.value && typeof field.value !== "string" && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() =>
+                      restaurantProfileForm.setValue("restaurantBanner", null)
+                    }
+                    className="rounded-lg"
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+              <FormMessage className="text-app-brown/70 text-xs" />
+            </FormItem>
           )}
+        />
+
+        <div className="grid grid-cols-2 grid-rows-5 gap-6">
+          <div className="col-span-2 row-span-1">
+            <FormField
+              control={restaurantProfileForm.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-app-dark-brown text-sm font-semibold">
+                    Restaurant Name
+                  </FormLabel>
+                  <FormControl>
+                    <input
+                      type="text"
+                      className="border-app-brown/20 placeholder:text-app-brown/40 text-app-dark-brown bg-app-white focus:border-app-dark-brown focus:ring-app-dark-brown/20 w-full rounded-xl border px-4 py-3 text-base shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition focus:ring-2 focus:outline-none"
+                      {...field}
+                      placeholder={restaurantData?.name ?? "Restaurant Name"}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-app-brown/70 text-xs" />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="col-span-2 row-span-1">
+            <FormField
+              control={restaurantProfileForm.control}
+              name="detail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-app-dark-brown text-sm font-semibold">
+                    About Your Restaurant
+                  </FormLabel>
+                  <FormControl>
+                    <input
+                      type="text"
+                      className="border-app-brown/20 placeholder:text-app-brown/40 text-app-dark-brown bg-app-white focus:border-app-dark-brown focus:ring-app-dark-brown/20 w-full rounded-xl border px-4 py-3 text-base shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition focus:ring-2 focus:outline-none"
+                      {...field}
+                      placeholder={restaurantData?.detail ?? "Description"}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-app-brown/70 text-xs" />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="col-span-1 row-span-1">
+            <FormField
+              control={restaurantProfileForm.control}
+              name="tel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-app-dark-brown text-sm font-semibold">
+                    Phone
+                  </FormLabel>
+                  <FormControl>
+                    <input
+                      type="tel"
+                      className="border-app-brown/20 placeholder:text-app-brown/40 text-app-dark-brown bg-app-white focus:border-app-dark-brown focus:ring-app-dark-brown/20 w-full rounded-xl border px-4 py-3 text-base shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition focus:ring-2 focus:outline-none"
+                      {...field}
+                      placeholder={restaurantData?.tel ?? "+668888888"}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-app-brown/70 text-xs" />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="mt-6">
+            <FormLabel className="text-app-dark-brown text-sm font-semibold">
+              Verification
+            </FormLabel>
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFileUpload(file);
+              }}
+              className="text-app-dark-brown file:bg-app-dark-brown mt-2 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-white hover:file:bg-[#2F2721]"
+              disabled={uploading}
+            />
+            {uploading && (
+              <p className="text-app-brown/70 mt-2 text-sm">Uploading...</p>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">
           <Button
             type="button"
             variant="outline"
-            onClick={() => customerProfileForm.reset()}
+            onClick={() => restaurantProfileForm.reset()}
             className="text-app-dark-brown hover:bg-app-brown/10 rounded-xl border-black/10 bg-white px-6 py-3 text-sm font-semibold shadow-none transition"
           >
             Cancel
