@@ -52,6 +52,7 @@ export default function OrderPage({
       dishes: IOrderDish[];
       restaurant_id: number;
       driver_fee: number;
+      remark: string;
     }) => createOrder(orderData),
 
     onSuccess: (data) => {
@@ -124,7 +125,7 @@ export default function OrderPage({
 
   const cartItem = getCartItems(resolvedParams.id);
 
-  const onSubmit = async (): Promise<void> => {
+  const onSubmit = async (remark: string): Promise<void> => {
     if (cartItem.length === 0) {
       alert("Your cart is empty!");
       return;
@@ -141,6 +142,7 @@ export default function OrderPage({
         dishes: sending,
         restaurant_id: Number(resolvedParams.id),
         driver_fee: 30,
+        remark: remark,
       });
 
       clearCart(resolvedParams.id);
