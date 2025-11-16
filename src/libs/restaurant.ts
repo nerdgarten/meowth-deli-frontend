@@ -10,7 +10,7 @@ export const getRestaurantById = async (
 ): Promise<IRestaurant> => {
   try {
     const response = await apiClient.get<IRestaurant>(
-      `/restaurant/profile/${restaurant_id}`
+      `/restaurant/${restaurant_id}`
     );
     return response.data;
   } catch (error) {
