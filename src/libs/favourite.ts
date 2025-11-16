@@ -1,7 +1,34 @@
+import type { IAuthenticatedAs } from "@/libs/authentication";
 import { apiClient } from "@/libs/axios";
 import type { IDish } from "@/types/dish";
 import type { IRestaurant } from "@/types/restaurant";
-import { check } from "zod";
+
+export const getFavouriteRestaurants = async (): Promise<IRestaurant[]> => {
+  try {
+    const response = await apiClient.get<IRestaurant[]>(`/restaurant/favorite`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching favourite restaurants:", error);
+    throw error;
+  }
+};
+
+export const updateFavouriteRestaurant = async (
+  restaurantId: number,
+  isFavourite: boolean
+): Promise<void> => {
+  try {
+    await apiClient.post<void>(`/restaurant/favorite`, {
+      restaurantId: restaurantId,
+      isFavourite: isFavourite,
+    });
+    return Promise.resolve();
+  } catch (error) {
+    console.error("Error updating favourite restaurants:", error);
+    throw error;
+  }
+};
+
 export const createFavouriteDish = async (dish_id: number): Promise<void> => {
   try {
     await apiClient.post<void>(`/favourite/dish`, { id: dish_id });
@@ -29,43 +56,41 @@ export const getFavouriteDish = async (): Promise<IDish[]> => {
     throw error;
   }
 };
-export const createFavouriteRestaurant = async (
-  restaurant_id: number
-): Promise<void> => {
-  try {
-    const response = await apiClient.post<void>(`/favourite/restaurant`, {
-      id: restaurant_id,
-    });
-    return Promise.resolve();
-  } catch (error) {
-    console.error("Error creating favourite restaurant:", error);
-    throw error;
-  }
+
+// Type guard to check if an item is a valid restaurant
+const isValidRestaurant = (item: unknown): item is IRestaurant => {
+  return (
+    item !== null &&
+    typeof item === 'object' &&
+    'name' in item &&
+    'location' in item &&
+    typeof (item as Record<string, unknown>).location === 'object' &&
+    (item as Record<string, unknown>).location !== null
+  );
 };
-export const deleteFavouriteRestaurant = async (
-  restaurant_id: number
-): Promise<void> => {
-  try {
-    const response = await apiClient.delete<void>(
-      `/favourite/restaurant/${restaurant_id}`
-    );
-    return Promise.resolve();
-  } catch (error) {
-    console.error("Error deleting favourite restaurant:", error);
-    throw error;
-  }
-};
+
 export const getFavouriteRestaurant = async (): Promise<IRestaurant[]> => {
   try {
     const response = await apiClient.get<IRestaurant[]>(
       `/favourite/restaurant`
     );
-    return response.data;
+
+    // Handle case where API returns location data instead of restaurant data
+    if (response.data && !Array.isArray(response.data)) {
+      console.warn("API returned unexpected data format for favourite restaurants:", response.data);
+      return [];
+    }
+
+    // Ensure each item has the expected restaurant properties
+    const validRestaurants = response.data.filter(isValidRestaurant);
+
+    return validRestaurants;
   } catch (error) {
     console.error("Error fetching favourite restaurant:", error);
     throw error;
   }
 };
+
 export const checkFavouriteDish = async (dish_id: number): Promise<boolean> => {
   try {
     const response = await apiClient.get<boolean>(`/favourite/dish/${dish_id}`);
@@ -92,6 +117,10 @@ export const getFavouriteDishesByRestaurant = async (
   restaurant_id: number
 ): Promise<IDish[]> => {
   try {
+    const isUser = await apiClient.get<IAuthenticatedAs>("/authenticate");
+    if(!isUser) {
+      return [];
+    }
     const response = await apiClient.get<IDish[]>(
       `/favourite/restaurant/${restaurant_id}/dish`
     );
@@ -103,6 +132,33 @@ export const getFavouriteDishesByRestaurant = async (
     return response.data;
   } catch (error) {
     console.error("Error fetching favourite dishes by restaurant:", error);
+    throw error;
+  }
+};
+
+export const createFavouriteRestaurant = async (
+  restaurant_id: number
+): Promise<void> => {
+  try {
+    const response = await apiClient.post<void>(`/favourite/restaurant`, {
+      id: restaurant_id,
+    });
+    return Promise.resolve();
+  } catch (error) {
+    console.error("Error creating favourite restaurant:", error);
+    throw error;
+  }
+};
+export const deleteFavouriteRestaurant = async (
+  restaurant_id: number
+): Promise<void> => {
+  try {
+    const response = await apiClient.delete<void>(
+      `/favourite/restaurant/${restaurant_id}`
+    );
+    return Promise.resolve();
+  } catch (error) {
+    console.error("Error deleting favourite restaurant:", error);
     throw error;
   }
 };
