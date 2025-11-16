@@ -12,12 +12,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "@ui/sidebar";
-import {
-  LayoutDashboard,
-  MessageSquare,
-  Settings,
-  ShoppingBag,
-} from "lucide-react";
+import { LayoutDashboard, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
@@ -27,28 +22,26 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { id } = useParams();
-  const restaurantId = id as string;
 
   const NAVIGATION_ITEMS = [
     {
       title: "Dashboard",
-      href: `/restaurant/${restaurantId}/dashboard`,
+      href: `/restaurant/dashboard`,
       icon: LayoutDashboard,
     },
     {
       title: "Orders",
-      href: `/restaurant/${restaurantId}/dashboard/orders`,
+      href: `/restaurant/orders`,
       icon: ShoppingBag,
     },
     // {
     //   title: "Reviews",
-    //   href: `/restaurant/${restaurantId}/dashboard/reviews`,
+    //   href: `/restaurant/reviews`,
     //   icon: MessageSquare,
     // },
     // {
     //   title: "Settings",
-    //   href: `/restaurant/${restaurantId}/dashboard/settings`,
+    //   href: `/restaurant/settings`,
     //   icon: Settings,
     // },
   ] as const;
@@ -77,7 +70,7 @@ export default function DashboardLayout({
                   {NAVIGATION_ITEMS.map((item) => {
                     const Icon = item.icon;
                     const isActive =
-                      item.href === `/restaurant/${restaurantId}/dashboard`
+                      item.href === `/restaurant/dashboard`
                         ? pathname === item.href
                         : pathname.startsWith(item.href);
 
