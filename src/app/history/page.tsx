@@ -1,126 +1,16 @@
 "use client";
 
-import * as React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/dialog";
 import Image from "next/image";
+import { useCallback, useState } from "react";
 
+import { type IOrderDetails } from "@/queries/order";
+import { queryDriverOrders } from "@/queries/order";
 import type { IOrder } from "@/types/order";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/dialog";
-import { Button } from "@ui/button";
-
-interface OrderItem {
-  name: string;
-  quantity: number;
-  price: number;
-  note?: string;
-  image?: string;
-}
-
-interface OrderDetails extends IOrder {
-  restaurant_name: string;
-  restaurant_image?: string;
-  driver_name?: string;
-  delivery_address: string;
-  items: OrderItem[];
-  subtotal: number;
-}
-
-const orders: OrderDetails[] = [
-  {
-    id: 2380,
-    restaurant_id: 1,
-    customer_id: 102,
-    driver_id: null,
-    location: "Pizza Com บ้าน",
-    status: "preparing",
-    remark: "Allergies: no peanuts",
-    total_amount: 920,
-    driver_fee: 22,
-    restaurant_name: "Pizza Com บ้าน ชาย มูรา - บางพลัด",
-    driver_name: "John Doorson",
-    delivery_address: "285/17 The King Hotel ถนนพชนาเฮม",
-    subtotal: 898,
-    items: [
-      {
-        name: "Premium French Imported Artisanal Avocado Oil",
-        quantity: 1,
-        price: 299,
-        note: "Avocado oil 100ML *1",
-        // image: "/placeholder-dish.jpg",
-      },
-      {
-        name: "French Imported Walnut Bread Spread",
-        quantity: 1,
-        price: 599,
-        note: "200g *1",
-        // image: "/placeholder-dish.jpg",
-      },
-    ],
-  },
-  {
-    id: 2381,
-    restaurant_id: 2,
-    customer_id: 219,
-    driver_id: 18,
-    location: "Pizza อีก",
-    status: "success",
-    remark: null,
-    total_amount: 320,
-    driver_fee: 15,
-    restaurant_name: "Pizza อีก",
-    delivery_address: "123 Main Street",
-    subtotal: 305,
-    items: [
-      {
-        name: "Margherita Pizza",
-        quantity: 1,
-        price: 305,
-      },
-    ],
-  },
-  {
-    id: 2382,
-    restaurant_id: 3,
-    customer_id: 356,
-    driver_id: 24,
-    location: "โดนเบ Pizza",
-    status: "rejected",
-    remark: "Leave at concierge",
-    total_amount: 617,
-    driver_fee: 20,
-    restaurant_name: "โดนเบ Pizza",
-    delivery_address: "456 Garden Lane",
-    subtotal: 597,
-    items: [
-      {
-        name: "Pepperoni Pizza",
-        quantity: 1,
-        price: 597,
-      },
-    ],
-  },
-  {
-    id: 2383,
-    restaurant_id: 1,
-    customer_id: 410,
-    driver_id: 33,
-    location: "โดนเบ Pizza",
-    status: "success",
-    remark: null,
-    total_amount: 274,
-    driver_fee: 20,
-    restaurant_name: "โดนเบ Pizza",
-    delivery_address: "789 Market Road",
-    subtotal: 254,
-    items: [
-      {
-        name: "Hawaiian Pizza",
-        quantity: 1,
-        price: 254,
-      },
-    ],
-  },
-];
+// Use react-query directly inside the component.
 
 const STATUS_LABELS: Record<IOrder["status"], string> = {
   pending: "Pending",
@@ -145,11 +35,21 @@ const formatCurrency = (value: number) =>
   })} ฿`;
 
 export default function OrdersPage() {
-  const [activeOrder, setActiveOrder] = React.useState<OrderDetails | null>(
-    null
-  );
+  const [activeOrder, setActiveOrder] = useState<IOrderDetails | null>(null);
 
-  const handleCloseModal = React.useCallback(() => {
+  // const {
+  //   data: orders = [],
+  //   isLoading,
+  //   error,
+  // } = useQuery<IOrderDetails[]>({
+  //   queryKey: ["driverOrders"],
+  //   queryFn: () => queryDriverOrders(),
+  // });
+  const orders: IOrderDetails[] = [];
+  const isLoading = false;
+  const error = null;
+
+  const handleCloseModal = useCallback(() => {
     setActiveOrder(null);
   }, []);
 
@@ -171,17 +71,29 @@ export default function OrdersPage() {
             <div>
               <h2 className="mb-4 text-xl font-bold text-black">Order</h2>
               <div className="space-y-4">
-                {orders.map((order) => (
-                  <OrderCard
-                    key={order.id}
-                    order={order}
-                    onViewDetails={() => setActiveOrder(order)}
-                  />
-                ))}
-                {orders.length === 0 && (
+                {isLoading ? (
                   <div className="rounded-2xl border-2 border-dashed border-[#d4c5a9] bg-white px-6 py-12 text-center">
-                    <p className="text-[#8b7355]">No incoming orders</p>
+                    <p className="text-[#8b7355]">Loading orders…</p>
                   </div>
+                ) : error ? (
+                  <div className="rounded-2xl border-2 border-dashed border-[#d4c5a9] bg-white px-6 py-12 text-center">
+                    <p className="text-[#8b7355]">Unable to load orders</p>
+                  </div>
+                ) : (
+                  <>
+                    {orders.map((order) => (
+                      <OrderCard
+                        key={order.id}
+                        order={order}
+                        onViewDetails={() => setActiveOrder(order)}
+                      />
+                    ))}
+                    {orders.length === 0 && (
+                      <div className="rounded-2xl border-2 border-dashed border-[#d4c5a9] bg-white px-6 py-12 text-center">
+                        <p className="text-[#8b7355]">No incoming orders</p>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -207,10 +119,10 @@ export default function OrdersPage() {
               {/* Restaurant Info */}
               <div className="flex items-start gap-3">
                 <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-[#f5f5f5]">
-                  {activeOrder.restaurant_image ? (
+                  {activeOrder.restaurant.banner ? (
                     <Image
-                      src={activeOrder.restaurant_image}
-                      alt={activeOrder.restaurant_name}
+                      src={activeOrder.restaurant.banner}
+                      alt={activeOrder.restaurant.name}
                       width={64}
                       height={64}
                       className="h-full w-full object-cover"
@@ -223,11 +135,12 @@ export default function OrdersPage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-black">
-                    {activeOrder.restaurant_name}
+                    {activeOrder.restaurant.name}
                   </h3>
-                  {activeOrder.driver_name && (
+                  {activeOrder.driver?.firstname && (
                     <p className="text-sm text-[#6c757d]">
-                      Delivered by {activeOrder.driver_name}
+                      Delivered by {activeOrder.driver.firstname}{" "}
+                      {activeOrder.driver.lastname}
                     </p>
                   )}
                 </div>
@@ -235,13 +148,13 @@ export default function OrdersPage() {
 
               {/* Order Items */}
               <div className="space-y-3">
-                {activeOrder.items.map((item, index) => (
+                {activeOrder.orderDishes.map((item, index) => (
                   <div key={index} className="flex items-start gap-3">
                     <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-[#f5f5f5]">
-                      {item.image ? (
+                      {item.dish?.image ? (
                         <Image
-                          src={item.image}
-                          alt={item.name}
+                          src={item.dish.image}
+                          alt={item.dish.name}
                           width={64}
                           height={64}
                           className="h-full w-full object-cover"
@@ -256,17 +169,17 @@ export default function OrdersPage() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <p className="font-medium text-black">
-                            <span className="mr-2">{item.quantity}x</span>
-                            {item.name}
+                            <span className="mr-2">{item.amount}x</span>
+                            {item.dish.name}
                           </p>
-                          {item.note && (
+                          {item.remark && (
                             <p className="text-xs text-[#6c757d]">
-                              {item.note}
+                              {item.remark}
                             </p>
                           )}
                         </div>
                         <span className="ml-3 font-semibold text-black">
-                          ฿ {item.price}
+                          ฿ {item.dish.price * item.amount}
                         </span>
                       </div>
                     </div>
@@ -282,7 +195,7 @@ export default function OrdersPage() {
                   </div>
                   <div className="flex-1">
                     <p className="text-sm text-black">
-                      {activeOrder.restaurant_name}
+                      {activeOrder.restaurant.name}
                     </p>
                   </div>
                 </div>
@@ -311,7 +224,7 @@ export default function OrdersPage() {
                   </div>
                   <div className="flex-1">
                     <p className="text-sm text-black">
-                      {activeOrder.delivery_address}
+                      {activeOrder.location.address}
                     </p>
                   </div>
                 </div>
@@ -321,7 +234,9 @@ export default function OrdersPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-[#6c757d]">Subtotal</span>
-                  <span className="text-black">฿ {activeOrder.subtotal}</span>
+                  <span className="text-black">
+                    ฿ {activeOrder.total_amount}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-[#6c757d]">Delivery fee</span>
@@ -357,7 +272,7 @@ export default function OrdersPage() {
 }
 
 type OrderCardProps = {
-  order: OrderDetails;
+  order: IOrderDetails;
   onViewDetails: () => void;
 };
 
@@ -377,7 +292,7 @@ function OrderCard({ order, onViewDetails }: OrderCardProps) {
             {STATUS_LABELS[order.status]}
           </span>
         </div>
-        <p className="text-sm text-[#6c757d]">{order.location}</p>
+        <p className="text-sm text-[#6c757d]">{order.location.address}</p>
         <p className="text-base font-semibold text-[#d2691e]">
           Delivery Fee {formatCurrency(order.driver_fee)}
         </p>
