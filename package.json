@@ -7,6 +7,7 @@
     "build": "next build",
     "check": "eslint . && tsc --noEmit",
     "dev": "next dev --turbo",
+    "test:e2e": "playwright test",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "lint": "eslint .",
@@ -52,6 +53,7 @@
     "zod": "^4.1.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/postcss": "^4.0.15",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20.14.10",
