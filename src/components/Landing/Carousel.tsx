@@ -1,7 +1,7 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { Carousel, CarouselContent, CarouselItem } from "@ui/carousel";
-import Image from "next/image";
 import {
   Carousel as LandingCarouselContainer,
   type CarouselApi as LandingCarouselApi,
@@ -10,20 +10,20 @@ import {
 } from "@ui/custom/LandingCarousel";
 import Autoplay from "embla-carousel-autoplay";
 import { Circle, Coffee, MessageSquare } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 
 import { MS_IN_SEC } from "@/constants/misc";
-import { cn } from "@/libs/utils";
-
-import { TopCarouselCard } from "./TopCarouselCard";
 import { getAllRestaurant } from "@/libs/restaurant";
-import type { IRestaurant } from "@/types/restaurant";
+import { cn } from "@/libs/utils";
+import { getDishesByRestaurnatId } from "@/queries/dish";
+import { getRestaurantReviews } from "@/queries/reviews";
 // zod not used here
 import type { IDish } from "@/types/dish";
-import { getRestaurantReviews } from "@/queries/reviews";
+import type { IRestaurant } from "@/types/restaurant";
 import type { ReviewResponse } from "@/types/review";
-import { getDishesByRestaurnatId } from "@/queries/dish";
+
+import { TopCarouselCard } from "./TopCarouselCard";
 
 export const LandingCarousel = () => {
   const [api, setApi] = useState<LandingCarouselApi>();
@@ -47,7 +47,6 @@ export const LandingCarousel = () => {
     enabled: !!randomRestaurant,
   });
 
-  // Fetch top review for the random restaurant (limit=1)
   const { data: restaurantReviews, isLoading: isReviewLoading } = useQuery<
     ReviewResponse[] | undefined
   >({
