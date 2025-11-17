@@ -4,11 +4,10 @@ import { Button } from "@ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/dialog";
 import Image from "next/image";
 import { useState, useMemo, useCallback } from "react";
-import type { IOrder } from "@/types/order";
 import { queryDriverOrders, type IOrderDetails } from "@/queries/order";
 import { useQuery } from "node_modules/@tanstack/react-query/build/modern/useQuery";
 
-const STATUS_LABELS: Record<IOrder["status"], string> = {
+const STATUS_LABELS: Record<IOrderDetails["status"], string> = {
   pending: "Pending",
   preparing: "In Progress",
   delivered: "Delivered",
@@ -16,15 +15,18 @@ const STATUS_LABELS: Record<IOrder["status"], string> = {
   success: "Complete",
 };
 
-const STATUS_STYLES: Record<IOrder["status"], string> = {
-  pending: "bg-[#6c757d] text-white",
-  preparing: "bg-[#6c757d] text-white",
-  delivered: "bg-[#0dcaf0] text-white",
-  rejected: "bg-[#dc3545] text-white",
-  success: "bg-[#0dcaf0] text-white",
+const STATUS_STYLES: Record<IOrderDetails["status"], string> = {
+  pending: "bg-[#fff3cd] text-[#856404]",
+  preparing: "bg-[#d1ecf1] text-[#0c5460]",
+  delivered: "bg-[#d4edda] text-[#155724]",
+  rejected: "bg-[#f8d7da] text-[#721c24]",
+  success: "bg-[#d4edda] text-[#155724]",
 };
 
-const FILTERS: Array<{ label: string; value: IOrder["status"] | "all" }> = [
+const FILTERS: Array<{
+  label: string;
+  value: IOrderDetails["status"] | "all";
+}> = [
   { label: "All", value: "all" },
   { label: "Pending", value: "pending" },
   { label: "Preparing", value: "preparing" },
@@ -40,23 +42,24 @@ const formatCurrency = (value: number) =>
   })} ฿`;
 
 export default function OrdersPage() {
-  const { data: orders = [], isLoading: ordersIsLoading } = useQuery<
-    IOrderDetails[]
-  >({
+  const { data = [], isLoading } = useQuery<IOrderDetails[]>({
     queryKey: ["driver-orders"],
     queryFn: queryDriverOrders,
   });
+  const orders = useMemo(() => {
+    return data.filter((order) => order.status !== "pending");
+  }, [data]);
   const [activeOrder, setActiveOrder] = useState<IOrderDetails | null>(null);
 
   const incomingOrders = useMemo(() => {
     return orders.filter((order) =>
-      ["pending", "preparing"].includes(order.status)
+      ["preparing", "delivered"].includes(order.status)
     );
   }, [orders]);
 
   const completeOrders = useMemo(() => {
     return orders.filter((order) =>
-      ["success", "rejected", "delivered"].includes(order.status)
+      ["success", "rejected"].includes(order.status)
     );
   }, [orders]);
 
@@ -321,13 +324,31 @@ function OrderCard({ order, onViewDetails }: OrderCardProps) {
           Delivery Fee {formatCurrency(order.driver_fee)}
         </p>
       </div>
-      <Button
-        variant="outline"
-        className="rounded-lg border-[#6c757d] px-6 py-2 text-sm font-medium text-[#6c757d] hover:bg-[#f8f9fa]"
-        onClick={onViewDetails}
-      >
-        View Details
-      </Button>
+      <div className="flex min-w-[11rem] flex-col gap-2">
+        {order.status === "preparing" && (
+          <Button
+            className="rounded-lg bg-[#f5c563] px-6 py-2 text-sm font-medium text-white hover:bg-[#f0b84a]"
+            type="button"
+          >
+            Received Food
+          </Button>
+        )}
+        {order.status === "delivered" && (
+          <Button
+            className="rounded-lg bg-[#6f5236] px-6 py-2 text-sm font-medium text-[#f6e9d2] hover:bg-[#5e432e]"
+            type="button"
+          >
+            Complete Delivery
+          </Button>
+        )}
+        <Button
+          variant="outline"
+          className="rounded-lg border-[#6c757d] px-6 py-2 text-sm font-medium text-[#6c757d] hover:bg-[#f8f9fa]"
+          onClick={onViewDetails}
+        >
+          View Details
+        </Button>
+      </div>
     </div>
   );
 }
