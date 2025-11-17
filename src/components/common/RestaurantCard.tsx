@@ -33,7 +33,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
 
   return (
     <Card
-      className="h-[300px] w-[375px] cursor-pointer transition-all hover:scale-105 hover:shadow-lg"
+      className="h-[300px] w-[375px] flex-shrink-0 cursor-pointer transition-all hover:scale-105 hover:shadow-lg"
       onClick={handleCardClick}
     >
       <CardHeader className="p-0">

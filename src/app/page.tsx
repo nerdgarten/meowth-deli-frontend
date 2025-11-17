@@ -54,43 +54,37 @@ export default function HomePage() {
         value={search}
         onChange={(event) => setSearch(event.target.value)}
       />
-      <div className="no-scrollbar w-full overflow-x-scroll">
-        <div className="flex flex-nowrap gap-4 py-4">
-          <div className="min-w-5"></div>
-          {filteredRestaurants.length ? (
-            filteredRestaurants.map((data) => (
-              <RestaurantCard key={data.id} restaurant={data} />
-            ))
-          ) : (
-            <p className="text-app-brown mx-auto my-10 text-center">
-              No results found.
-            </p>
-          )}
-          <div className="min-w-5"></div>
-        </div>
+      <div className="no-scrollbar flex w-full flex-nowrap gap-4 overflow-x-scroll py-4">
+        <div className="min-w-5"></div>
+        {filteredRestaurants.length ? (
+          filteredRestaurants.map((data) => (
+            <RestaurantCard key={data.id} restaurant={data} />
+          ))
+        ) : (
+          <p className="text-app-brown mx-auto my-10 text-center">
+            No results found.
+          </p>
+        )}
+        <div className="min-w-5"></div>
       </div>
       {!isLoading ? (
         <>
           <h1 className="mt-10 mb-5 text-center text-5xl font-bold">
             Your Favourite
           </h1>
-          {Array.from({ length: 1 }).map((_, index) => (
-            <div className="no-scrollbar w-full overflow-x-scroll" key={index}>
-              <div className="flex flex-nowrap gap-4 py-4">
-                <div className="min-w-5"></div>
-                {favourite_restaurant && favourite_restaurant?.length > 0 ? (
-                  favourite_restaurant.map((data, index_2) => {
-                    return <RestaurantCard key={index_2} restaurant={data} />;
-                  })
-                ) : (
-                  <p className="text-app-brown mx-auto my-10 text-center">
-                    Please find your favourite restaurant and add them to your
-                  </p>
-                )}
-                <div className="min-w-5"></div>
-              </div>
-            </div>
-          ))}
+          <div className="no-scrollbar flex w-full flex-nowrap gap-4 overflow-x-scroll py-4">
+            <div className="min-w-5"></div>
+            {favourite_restaurant && favourite_restaurant?.length > 0 ? (
+              favourite_restaurant.map((data) => (
+                <RestaurantCard key={data.id} restaurant={data} />
+              ))
+            ) : (
+              <p className="text-app-brown mx-auto my-10 text-center">
+                No results found.
+              </p>
+            )}
+            <div className="min-w-5"></div>
+          </div>
         </>
       ) : (
         <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
