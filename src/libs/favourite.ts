@@ -1,7 +1,34 @@
+import type { IAuthenticatedAs } from "@/libs/authentication";
 import { apiClient } from "@/libs/axios";
 import type { IDish } from "@/types/dish";
 import type { IRestaurant } from "@/types/restaurant";
-import { check } from "zod";
+
+export const getFavouriteRestaurants = async (): Promise<IRestaurant[]> => {
+  try {
+    const response = await apiClient.get<IRestaurant[]>(`/restaurant/favorite`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching favourite restaurants:", error);
+    throw error;
+  }
+};
+
+export const updateFavouriteRestaurant = async (
+  restaurantId: number,
+  isFavourite: boolean
+): Promise<void> => {
+  try {
+    await apiClient.post<void>(`/restaurant/favorite`, {
+      restaurantId: restaurantId,
+      isFavourite: isFavourite,
+    });
+    return Promise.resolve();
+  } catch (error) {
+    console.error("Error updating favourite restaurants:", error);
+    throw error;
+  }
+};
+
 export const createFavouriteDish = async (dish_id: number): Promise<void> => {
   try {
     await apiClient.post<void>(`/favourite/dish`, { id: dish_id });
@@ -55,6 +82,19 @@ export const deleteFavouriteRestaurant = async (
     throw error;
   }
 };
+
+// Type guard to check if an item is a valid restaurant
+const isValidRestaurant = (item: unknown): item is IRestaurant => {
+  return (
+    item !== null &&
+    typeof item === 'object' &&
+    'name' in item &&
+    'location' in item &&
+    typeof (item as Record<string, unknown>).location === 'object' &&
+    (item as Record<string, unknown>).location !== null
+  );
+};
+
 export const getFavouriteRestaurant = async (): Promise<IRestaurant[]> => {
   try {
     const response = await apiClient.get<IRestaurant[]>(`restaurant/favorite`);
