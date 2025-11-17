@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getOrderById } from "@/libs/orders";
-import { getRestaurantById } from "@/libs/restaurant";
+import { getRestaurant } from "@/queries/restaurant";
 import type { IOrder, StoredOrder } from "@/types/order"; // ensure Restaurant type exists
 import type { IRestaurant } from "@/types/restaurant";
 
@@ -25,7 +25,7 @@ export default function OrderSuccessPage() {
     queryFn: async ({ queryKey }): Promise<IRestaurant> => {
       const [, id] = queryKey;
       if (!id) throw new Error("No restaurant ID provided");
-      const data = await getRestaurantById(id);
+      const data = await getRestaurant(id);
       return data;
     },
     enabled: !!restaurantId,

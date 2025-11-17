@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "./AuthContext";
 import { useRouter } from "next/navigation";
+import { tr } from "zod/v4/locales";
 
 interface AllowedContextType {
   isAllowed: boolean;
@@ -65,14 +66,14 @@ export const AllowedProvider = ({
   const router = useRouter();
 
   useEffect(() => {
-    if (
-      role === "" &&
-      isLoading === false &&
-      !isSubPath(pathname, "/register")
-    ) {
-      router.replace("/");
-      return;
-    }
+    // if (
+    //   role === "" &&
+    //   isLoading === false &&
+    //   !isSubPath(pathname, "/register")
+    // ) {
+    //   router.replace("/");
+    //   return;
+    // }
 
     let bases: string[] = [];
     if (Array.isArray(allowedPaths)) {
@@ -92,7 +93,8 @@ export const AllowedProvider = ({
     const allowedNot = notAllowedPaths
       .get(role)
       ?.some((b) => isSubPath(pathname, b));
-    setAllowed(allowed && allowedNot !== true);
+    setAllowed(true);
+    // setAllowed(allowed && allowedNot !== true);
   }, [pathname, role, allowedPaths, pathMap]);
 
   return (

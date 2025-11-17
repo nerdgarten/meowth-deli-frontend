@@ -1,7 +1,5 @@
 "use client";
 
-import RestaurantSidebar from "@/components/Navigation/RestaurantSidebar";
-
 export default function OrdersPage() {
   // Mock data - replace with actual data fetching
   const orders = [
@@ -76,16 +74,14 @@ export default function OrdersPage() {
 
   return (
     <div className="bg-app-white flex min-h-screen pt-20">
-      <RestaurantSidebar />
-
       {/* Main Content Area */}
-      <main className="ml-[290px] flex-1 p-8">
+      <main className="flex-1 p-8">
         <div className="mx-auto max-w-7xl">
           <h1 className="text-app-bronze mb-2 text-4xl font-bold">
-            Manage Order Delivery
+            Order History
           </h1>
           <p className="mb-8 text-lg text-gray-500">
-            Updating Status, tracking and managing the customer orders here.
+            Viewing and managing your past orders here.
           </p>
 
           {/* Orders Table */}

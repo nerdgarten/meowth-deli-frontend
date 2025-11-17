@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { IDriverProfile } from "@/types/user";
 import Image from "next/image";
+import { driverUploadFile } from "@/queries/file";
 
 import { useQuery } from "@tanstack/react-query";
 import { UserRound } from "lucide-react";
@@ -28,7 +29,6 @@ import {
   queryDriverProfile,
   DriverProfileFormSchema,
 } from "@/libs/driver";
-import { driverUploadFile } from "@/queries/file";
 
 export function DriverProfilePage() {
   return (

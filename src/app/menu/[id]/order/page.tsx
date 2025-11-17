@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useCart } from "@/components/context/CartProvider";
 import { OrderSummary } from "@/components/Main/OrderSummary";
 import { createOrder } from "@/libs/orders";
-import { getRestaurantById } from "@/libs/restaurant";
+import { getRestaurant } from "@/queries/restaurant";
 import type { IOrderDish } from "@/types/order";
 import { getCustomerLocations } from "@/libs/location";
 
@@ -42,11 +42,11 @@ export default function OrderPage({
     queryFn: async ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No id provided");
-      return getRestaurantById(restaurantId);
+      return getRestaurant(restaurantId);
     },
     enabled: !!resolvedParams?.id,
   });
-  const {data: getLocation} = useQuery({
+  const { data: getLocation } = useQuery({
     queryKey: ["location-info"],
     queryFn: async () => {
       return getCustomerLocations();

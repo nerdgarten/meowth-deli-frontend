@@ -47,7 +47,7 @@ export const deleteFavouriteRestaurant = async (
 ): Promise<void> => {
   try {
     const response = await apiClient.delete<void>(
-      `/favourite/restaurant/${restaurant_id}`
+      `/restaurant/favorite/${restaurant_id}`
     );
     return Promise.resolve();
   } catch (error) {
@@ -57,9 +57,7 @@ export const deleteFavouriteRestaurant = async (
 };
 export const getFavouriteRestaurant = async (): Promise<IRestaurant[]> => {
   try {
-    const response = await apiClient.get<IRestaurant[]>(
-      `/favourite/restaurant`
-    );
+    const response = await apiClient.get<IRestaurant[]>(`restaurant/favorite`);
     return response.data;
   } catch (error) {
     console.error("Error fetching favourite restaurant:", error);
@@ -80,7 +78,7 @@ export const checkFavouriteRestaurant = async (
 ): Promise<boolean> => {
   try {
     const response = await apiClient.get<boolean>(
-      `/favourite/restaurant/${restaurant_id}`
+      `/restaurant/${restaurant_id}/favorite`
     );
     return response.data;
   } catch (error) {
@@ -93,7 +91,7 @@ export const getFavouriteDishesByRestaurant = async (
 ): Promise<IDish[]> => {
   try {
     const response = await apiClient.get<IDish[]>(
-      `/favourite/restaurant/${restaurant_id}/dish`
+      `/restaurant/${restaurant_id}/favorite/dish`
     );
     if (response.data[0] === null) {
       return [];

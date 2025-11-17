@@ -41,6 +41,7 @@ export const LoginDialog = ({
     onSuccess: () => {
       toast.success("Login successful!");
       setIsLoginDialogOpen(false);
+      location.reload();
     },
     onError: (error: unknown) => {
       if (error instanceof Error) {

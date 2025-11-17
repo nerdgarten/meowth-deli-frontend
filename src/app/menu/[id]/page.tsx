@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 import { RestaurantList } from "@/components/Main/RestaurantList";
-import { getRestaurantById } from "@/libs/restaurant";
+import { getRestaurant } from "@/queries/restaurant";
 import { getDishRestaurantId } from "@/libs/dish";
 import type { IDish } from "@/types/dish";
 import {
@@ -34,7 +34,7 @@ export default function RestaurantPage({
     queryFn: ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No id provided");
-      return getRestaurantById(restaurantId);
+      return getRestaurant(restaurantId);
     },
     enabled: !!resolvedParams?.id,
   });
