@@ -47,7 +47,7 @@ export default function HomePage() {
   }, [restaurant, deferredSearch]);
 
   return (
-    <main className="mt-[5.5rem]">
+    <main className="mt-[4rem]">
       <LandingCarousel />
       <Toolbar
         placeholder="Search for restaurants..."
