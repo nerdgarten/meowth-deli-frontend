@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Lock } from "lucide-react";
-import { type FieldErrors,useForm } from "react-hook-form";
+import { type FieldErrors, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
@@ -16,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { resetPassword } from "@/libs/authentication";
 
 const ChangePasswordFormSchema = z
   .object({
@@ -25,7 +26,7 @@ const ChangePasswordFormSchema = z
       .max(128, "Password is too long."),
     newPassword: z
       .string()
-      .min(8, "New password must be at least 8 characters.")
+      .min(6, "New password must be at least 8 characters.")
       .max(128, "Password is too long."),
     confirmPassword: z
       .string()
@@ -42,10 +43,13 @@ type ChangePasswordFormValues = z.infer<typeof ChangePasswordFormSchema>;
 const changePassword = async (_payload: ChangePasswordFormValues) => {
   const { currentPassword, newPassword, confirmPassword } = _payload;
   if (newPassword !== confirmPassword) {
-    toast.error("Passwords do not match.");
-    return;
+    throw new Error("Passwords do not match.");
   }
-  await new Promise((resolve) => setTimeout(resolve, 600));
+  try {
+    await resetPassword(currentPassword, newPassword);
+  } catch (error) {
+    throw new Error("Failed to reset password. Please try again.");
+  }
 };
 
 export function CustomerSecurityPage() {

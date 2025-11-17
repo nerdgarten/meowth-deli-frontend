@@ -11,16 +11,16 @@ export const authenticatedAs = async (): Promise<Role | null> => {
   }
 };
 export const resetPassword = async (
-  currentPassword: string,
+  oldPassword: string,
   newPassword: string
 ): Promise<void> => {
   try {
     const data = {
-      currentPassword,
+      oldPassword,
       newPassword,
     };
-    await apiClient.post("/reset-password", {
-      currentPassword,
+    await apiClient.patch("/authenticate/change-password", {
+      oldPassword,
       newPassword,
     });
   } catch (error) {

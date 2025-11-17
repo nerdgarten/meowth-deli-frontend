@@ -51,13 +51,13 @@ export const AllowedProvider = ({
 
   const [isAllowed, setAllowed] = useState(true);
   const allowedPaths = new Map<string, string[]>([
-    ["admin", ["/admin"]],
-    ["restaurant", ["/restaurant_2", "/settings"]],
-    ["customer", ["/", "/settings"]],
-    ["driver", ["/restaurant_2", "/settings"]],
+    ["admin", ["/admin", "order"]],
+    ["restaurant", ["/restaurant", "/settings", "/history", "order"]],
+    ["customer", ["/", "/settings", "/history", "/order"]],
+    ["driver", ["/driver", "/settings", "/history", "/order"]],
   ]);
   const notAllowedPaths = new Map<string, string[]>([
-    ["customer", ["/restaurant_2", "/admin"]],
+    ["customer", ["/restaurant", "/admin", "/driver"]],
     ["driver", ["/admin"]],
     ["restaurant", ["/admin"]],
   ]);
@@ -94,8 +94,8 @@ export const AllowedProvider = ({
     const allowedNot = notAllowedPaths
       .get(role)
       ?.some((b) => isSubPath(pathname, b));
-    setAllowed(true);
-    // setAllowed(allowed && allowedNot !== true);
+    // setAllowed(true);
+    setAllowed(allowed && allowedNot !== true);
   }, [pathname, role, allowedPaths, pathMap]);
 
   return (

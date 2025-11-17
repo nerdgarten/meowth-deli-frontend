@@ -30,10 +30,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const role = useRef<string>("");
   const [user, setUser] = useState<User | null>(null);
   const pathMap = new Map<string, string>([
-    ["admin", "/admin"],
-    ["restaurant", "/restaurant_2"],
+    ["admin", "/admin/dashboard"],
+    ["restaurant", "/restaurant/orders"],
     ["customer", "/"],
-    ["driver", "/restaurant_2"],
+    ["driver", "/driver/orders"],
   ]);
   const login = async (data: z.infer<typeof LoginFormSchema>) => {
     await loginSubmitMutation(data);
