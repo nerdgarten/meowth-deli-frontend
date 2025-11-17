@@ -1,37 +1,74 @@
 "use client";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Bean,
+  Egg,
+  Fish,
+  ImageIcon,
+  Info,
+  Leaf,
+  Milk,
+  Nut,
+  Shell,
+  Shrimp,
+  Wheat,
+} from "lucide-react";
+
 import { MenuFormDialog } from "@/components/Restaurant/MenuFormDialog";
 import { Button } from "@/components/ui/button";
-import type { IDish } from "@/types/dish";
+import { apiClient } from "@/libs/axios";
+import { deleteMenu, getMenusByRestaurant } from "@/libs/menus";
+import type { Allergy, IDish } from "@/types/dish";
 
-const MENU_ITEMS: IDish[] = [
-  {
-    id: "1",
-    restaurant_id: "1",
-    name: "Sashimi Size XL",
-    detail:
-      "A quick and healthy with Omega and mineral featuring succulent Salmon to perfection raw fish, and a side of fruit. This dish is not only packed with rice. If you don't like the vegetable, feel free to inform us.",
-    price: 1299,
-    allergy: ["eggs", "fish", "seafood"],
-    image:
-      "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1200&q=80",
-    is_out_of_stock: false,
-  },
-  {
-    id: "2",
-    restaurant_id: "1",
-    name: "Sashimi Size L",
-    detail:
-      "A quick and healthy with Omega and mineral featuring succulent Salmon to perfection raw fish, and a side of fruit. This dish is not only packed with rice. If you don't like the vegetable, feel free to inform us.",
-    price: 999,
-    allergy: [],
-    image:
-      "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1200&q=80",
-    is_out_of_stock: false,
-  },
-];
+const ALLERGENS: Record<
+  Allergy,
+  { label: string; Icon: React.ComponentType<{ className?: string }> }
+> = {
+  eggs: { label: "Eggs", Icon: Egg },
+  dairy: { label: "Dairy", Icon: Milk },
+  soy: { label: "Soy", Icon: Bean },
+  tree_nuts: { label: "Nuts", Icon: Nut },
+  seafood: { label: "Sea Foods", Icon: Shrimp },
+  fish: { label: "Fish", Icon: Fish },
+  peanuts: { label: "Peanuts", Icon: Leaf },
+  wheat: { label: "Wheat", Icon: Wheat },
+  shellfish: { label: "Shellfish", Icon: Shell },
+  gluten: { label: "Gluten", Icon: Info },
+};
 
 export default function RestaurantMenusPage() {
+  const queryClient = useQueryClient();
+
+  // Get the current authenticated user's restaurant profile
+  // For restaurant users, their user.id IS their restaurant.id
+  const { data: restaurantProfile } = useQuery({
+    queryKey: ["restaurant-profile"],
+    queryFn: async () => {
+      const response = await apiClient.get<{ id: number }>(
+        "/restaurant/profile"
+      );
+      return response.data;
+    },
+    staleTime: Infinity, // Restaurant ID won't change during the session
+  });
+
+  const restaurantId = restaurantProfile?.id?.toString();
+
+  const { data: menus = [], isLoading } = useQuery<IDish[]>({
+    queryKey: ["menus", restaurantId],
+    queryFn: () => getMenusByRestaurant(restaurantId!),
+    enabled: !!restaurantId, // Only fetch when we have the restaurant ID
+  });
+
+  const delMutation = useMutation({
+    mutationFn: (id: string) => deleteMenu(id),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["menus"] });
+      await queryClient.refetchQueries({ queryKey: ["menus"] });
+    },
+  });
+
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">
       <section className="border-b-app-background rounded-[36px] border bg-white px-8 py-10 shadow-[0_30px_60px_rgba(93,66,17,0.08)]">
@@ -53,54 +90,96 @@ export default function RestaurantMenusPage() {
         </div>
 
         <div className="mt-8 space-y-6">
-          {MENU_ITEMS.map((menu) => (
-            <article
-              key={menu.id}
-              className="flex flex-col gap-6 rounded-2xl border border-[#ecdfcf] bg-[#fff9ef] px-6 py-5 shadow-[0_16px_40px_rgba(52,31,10,0.08)] sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div className="flex-1 space-y-4">
-                <div className="space-y-1">
-                  <h2 className="text-app-black text-2xl font-semibold">
-                    {menu.name}
-                  </h2>
-                </div>
+          {isLoading ? (
+            <p>Loading menus...</p>
+          ) : (
+            menus.map((menu) => (
+              <article
+                key={menu.id}
+                className="flex flex-col gap-6 rounded-2xl border border-[#ecdfcf] bg-[#fff9ef] px-6 py-5 shadow-[0_16px_40px_rgba(52,31,10,0.08)] sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="flex-1 space-y-4">
+                  <div className="space-y-1">
+                    <h2 className="text-app-black text-2xl font-semibold">
+                      {menu.name}
+                    </h2>
+                  </div>
 
-                <div className="space-y-1">
-                  <p className="text-app-black text-sm font-semibold">detail</p>
-                  <p className="text-app-brown text-sm leading-relaxed">
-                    {menu.detail}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-4">
-                  <div>
+                  <div className="space-y-1">
                     <p className="text-app-black text-sm font-semibold">
-                      Price
+                      detail
                     </p>
-                    <p className="text-app-black text-2xl font-semibold">
-                      {menu.price.toLocaleString("en-US")}
+                    <p className="text-app-brown text-sm leading-relaxed">
+                      {menu.detail}
                     </p>
                   </div>
-                  <div className="flex-auto"></div>
-                  <div className="flex flex-wrap gap-3">
-                    <MenuFormDialog dish={menu} />
-                    <Button className="rounded-full bg-[#fb6d2c] px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 active:translate-y-[1px] active:brightness-90">
-                      Delete
-                    </Button>
+
+                  {menu.allergy && menu.allergy.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-app-black text-sm font-semibold">
+                        Allergens
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {menu.allergy.map((allergen) => {
+                          const allergenInfo = ALLERGENS[allergen];
+                          if (!allergenInfo) return null;
+                          const Icon = allergenInfo.Icon;
+                          return (
+                            <div
+                              key={allergen}
+                              className="flex items-center gap-1.5 rounded-full border border-[#d6c8b0] bg-white px-3 py-1.5 text-xs font-medium text-[#6f553a] shadow-sm"
+                            >
+                              <Icon className="h-3.5 w-3.5" />
+                              <span>{allergenInfo.label}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap items-center gap-4">
+                    <div>
+                      <p className="text-app-black text-sm font-semibold">
+                        Price
+                      </p>
+                      <p className="text-app-black text-2xl font-semibold">
+                        {menu.price.toLocaleString("en-US")}
+                      </p>
+                    </div>
+                    <div className="flex-auto"></div>
+                    <div className="flex flex-wrap gap-3">
+                      <MenuFormDialog dish={menu} />
+                      <Button
+                        className="rounded-full bg-[#fb6d2c] px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 active:translate-y-[1px] active:brightness-90"
+                        onClick={() => void delMutation.mutate(menu.id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="relative aspect-[4/3] w-full max-w-[240px] overflow-hidden rounded-xl border border-[#e7d3b0] bg-[#f7e6cc] shadow-inner sm:w-auto">
-                <img
-                  src={menu.image}
-                  alt={menu.name}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
-              </div>
-            </article>
-          ))}
+                <div className="relative aspect-[4/3] w-full max-w-[320px] overflow-hidden rounded-xl border border-[#e7d3b0] bg-[#f7e6cc] shadow-inner sm:w-auto">
+                  {menu.image ? (
+                    <img
+                      src={menu.image}
+                      alt={menu.name}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-[#f7e6cc]">
+                      <div className="flex flex-col items-center justify-center text-[#8c7254]">
+                        <ImageIcon className="mb-2 h-16 w-16" />
+                        <p className="text-xs font-medium">No Image</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))
+          )}
         </div>
       </section>
     </div>

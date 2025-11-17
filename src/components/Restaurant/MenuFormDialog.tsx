@@ -20,6 +20,8 @@ import {
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createMenu, updateMenu } from "@/libs/menus";
 import {
   Dialog,
   DialogContent,
@@ -113,13 +115,26 @@ export function MenuFormDialog(props: { dish: IDish | null }) {
     } satisfies DishFormValues,
   });
 
+  // Reset form when dialog opens
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        name: dish?.name ?? "",
+        price: dish?.price ?? 0,
+        detail: dish?.detail ?? "",
+        image: dish?.image ?? null,
+        allergies: dish?.allergy ?? [],
+      });
+      setPreview(dish?.image && dish.image.trim() !== "" ? dish.image : "");
+    }
+  }, [open, dish, form]);
+
   const watchedImage = form.watch("image");
   const [preview, setPreview] = useState<string>("");
 
   const hasImage = useMemo(
-    () =>
-      Boolean(preview || (watchedImage && typeof watchedImage !== "string")),
-    [preview, watchedImage]
+    () => Boolean(preview && preview.trim() !== ""),
+    [preview]
   );
 
   useEffect(() => {
@@ -149,11 +164,52 @@ export function MenuFormDialog(props: { dish: IDish | null }) {
     }
   };
 
+  const queryClient = useQueryClient();
+
   const handleSubmit = (values: DishFormValues) => {
-    // TODO: wire up create/update dish mutation
-    console.info("submit dish", values);
-    setOpen(false);
-    form.reset();
+    const restaurantId = process.env.NEXT_PUBLIC_RESTAURANT_ID ?? "";
+    const payload: Partial<IDish> = {
+      name: values.name,
+      price: Number(values.price),
+      detail: values.detail ?? "",
+      allergy: values.allergies ?? [],
+    };
+
+    const image = values.image;
+
+    const doCreateOrUpdate = async () => {
+      if (dish) {
+        // update
+        await updateMenu(dish.id, { ...payload, image });
+      } else {
+        await createMenu({ ...payload, image });
+      }
+    };
+
+    void (async () => {
+      try {
+        await doCreateOrUpdate();
+        // invalidate menus for this restaurant
+        await queryClient.invalidateQueries({ queryKey: ["menus"] });
+        await queryClient.refetchQueries({ queryKey: ["menus"] });
+      } catch (err) {
+        console.error("Failed to save menu", err);
+        // Log more details about the error
+        if (err && typeof err === "object" && "response" in err) {
+          const axiosError = err as any;
+          console.error("Response status:", axiosError.response?.status);
+          console.error("Response data:", axiosError.response?.data);
+          console.error("Request headers:", axiosError.config?.headers);
+        }
+        alert(
+          `Failed to save menu: ${err instanceof Error ? err.message : "Unknown error"}`
+        );
+        return; // Don't close dialog on error
+      } finally {
+        setOpen(false);
+        form.reset();
+      }
+    })();
   };
 
   return (

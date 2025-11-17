@@ -18,11 +18,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAVIGATION_ITEMS = [
-  {
-    title: "Dashboard",
-    href: `/restaurant/dashboard`,
-    icon: LayoutDashboard,
-  },
+  // {
+  //   title: "Dashboard",
+  //   href: `/restaurant/dashboard`,
+  //   icon: LayoutDashboard,
+  // },
   {
     title: "Orders",
     href: `/restaurant/orders`,
