@@ -25,7 +25,6 @@ const orders: IOrder[] = [
     remark: "Allergies: no peanuts",
     total_amount: 48.5,
     driver_fee: 5.25,
-    restaurant_id: 1,
   },
   {
     id: 2381,
@@ -37,7 +36,6 @@ const orders: IOrder[] = [
     remark: null,
     total_amount: 32.9,
     driver_fee: 4.1,
-    restaurant_id: 1,
   },
   {
     id: 2382,
@@ -49,7 +47,6 @@ const orders: IOrder[] = [
     remark: "Leave at concierge",
     total_amount: 61.75,
     driver_fee: 6.8,
-    restaurant_id: 1,
   },
   {
     id: 2383,
@@ -61,7 +58,6 @@ const orders: IOrder[] = [
     remark: null,
     total_amount: 27.4,
     driver_fee: 3.5,
-    restaurant_id: 1,
   },
   {
     id: 2384,
@@ -73,7 +69,6 @@ const orders: IOrder[] = [
     remark: "Ring the doorbell twice",
     total_amount: 43.2,
     driver_fee: 5.05,
-    restaurant_id: 1,
   },
 ];
 
