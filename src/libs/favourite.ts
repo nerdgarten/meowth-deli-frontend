@@ -2,6 +2,7 @@ import type { IAuthenticatedAs } from "@/libs/authentication";
 import { apiClient } from "@/libs/axios";
 import type { IDish } from "@/types/dish";
 import type { IRestaurant } from "@/types/restaurant";
+import type { Role } from "@/types/role";
 
 export const getFavouriteRestaurants = async (): Promise<IRestaurant[]> => {
   try {
@@ -74,7 +75,7 @@ export const deleteFavouriteRestaurant = async (
 ): Promise<void> => {
   try {
     const response = await apiClient.delete<void>(
-      `/restaurant/favorite/${restaurant_id}`
+      `/favourite/restaurant/${restaurant_id}`
     );
     return Promise.resolve();
   } catch (error) {
@@ -82,19 +83,6 @@ export const deleteFavouriteRestaurant = async (
     throw error;
   }
 };
-
-// Type guard to check if an item is a valid restaurant
-const isValidRestaurant = (item: unknown): item is IRestaurant => {
-  return (
-    item !== null &&
-    typeof item === 'object' &&
-    'name' in item &&
-    'location' in item &&
-    typeof (item as Record<string, unknown>).location === 'object' &&
-    (item as Record<string, unknown>).location !== null
-  );
-};
-
 export const getFavouriteRestaurant = async (): Promise<IRestaurant[]> => {
   try {
     const response = await apiClient.get<IRestaurant[]>(`restaurant/favorite`);

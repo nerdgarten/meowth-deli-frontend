@@ -8,6 +8,7 @@ import { useCart } from "@/components/context/CartProvider";
 import { OrderSummary } from "@/components/Main/OrderSummary";
 import { createOrder } from "@/libs/orders";
 import { getRestaurant } from "@/queries/restaurant";
+import { getRestaurantById } from "@/libs/restaurant";
 import type { IOrderDish } from "@/types/order";
 import { getCustomerLocations } from "@/libs/location";
 
@@ -46,12 +47,13 @@ export default function OrderPage({
     },
     enabled: !!resolvedParams?.id,
   });
-  const { data: getLocation } = useQuery({
+  const {data: getLocation} = useQuery({
     queryKey: ["location-info"],
     queryFn: async () => {
       return getCustomerLocations();
     },
   });
+
 
   const createOrderMutation = useMutation({
     mutationFn: (orderData: {

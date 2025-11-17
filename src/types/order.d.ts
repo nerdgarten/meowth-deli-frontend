@@ -1,5 +1,3 @@
-import { IDish } from "@/types/dish";
-
 export interface IOrder {
   id: number;
   customer_id: number;

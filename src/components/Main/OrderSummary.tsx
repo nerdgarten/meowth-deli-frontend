@@ -95,9 +95,7 @@ export const OrderSummary = ({
         </div>
 
         <div className="flex h-16 w-full items-center justify-between rounded-md border border-slate-300 p-8 transition hover:bg-gray-100 active:bg-gray-300">
-          <h2 className="mx-4 text-lg font-bold">
-            {location[0]?.address ?? "No address available"}
-          </h2>
+          <h2 className="mx-4 text-lg font-bold">{location[0]?.address}</h2>
           <ChevronLeft size={20} />
         </div>
 
