@@ -7,7 +7,7 @@ import type { SubmitReviewData } from "@/queries/reviews";
 import { submitDriverReview, submitRestaurantReview } from "@/queries/reviews";
 
 interface AddReviewFormProps {
-  type: "driver" | "restaurant";
+  type: "driver" | "restaurant" | "report";
   id: number;
   orderId: number;
   onSuccess?: () => void;
@@ -33,7 +33,10 @@ const AddReviewForm: FC<AddReviewFormProps> = ({
     mutationFn: (reviewData: SubmitReviewData) => {
       if (type === "driver") {
         return submitDriverReview(id, reviewData);
+      } else if (type === "restaurant") {
+        return submitRestaurantReview(id, reviewData);
       } else {
+        // TODO: change this to submit report
         return submitRestaurantReview(id, reviewData);
       }
     },
@@ -113,20 +116,22 @@ const AddReviewForm: FC<AddReviewFormProps> = ({
           />
 
           {/* Star Rating */}
-          <div className="flex items-center" onMouseLeave={handleRatingLeave}>
-            {Array.from({ length: maxStars }).map((_, index) => (
-              <Star
-                key={index}
-                size={28} // Larger stars for clicking
-                className={`cursor-pointer ${
-                  index < displayRating ? "text-yellow-400" : "text-gray-300"
-                }`}
-                fill={index < displayRating ? "currentColor" : "none"}
-                onClick={() => handleRatingClick(index)}
-                onMouseEnter={() => handleRatingHover(index)}
-              />
-            ))}
-          </div>
+          {type !== "report" && (
+            <div className="flex items-center" onMouseLeave={handleRatingLeave}>
+              {Array.from({ length: maxStars }).map((_, index) => (
+                <Star
+                  key={index}
+                  size={28} // Larger stars for clicking
+                  className={`cursor-pointer ${
+                    index < displayRating ? "text-yellow-400" : "text-gray-300"
+                  }`}
+                  fill={index < displayRating ? "currentColor" : "none"}
+                  onClick={() => handleRatingClick(index)}
+                  onMouseEnter={() => handleRatingHover(index)}
+                />
+              ))}
+            </div>
+          )}
 
           {/* Description Textarea */}
           <textarea
@@ -180,7 +185,11 @@ const AddReviewForm: FC<AddReviewFormProps> = ({
           disabled={submitReviewMutation.isPending || rating === 0}
           className="rounded-lg bg-yellow-500 px-6 py-2 font-medium text-white transition-colors hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {submitReviewMutation.isPending ? "Submitting..." : "Submit Review"}
+          {submitReviewMutation.isPending
+            ? "Submitting..."
+            : type === "report"
+              ? "Submit Report"
+              : "Submit Review"}
         </button>
       </div>
 
