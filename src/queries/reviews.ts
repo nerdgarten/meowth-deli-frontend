@@ -1,5 +1,5 @@
 import { apiClient } from "@/libs/axios";
-import type { DriverReviewResponse,ReviewResponse } from "@/types/review";
+import type { DriverReviewResponse, ReviewResponse } from "@/types/review";
 
 export interface GetRestaurantReviewsParams {
   restaurantId: number;
@@ -23,8 +23,8 @@ export async function getRestaurantReviews({
   restaurantId,
   limit = 10,
   offset = 0,
-}: GetRestaurantReviewsParams): Promise<ReviewResponse> {
-  const response = await apiClient.get<ReviewResponse>(
+}: GetRestaurantReviewsParams): Promise<ReviewResponse[]> {
+  const response = await apiClient.get<ReviewResponse[]>(
     `/review/restaurant/${restaurantId}`,
     {
       params: { limit, offset },
