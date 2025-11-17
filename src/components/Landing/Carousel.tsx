@@ -12,15 +12,47 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import { Circle, Coffee, MessageSquare } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { MS_IN_SEC } from "@/constants/misc";
 import { cn } from "@/libs/utils";
 
 import { TopCarouselCard } from "./TopCarouselCard";
+import { getAllRestaurant } from "@/libs/restaurant";
+import type { IRestaurant } from "@/types/restaurant";
+import { set } from "zod";
+import type { IDish } from "@/types/dish";
+import { getDishesByRestaurnatId } from "@/queries/dish";
 
 export const LandingCarousel = () => {
   const [api, setApi] = useState<LandingCarouselApi>();
   const [currentIdx, setCurrentIdx] = useState(0);
+
+  const { data: restaurants } = useQuery<IRestaurant[]>({
+    queryKey: ["restaurant-all"],
+    queryFn: getAllRestaurant,
+  });
+
+  const [randomRestaurant, setRandomRestaurant] = useState<IRestaurant | null>(
+    null
+  );
+
+  const { data: dishes = [] } = useQuery<IDish[]>({
+    queryKey: ["restaurant-all-dish", randomRestaurant?.id],
+    queryFn: async () => {
+      if (!randomRestaurant) return [] as IDish[];
+      return await getDishesByRestaurnatId(randomRestaurant.id);
+    },
+    enabled: !!randomRestaurant,
+  });
+
+  useEffect(() => {
+    if (!restaurants) return;
+    const idx = Math.floor(Math.random() * restaurants.length);
+    console.log(restaurants);
+    setRandomRestaurant(restaurants[idx]!);
+    console.log("Random Restaurant:", randomRestaurant);
+  }, [restaurants, setRandomRestaurant, randomRestaurant]);
 
   useEffect(() => {
     if (!api) {
@@ -92,15 +124,25 @@ export const LandingCarousel = () => {
             ]}
           >
             <CarouselContent className="-ml-3">
-              {Array.from({ length: 10 }).map((_, index) => (
+              {dishes.slice(0, 10).map((dish, index) => (
                 <CarouselItem
                   key={index}
                   className="pl-3 md:basis-1/2 lg:basis-1/3"
                 >
-                  <div className="bg-app-brown h-[24vh] w-full rounded-lg">
+                  {/* <div className="bg-app-brown h-[24vh] w-full rounded-lg">
                     <div className="text-app-yellow flex h-full w-full items-center justify-center select-none">
                       {index}
                     </div>
+                  </div> */}
+                  <div className="bg-app-brown h-[24vh] w-full rounded-lg">
+                    <Image
+                      className="bg-app-brown h-[24vh] w-full rounded-lg"
+                      src={dish.image ?? "/images/meowth-eating.webp"}
+                      alt={dish.name ?? dish ?? "Dish"}
+                      width={100}
+                      height={100}
+                      objectFit="cover"
+                    />
                   </div>
                 </CarouselItem>
               ))}

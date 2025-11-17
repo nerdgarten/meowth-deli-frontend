@@ -1,8 +1,8 @@
 import { apiClient } from "@/libs/axios";
-import type { IRestaurant } from "@/types/restaurant";
+import type { IDish } from "@/types/dish";
 
-export async function getRestaurant(restaurantId: number): Promise<IRestaurant> {
-  const response = await apiClient.get<IRestaurant>(
+export async function getRestaurant(restaurantId: number): Promise<IDish[]> {
+  const response = await apiClient.get<IDish[]>(
     `/restaurant/${restaurantId}`
   );
 
