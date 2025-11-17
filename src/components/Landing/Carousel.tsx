@@ -117,7 +117,20 @@ export const LandingCarousel = () => {
             <h2 className="text-2xl font-bold">Reviews</h2>
           </div>
           <div className="mt-3 flex flex-row gap-x-4">
-            <div className="bg-app-brown h-25 w-25 shrink-0 rounded-md" />
+            {restaurantReviews &&
+            restaurantReviews.length > 0 &&
+            restaurantReviews[0]?.customer?.image ? (
+              <Image
+                className="h-25 w-25 shrink-0 rounded-md"
+                src={restaurantReviews[0]?.customer?.image}
+                alt={randomRestaurant?.name ?? "Restaurant Banner"}
+                width={50}
+                height={50}
+                objectFit="cover"
+              />
+            ) : (
+              <div className="bg-app-brown h-25 w-25 shrink-0 rounded-md" />
+            )}
             {randomRestaurant ? (
               restaurantReviews ? (
                 <div>
