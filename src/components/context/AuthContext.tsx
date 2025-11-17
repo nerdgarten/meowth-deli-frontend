@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import type { User } from "@/types/review";
 import { set, z } from "zod";
 import { loginSubmitMutation } from "@/queries/auth";
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [role, setRole] = useState<string>("");
+  const role = useRef<string>("");
   const [user, setUser] = useState<User | null>(null);
   const pathMap = new Map<string, string>([
     ["admin", "/admin"],
@@ -38,7 +38,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await loginSubmitMutation(data);
     setIsAuthenticated(true);
     const d = await authenticatedAs();
-    setRole(d || "");
+    console.log("Authenticated as:", d);
+    role.current = d || "";
     if (d) {
       setIsAuthenticated(true);
     }
@@ -48,7 +49,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     await logoutFunctionMutation();
     setIsAuthenticated(false);
-    setRole("");
+    console.log("Logged out");
+    role.current = "";
     setUser(null);
     router.replace("/");
   };
@@ -59,7 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const d = await authenticatedAs();
       if (d) {
         setIsAuthenticated(true);
-        setRole(d);
+        role.current = d;
       }
       setIsLoading(false);
     };
@@ -71,7 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         isAuthenticated,
         user: {} as User,
-        role,
+        role: role.current,
         login,
         logout,
         pathMap,

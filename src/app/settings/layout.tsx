@@ -14,6 +14,7 @@ import {
   SlidersHorizontal,
   User,
 } from "lucide-react";
+import { useAuth } from "@/components/context/AuthContext";
 
 const basePath = "/settings";
 
@@ -96,11 +97,7 @@ export default function CustomerSettingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { data: role, isLoading } = useQuery({
-    queryKey: ["authenticated-role"],
-    queryFn: authenticatedAs,
-    staleTime: 60_000,
-  });
+  const { role, isLoading } = useAuth();
   if (isLoading) {
     return <div>Loading...</div>;
   }
