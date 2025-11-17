@@ -76,7 +76,7 @@ export const RestaurantList = ({
           )}
           <Heart
             size={40}
-            className={`absolute top-4 right-4 z-10 cursor-pointer ${fav ? "fill-pink-600 text-pink-600" : "fill-white text-white"}`}
+            className={`absolute top-4 right-4 z-10 cursor-pointer ${fav ? "fill-red-500 text-red-500" : "fill-white text-white"}`}
             onClick={async () => {
               if (!fav) {
                 await createFavouriteRestaurant(Number(restaurant?.id));
