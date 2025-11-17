@@ -17,6 +17,7 @@ export interface SubmitReviewData {
   orderId: number;
   rate: number;
   reviewText?: string;
+  file?: File;
 }
 
 export async function getRestaurantReviews({
@@ -53,12 +54,30 @@ export async function submitDriverReview(
   driverId: number,
   reviewData: SubmitReviewData
 ): Promise<void> {
-  await apiClient.post(`/review/driver/${driverId}`, reviewData);
+  const formData = new FormData();
+  formData.append('orderId', reviewData.orderId.toString());
+  formData.append('rate', reviewData.rate.toString());
+  if (reviewData.reviewText) {
+    formData.append('reviewText', reviewData.reviewText);
+  }
+  if (reviewData.file) {
+    formData.append('file', reviewData.file);
+  }
+  await apiClient.post(`/review/driver/${driverId}`, formData);
 }
 
 export async function submitRestaurantReview(
   restaurantId: number,
   reviewData: SubmitReviewData
 ): Promise<void> {
-  await apiClient.post(`/review/restaurant/${restaurantId}`, reviewData);
+  const formData = new FormData();
+  formData.append('orderId', reviewData.orderId.toString());
+  formData.append('rate', reviewData.rate.toString());
+  if (reviewData.reviewText) {
+    formData.append('reviewText', reviewData.reviewText);
+  }
+  if (reviewData.file) {
+    formData.append('file', reviewData.file);
+  }
+  await apiClient.post(`/review/restaurant/${restaurantId}`, formData);
 }
