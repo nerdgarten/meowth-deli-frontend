@@ -1,7 +1,6 @@
 "use client";
 
 import { Carousel, CarouselContent, CarouselItem } from "@ui/carousel";
-// import landing1 from "@/public/images/landing-carousel-1.jpg";
 import Image from "next/image";
 import {
   Carousel as LandingCarouselContainer,
@@ -20,8 +19,10 @@ import { cn } from "@/libs/utils";
 import { TopCarouselCard } from "./TopCarouselCard";
 import { getAllRestaurant } from "@/libs/restaurant";
 import type { IRestaurant } from "@/types/restaurant";
-import { set } from "zod";
+// zod not used here
 import type { IDish } from "@/types/dish";
+import { getRestaurantReviews } from "@/queries/reviews";
+import type { ReviewResponse } from "@/types/review";
 import { getDishesByRestaurnatId } from "@/queries/dish";
 
 export const LandingCarousel = () => {
@@ -42,6 +43,22 @@ export const LandingCarousel = () => {
     queryFn: async () => {
       if (!randomRestaurant) return [] as IDish[];
       return await getDishesByRestaurnatId(randomRestaurant.id);
+    },
+    enabled: !!randomRestaurant,
+  });
+
+  // Fetch top review for the random restaurant (limit=1)
+  const { data: restaurantReviews, isLoading: isReviewLoading } = useQuery<
+    ReviewResponse[] | undefined
+  >({
+    queryKey: ["restaurant-review", randomRestaurant?.id],
+    queryFn: async () => {
+      if (!randomRestaurant) return undefined;
+      return await getRestaurantReviews({
+        restaurantId: randomRestaurant.id,
+        limit: 1,
+        offset: 0,
+      });
     },
     enabled: !!randomRestaurant,
   });
@@ -127,11 +144,6 @@ export const LandingCarousel = () => {
                   key={index}
                   className="pl-3 md:basis-1/2 lg:basis-1/3"
                 >
-                  {/* <div className="bg-app-brown h-[24vh] w-full rounded-lg">
-                    <div className="text-app-yellow flex h-full w-full items-center justify-center select-none">
-                      {index}
-                    </div>
-                  </div> */}
                   <div className="bg-app-brown h-[24vh] w-full rounded-lg">
                     <Image
                       className="bg-app-brown h-[24vh] w-full rounded-lg"
@@ -154,12 +166,29 @@ export const LandingCarousel = () => {
           </div>
           <div className="mt-3 flex flex-row gap-x-4">
             <div className="bg-app-brown h-25 w-25 shrink-0 rounded-md" />
-            <p className="text-app-brown text-lg font-semibold">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa
-              minima, repellendus asperiores impedit cum quasi tenetur sequi,
-              dolor maxime numquam totam quisquam ea! Esse nemo error quaerat
-              sed alias provident!
-            </p>
+            {randomRestaurant ? (
+              restaurantReviews ? (
+                <div>
+                  <p className="text-app-brown text-lg font-semibold">
+                    {restaurantReviews[0]?.review_text ?? "No review text"}
+                  </p>
+                  <p className="text-app-dark-brown mt-2 text-sm">
+                    — {restaurantReviews[0]?.customer?.firstname ?? "Anonymous"}{" "}
+                    {restaurantReviews[0]?.customer?.lastname ?? ""}
+                  </p>
+                </div>
+              ) : isReviewLoading ? (
+                <p className="text-app-brown text-lg font-semibold">
+                  Loading review…
+                </p>
+              ) : (
+                <p className="text-app-brown text-lg font-semibold">
+                  No reviews
+                </p>
+              )
+            ) : (
+              <p className="text-app-brown text-lg font-semibold">No reviews</p>
+            )}
           </div>
         </TopCarouselCard>
       </div>
