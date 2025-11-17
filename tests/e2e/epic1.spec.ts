@@ -216,7 +216,7 @@ async function expectStillOnRegister(page: Page, role: RegistrationRole) {
 
 async function loginAs(page: Page, role: UserRole) {
   await page.goto("/");
-  const userButton = page.locator("nav button").first();
+  const userButton = page.locator("nav button").nth(1);
   await expect(userButton).toBeVisible();
   await userButton.click();
   const dialog = page.getByRole("dialog");
@@ -369,16 +369,12 @@ test.describe("Epic 1 – Registration, Logout, Consents, License Upload", () =>
     page,
   }) => {
     await loginAs(page, "customer");
-    const menuButton = page.locator("nav button").nth(1);
-    await expect(menuButton).toBeVisible();
-    await menuButton.click();
-    const menuDialog = page.getByRole("dialog", { name: /menu/i });
-    await expect(menuDialog).toBeVisible();
-    await menuDialog.getByRole("button", { name: /logout/i }).click();
+    const logoutButton = page.locator("nav button").nth(2);
+    await expect(logoutButton).toBeVisible();
+    await logoutButton.click();
     await expect(page.getByText(logoutToastText)).toBeVisible({
       timeout: 10_000,
     });
-    await expect(menuDialog).toBeHidden({ timeout: 10_000 });
     await expect(page).toHaveURL(/\/$/);
   });
 

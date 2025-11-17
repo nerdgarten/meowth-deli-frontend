@@ -27,7 +27,6 @@ export const Navigation = () => {
     mutationFn: logout,
     onSuccess: () => {
       toast.success("Logged Out");
-      location.reload();
     },
     onError: () => {
       toast.error("Failed to logout. Please try again.");
