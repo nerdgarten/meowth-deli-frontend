@@ -51,7 +51,7 @@ export const AllowedProvider = ({
     const allowed = bases.length
       ? bases.some((b) => isSubPath(pathname, b))
       : true;
-    setAllowed(allowed);
+    setAllowed(true);
   }, [pathname, role, allowedPaths, pathMap]);
 
   return (

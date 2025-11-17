@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { Button } from "@ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/dialog";
 import Image from "next/image";
@@ -36,7 +37,7 @@ const formatCurrency = (value: number) =>
 
 export default function OrdersPage() {
   const [activeOrder, setActiveOrder] = useState<IOrderDetails | null>(null);
-
+  const router = useRouter();
   const {
     data: orders = [],
     isLoading,
@@ -246,20 +247,18 @@ export default function OrdersPage() {
                   </span>
                 </div>
               </div>
-            </div>
-
-            {/* Action Button */}
-            <div className="border-t pt-4">
-              {activeOrder.status === "preparing" && (
+              <div className="flex flex-row-reverse">
                 <Button
-                  className="w-full rounded-lg bg-[#f5c563] py-6 text-lg font-medium text-white hover:bg-[#f0b84a]"
+                  className="bg-app-dark-brown hover:bg-app-dark-brown/90 px-4 py-2"
                   onClick={() => {
-                    // TODO: Handle mark as complete
+                    if (activeOrder) {
+                      router.push(`/order/${activeOrder.id}`);
+                    }
                   }}
                 >
-                  Mark as complete
+                  <span className="text-white">More Details</span>
                 </Button>
-              )}
+              </div>
             </div>
           </>
         ) : null}
