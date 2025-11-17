@@ -9,6 +9,14 @@ export async function queryCustomerProfile(): Promise<ICustomerProfile> {
   return response.data;
 }
 
+export async function queryWalletBalance(): Promise<number> {
+  const response = await apiClient.get<{ balance: number }>(
+    "/customer/wallet-balance"
+  );
+
+  return response.data.balance;
+}
+
 export const EditProfileFormSchema = z.object({
   firstname: z.string(),
   lastname: z.string(),
