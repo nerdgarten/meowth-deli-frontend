@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Button } from "@ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/dialog";
 import toast from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
 
 import { logoutFunctionMutation } from "@/queries/logout";
 
@@ -14,8 +15,9 @@ export const MenuDialog = ({
   isMenuDialogOpen,
   setIsMenuDialogOpen,
 }: MenuDialogProps) => {
+  const { logout } = useAuth();
   const logoutMutation = useMutation({
-    mutationFn: logoutFunctionMutation,
+    mutationFn: logout,
     onSuccess: () => {
       toast.success("Logged Out");
       setIsMenuDialogOpen(false);

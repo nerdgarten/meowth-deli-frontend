@@ -18,9 +18,11 @@ import { useNavContext } from "@/components/Setting/SettingNavigationMenu";
 import { useQuery } from "@tanstack/react-query";
 
 import { authenticatedAs } from "@/libs/authentication";
+import { useAuth } from "@/components/context/AuthContext";
 
 export default function SettingsPage() {
   const { select_key, role } = useNavContext();
+  console.log("role:", role);
 
   switch (`${select_key}-${role}`) {
     case "profile-customer":

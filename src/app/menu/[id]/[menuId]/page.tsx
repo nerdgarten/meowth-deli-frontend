@@ -35,7 +35,6 @@ export default function MenuPage({
   const addCart = (dish: IDish, quantity: number) => {
     if (!resolvedParams) return;
     addToCart(resolvedParams.id, dish, quantity);
-    console.log("test");
   };
 
   const { data: dish } = useQuery({

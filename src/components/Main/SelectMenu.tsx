@@ -1,8 +1,8 @@
-import { Heart,Minus, Plus } from "lucide-react";
+import { Heart, Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-
 import { createFavouriteDish, deleteFavouriteDish } from "@/libs/favourite";
+
 import type { IDish } from "@/types/dish";
 
 interface SelectMenuProps {
@@ -69,7 +69,7 @@ export const SelectMenu = ({
   return (
     <div className="grid-row-2 mx-4 grid h-full grid-cols-1 gap-4 rounded-2xl bg-white p-4">
       <div className="col-span-1 row-span-1 grid grid-cols-3 grid-rows-1 overflow-hidden rounded-2xl border border-black/5 p-4">
-        <div className="relative h-full w-full rounded-2xl bg-slate-200 overflow-hidden">
+        <div className="relative h-full w-full overflow-hidden rounded-2xl bg-slate-200">
           {dish.image && (
             <Image
               src={dish.image}
@@ -179,7 +179,7 @@ export const SelectMenu = ({
               onClick={() => onDishClick(item)}
               aria-label={`View ${item.name}`}
             >
-              <div className="relative h-40 w-full rounded-lg bg-slate-200 overflow-hidden">
+              <div className="relative h-40 w-full overflow-hidden rounded-lg bg-slate-200">
                 {item.image && (
                   <Image
                     src={item.image}

@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { IDriverProfile } from "@/types/user";
 import Image from "next/image";
+import { driverUploadFile } from "@/queries/file";
 
 import { useQuery } from "@tanstack/react-query";
 import { UserRound } from "lucide-react";
@@ -106,7 +107,6 @@ const CustomerProfileForm = () => {
 
   const onSubmit = (data: z.infer<typeof DriverProfileFormSchema>) => {
     const { profilePicture, firstname, lastname, tel } = data;
-    console.log("image", profilePicture);
     drivereMutation.mutate({
       firstname,
       lastname,
@@ -122,19 +122,7 @@ const CustomerProfileForm = () => {
   const handleFileUpload = async (file: File) => {
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch("http://localhost:3030/file/upload", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
-      }
-
+      await driverUploadFile(file);
       toast.success("File uploaded successfully!");
     } catch (error: any) {
       toast.error(error.message || "File upload failed!");
