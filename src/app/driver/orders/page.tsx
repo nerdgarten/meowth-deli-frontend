@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useState, useMemo, useCallback } from "react";
 import { queryDriverOrders, type IOrderDetails } from "@/queries/order";
 import { useQuery } from "node_modules/@tanstack/react-query/build/modern/useQuery";
+import { updateOrderStatus } from "@/libs/orders";
 
 const STATUS_LABELS: Record<IOrderDetails["status"], string> = {
   pending: "Pending",
@@ -279,7 +280,7 @@ export default function OrdersPage() {
             </div>
 
             {/* Action Button */}
-            <div className="border-t pt-4">
+            {/* <div className="border-t pt-4">
               {activeOrder.status === "preparing" && (
                 <Button
                   className="w-full rounded-lg bg-[#f5c563] py-6 text-lg font-medium text-white hover:bg-[#f0b84a]"
@@ -290,7 +291,7 @@ export default function OrdersPage() {
                   Mark as complete
                 </Button>
               )}
-            </div>
+            </div> */}
           </>
         ) : null}
       </DialogContent>
@@ -329,6 +330,7 @@ function OrderCard({ order, onViewDetails }: OrderCardProps) {
           <Button
             className="rounded-lg bg-[#f5c563] px-6 py-2 text-sm font-medium text-white hover:bg-[#f0b84a]"
             type="button"
+            onClick={() => updateOrderStatus(order.id, "delivered")}
           >
             Received Food
           </Button>
@@ -337,6 +339,7 @@ function OrderCard({ order, onViewDetails }: OrderCardProps) {
           <Button
             className="rounded-lg bg-[#6f5236] px-6 py-2 text-sm font-medium text-[#f6e9d2] hover:bg-[#5e432e]"
             type="button"
+            onClick={() => updateOrderStatus(order.id, "success")}
           >
             Complete Delivery
           </Button>
