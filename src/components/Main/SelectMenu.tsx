@@ -89,7 +89,9 @@ export const SelectMenu = ({
               <button
                 type="button"
                 aria-pressed={fav}
-                aria-label={fav ? "Remove from favourites" : "Add to favourites"}
+                aria-label={
+                  fav ? "Remove from favourites" : "Add to favourites"
+                }
                 disabled={favPending}
                 onClick={toggleFav}
                 className={`mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full ring-offset-2 transition focus:ring-2 focus:ring-amber-500 focus:outline-none disabled:opacity-50`}
@@ -102,7 +104,7 @@ export const SelectMenu = ({
               </button>
             </div>
             <div className="flex flex-col items-start rounded-xl border border-slate-200 px-4 py-2 md:items-end">
-              <p className="text-xs uppercase tracking-wide text-slate-500">
+              <p className="text-xs tracking-wide text-slate-500 uppercase">
                 Base price
               </p>
               <h2 className="text-2xl font-bold text-black sm:text-3xl">
@@ -177,7 +179,7 @@ export const SelectMenu = ({
             <button
               key={item.id}
               type="button"
-              className="h-full w-72 flex-shrink-0 snap-start overflow-hidden rounded-lg bg-white p-2 text-left shadow-2xl ring-1 ring-black/5 transition hover:scale-[1.01] active:scale-[0.99]"
+              className="h-full w-72 flex-shrink-0 snap-start overflow-hidden rounded-lg border bg-white p-2 text-left ring-1 ring-black/5 transition hover:scale-[1.01] active:scale-[0.99]"
               onClick={() => onDishClick(item)}
               aria-label={`View ${item.name}`}
             >
