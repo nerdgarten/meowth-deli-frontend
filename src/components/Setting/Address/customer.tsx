@@ -15,6 +15,7 @@ import { useSettingFloatPanel } from "../SettingFloatPanelProvider";
 import { AddAddressCard } from "./addAddressCard";
 import {
   getCustomerLocations,
+  getDefaultCustomerLocation,
   setDefaultCustomerLocation,
 } from "@/libs/location";
 import type { ICreateLocation } from "@/types/location";
@@ -41,8 +42,8 @@ export function CustomerAddressList() {
   const { data: defaultL } = useQuery({
     queryKey: ["default-customer-location"],
     queryFn: async () => {
-      const response = await getCustomerLocations();
-      return response.find((loc) => loc.id) ?? null;
+      const response = await getDefaultCustomerLocation();
+      return response;
     },
   });
 
