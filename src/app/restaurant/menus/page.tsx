@@ -1,35 +1,33 @@
 "use client";
 
-import { AddMenuFormDialog } from "@/components/Restaurant/MenuFormDialog";
-import { RestaurantProfileFormCard } from "@/components/Setting/Profile/restaurant";
+import { MenuFormDialog } from "@/components/Restaurant/MenuFormDialog";
 import { Button } from "@/components/ui/button";
+import type { IDish } from "@/types/dish";
 
-type MenuItem = {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-};
-
-const MENU_ITEMS: MenuItem[] = [
+const MENU_ITEMS: IDish[] = [
   {
-    id: 1,
-    title: "Sashimi Size XL",
-    description:
+    id: "1",
+    restaurant_id: "1",
+    name: "Sashimi Size XL",
+    detail:
       "A quick and healthy with Omega and mineral featuring succulent Salmon to perfection raw fish, and a side of fruit. This dish is not only packed with rice. If you don't like the vegetable, feel free to inform us.",
     price: 1299,
-    imageUrl:
+    allergy: ["eggs", "fish", "seafood"],
+    image:
       "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1200&q=80",
+    is_out_of_stock: false,
   },
   {
-    id: 2,
-    title: "Sashimi Size L",
-    description:
+    id: "2",
+    restaurant_id: "1",
+    name: "Sashimi Size L",
+    detail:
       "A quick and healthy with Omega and mineral featuring succulent Salmon to perfection raw fish, and a side of fruit. This dish is not only packed with rice. If you don't like the vegetable, feel free to inform us.",
     price: 999,
-    imageUrl:
+    allergy: [],
+    image:
       "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1200&q=80",
+    is_out_of_stock: false,
   },
 ];
 
@@ -51,7 +49,7 @@ export default function RestaurantMenusPage() {
             </p>
           </div>
 
-          <AddMenuFormDialog />
+          <MenuFormDialog dish={null} />
         </div>
 
         <div className="mt-8 space-y-6">
@@ -63,16 +61,14 @@ export default function RestaurantMenusPage() {
               <div className="flex-1 space-y-4">
                 <div className="space-y-1">
                   <h2 className="text-app-black text-2xl font-semibold">
-                    {menu.title}
+                    {menu.name}
                   </h2>
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-app-black text-sm font-semibold">
-                    Description
-                  </p>
+                  <p className="text-app-black text-sm font-semibold">detail</p>
                   <p className="text-app-brown text-sm leading-relaxed">
-                    {menu.description}
+                    {menu.detail}
                   </p>
                 </div>
 
@@ -87,9 +83,7 @@ export default function RestaurantMenusPage() {
                   </div>
                   <div className="flex-auto"></div>
                   <div className="flex flex-wrap gap-3">
-                    <Button className="rounded-full bg-[#aeb7bd] px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 active:translate-y-[1px] active:brightness-90">
-                      Edit
-                    </Button>
+                    <MenuFormDialog dish={menu} />
                     <Button className="rounded-full bg-[#fb6d2c] px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 active:translate-y-[1px] active:brightness-90">
                       Delete
                     </Button>
@@ -99,8 +93,8 @@ export default function RestaurantMenusPage() {
 
               <div className="relative aspect-[4/3] w-full max-w-[240px] overflow-hidden rounded-xl border border-[#e7d3b0] bg-[#f7e6cc] shadow-inner sm:w-auto">
                 <img
-                  src={menu.imageUrl}
-                  alt={menu.title}
+                  src={menu.image}
+                  alt={menu.name}
                   className="h-full w-full object-cover"
                   loading="lazy"
                 />

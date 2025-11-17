@@ -38,6 +38,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/libs/utils";
+import type { IDish } from "@/types/dish";
 
 const ALLERGEN_KEYS = [
   "gluten",
@@ -93,7 +94,9 @@ const DishFormSchema = z.object({
 
 type DishFormValues = z.infer<typeof DishFormSchema>;
 
-export function AddMenuFormDialog() {
+export function MenuFormDialog(props: { dish: IDish | null }) {
+  const dish = props.dish;
+  console.log("dish", dish);
   const [open, setOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -102,11 +105,11 @@ export function AddMenuFormDialog() {
       DishFormSchema
     ) as unknown as Resolver<DishFormValues>,
     defaultValues: {
-      name: "",
-      price: 0,
-      detail: "",
-      image: null,
-      allergies: [],
+      name: dish?.name ?? "",
+      price: dish?.price ?? 0,
+      detail: dish?.detail ?? "",
+      image: dish?.image ?? null,
+      allergies: dish?.allergy ?? [],
     } satisfies DishFormValues,
   });
 
@@ -157,12 +160,12 @@ export function AddMenuFormDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="rounded-full bg-[#f5a77b] px-5 py-2 text-sm font-semibold text-white shadow-lg hover:brightness-95">
-          Add Item
+          {dish ? "Edit Menu" : "Add Menu"}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[75vh] w-[90vw] max-w-4xl overflow-y-auto rounded-[28px] border-none bg-[#fffaf2] p-0 shadow-[0_24px_60px_rgba(52,31,10,0.12)] sm:p-0">
         <DialogHeader className="sr-only">
-          <DialogTitle>Menu Form</DialogTitle>
+          <DialogTitle>{dish ? "Edit Menu" : "Add Menu"}</DialogTitle>
         </DialogHeader>
         <div className="rounded-[28px] bg-white px-6 py-6 text-[#2b2016]">
           <Form {...form}>
@@ -241,12 +244,12 @@ export function AddMenuFormDialog() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-lg font-semibold text-[#2d1f13]">
-                          Item Name
+                          Menu Name
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Enter item name"
+                            placeholder="Enter menu name"
                             className="h-auto rounded-xl border-[#ded2c0] bg-white px-4 py-3 text-sm text-[#2d1f13] shadow-inner focus:border-[#cfa46b] focus:ring-2 focus:ring-[#f5d9aa]"
                           />
                         </FormControl>
@@ -282,62 +285,62 @@ export function AddMenuFormDialog() {
                       )}
                     />
                   </div>
-                </div>
-                <FormField
-                  control={form.control}
-                  name="detail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-lg font-semibold text-[#2d1f13]">
-                        Description
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          placeholder="Add description"
-                          className="min-h-[80px] rounded-xl border-[#ded2c0] bg-white px-4 py-3 text-sm text-[#2d1f13] shadow-inner focus:border-[#cfa46b] focus:ring-2 focus:ring-[#f5d9aa]"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={form.control}
+                    name="detail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-lg font-semibold text-[#2d1f13]">
+                          Description
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea
+                            {...field}
+                            placeholder="Add description"
+                            className="min-h-[80px] rounded-xl border-[#ded2c0] bg-white px-4 py-3 text-sm text-[#2d1f13] shadow-inner focus:border-[#cfa46b] focus:ring-2 focus:ring-[#f5d9aa]"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="allergies"
-                  render={() => (
-                    <FormItem className="space-y-3">
-                      <FormLabel className="text-lg font-semibold text-[#2d1f13]">
-                        Allergens
-                      </FormLabel>
-                      <div className="flex flex-wrap gap-3">
-                        {ALLERGENS.map((item) => {
-                          const isActive = form
-                            .watch("allergies")
-                            .includes(item.key);
-                          return (
-                            <Button
-                              key={item.key}
-                              type="button"
-                              onClick={() => toggleAllergy(item.key)}
-                              className={cn(
-                                "flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold shadow-sm transition",
-                                isActive
-                                  ? "border-[#f5b700] bg-[#ffe69b] text-[#3c280f]"
-                                  : "border-[#d6c8b0] bg-white text-[#6f553a] hover:bg-[#f5ecd9]"
-                              )}
-                              variant="outline"
-                            >
-                              <item.Icon className="size-4 text-[#6f553a]" />
-                              {item.label}
-                            </Button>
-                          );
-                        })}
-                      </div>
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={form.control}
+                    name="allergies"
+                    render={() => (
+                      <FormItem className="space-y-3">
+                        <FormLabel className="text-lg font-semibold text-[#2d1f13]">
+                          Allergens
+                        </FormLabel>
+                        <div className="flex flex-wrap gap-3">
+                          {ALLERGENS.map((item) => {
+                            const isActive = form
+                              .watch("allergies")
+                              .includes(item.key);
+                            return (
+                              <Button
+                                key={item.key}
+                                type="button"
+                                onClick={() => toggleAllergy(item.key)}
+                                className={cn(
+                                  "flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold shadow-sm transition",
+                                  isActive
+                                    ? "border-[#f5b700] bg-[#ffe69b] text-[#3c280f]"
+                                    : "border-[#d6c8b0] bg-white text-[#6f553a] hover:bg-[#f5ecd9]"
+                                )}
+                                variant="outline"
+                              >
+                                <item.Icon className="size-4 text-[#6f553a]" />
+                                {item.label}
+                              </Button>
+                            );
+                          })}
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
 
               <div className="flex justify-end gap-3">
@@ -349,18 +352,14 @@ export function AddMenuFormDialog() {
                 >
                   Cancel
                 </Button>
-                {/* <Button
-                  type="button"
-                  className="flex items-center gap-2 rounded-full bg-[#f45c3b] px-6 py-3 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(244,92,59,0.35)] transition hover:brightness-95 active:translate-y-[1px] active:brightness-90"
-                >
-                  Delete
-                  <Trash2 className="size-4" aria-hidden />
-                </Button> */}
                 <Button
                   type="submit"
-                  className="rounded-full bg-[#f5a77b] px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:brightness-95"
+                  className="bg-app-peanut rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:brightness-95"
+                  onClick={() => {
+                    // TODO: do something
+                  }}
                 >
-                  Save
+                  {dish ? "Save Changes" : "Add Item"}
                 </Button>
               </div>
             </form>
