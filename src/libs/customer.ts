@@ -1,8 +1,8 @@
 import { apiClient } from "@/libs/axios";
 
-export const getAllergy = async () => {
+export const getAllergy = async (): Promise<string[]> => {
   try {
-    const response = await apiClient.get(`/customer/allergy`);
+    const response = await apiClient.get<string[]>(`/customer/allergy`);
     return response.data;
   } catch (error) {
     console.error("Error fetching dish:", error);
@@ -11,7 +11,7 @@ export const getAllergy = async () => {
 };
 export const updateAllergy = async (allergy: string[]) => {
   try {
-    const response = await apiClient.put(`/customer/allergy`, {
+    const response = await apiClient.put<string[]>(`/customer/allergy`, {
       allergies: allergy,
     });
     return response.data;

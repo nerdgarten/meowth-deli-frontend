@@ -147,7 +147,10 @@ export function AdminPending() {
         <div className="flex w-full flex-col gap-8">
           {pendingReports.map((report) => {
             return (
-              <div className="w-full rounded-xl bg-white/80 shadow-xl">
+              <div
+                key={report.id}
+                className="w-full rounded-xl bg-white/80 shadow-xl"
+              >
                 <ReportCard data={report} onClick={handleResolveClick} />
               </div>
             );

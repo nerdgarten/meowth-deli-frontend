@@ -127,8 +127,8 @@ const RestaurantProfileForm = () => {
     try {
       await restaurantUploadFile(file);
       toast.success("File uploaded successfully!");
-    } catch (error: any) {
-      toast.error(error.message || "File upload failed!");
+    } catch (error) {
+      toast.error("File upload failed!");
     } finally {
       setUploading(false);
     }
@@ -284,9 +284,9 @@ const RestaurantProfileForm = () => {
             <input
               type="file"
               accept="application/pdf"
-              onChange={(e) => {
+              onChange={async (e) => {
                 const file = e.target.files?.[0];
-                if (file) handleFileUpload(file);
+                if (file) await handleFileUpload(file);
               }}
               className="text-app-dark-brown file:bg-app-dark-brown mt-2 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-white hover:file:bg-[#2F2721]"
               disabled={uploading}

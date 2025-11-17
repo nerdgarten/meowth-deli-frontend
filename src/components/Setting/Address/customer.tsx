@@ -13,8 +13,12 @@ import { Button } from "@/components/ui/button";
 import { AddressCard } from "./addressCard";
 import { useSettingFloatPanel } from "../SettingFloatPanelProvider";
 import { AddAddressCard } from "./addAddressCard";
-import { getCustomerLocations } from "@/libs/location";
+import {
+  getCustomerLocations,
+  setDefaultCustomerLocation,
+} from "@/libs/location";
 import type { ICreateLocation } from "@/types/location";
+import { de } from "zod/v4/locales";
 
 export function CustomerAddressPage() {
   return (
@@ -31,14 +35,27 @@ export function CustomerAddressList() {
     queryKey: ["address-profile"],
     queryFn: getCustomerLocations,
   });
+  const [defaultLocation, setDefaultLocation] =
+    useState<ICreateLocation | null>(null);
+
+  const { data: defaultL } = useQuery({
+    queryKey: ["default-customer-location"],
+    queryFn: async () => {
+      const response = await getCustomerLocations();
+      return response.find((loc) => loc.id) ?? null;
+    },
+  });
+
   const [addressList, setAddressList] = useState<ICreateLocation[]>([]);
   const { showPanel, setShowCloseButton, hidePanel } = useSettingFloatPanel();
 
   useEffect(() => {
     if (profile) setAddressList(profile);
-  }, [profile]);
+    if (defaultL !== undefined && defaultL !== null)
+      setDefaultLocation(defaultL);
+  }, [profile, defaultL]);
 
-  if (profile === undefined) {
+  if (profile === undefined || defaultL === undefined) {
     return <div>Loading...</div>;
   }
 
@@ -63,7 +80,15 @@ export function CustomerAddressList() {
             <p className="text-app-brown/80">No addresses found.</p>
           ) : (
             addressList.map((address) => (
-              <AddressCard key={address.id} address={address.address} />
+              <AddressCard
+                key={address.id}
+                address={address}
+                isDefault={address.id === defaultLocation?.id}
+                setDefault={async (location: ICreateLocation) => {
+                  await setDefaultCustomerLocation(String(location.id));
+                  setDefaultLocation(location);
+                }}
+              />
             ))
           )}
         </div>

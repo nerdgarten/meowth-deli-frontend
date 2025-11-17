@@ -33,11 +33,9 @@ export const AllowedProvider = ({
     let bases: string[] = [];
     if (Array.isArray(allowedPaths)) {
       bases = allowedPaths;
-    } else if (
-      allowedPaths &&
-      typeof (allowedPaths as any)?.get === "function"
-    ) {
-      bases = (allowedPaths as Map<string, string[]>).get(role) ?? [];
+    } else if (allowedPaths instanceof Map) {
+      // safe Map type check — no `any` and no unnecessary assertion
+      bases = allowedPaths.get(role) ?? [];
     }
     const roleBase = pathMap?.get?.(role);
     if (roleBase) bases.push(roleBase);
@@ -78,11 +76,9 @@ export const AllowedProvider = ({
     let bases: string[] = [];
     if (Array.isArray(allowedPaths)) {
       bases = allowedPaths;
-    } else if (
-      allowedPaths &&
-      typeof (allowedPaths as any)?.get === "function"
-    ) {
-      bases = (allowedPaths as Map<string, string[]>).get(role) ?? [];
+    } else if (allowedPaths instanceof Map) {
+      // use instanceof Map here as well
+      bases = allowedPaths.get(role) ?? [];
     }
     const roleBase = pathMap?.get?.(role);
     if (roleBase) bases.push(roleBase);
@@ -113,7 +109,7 @@ export const AllowedProvider = ({
               <button
                 type="button"
                 onClick={() => {
-                  router.replace(pathMap.get(role) || "/");
+                  router.replace(pathMap.get(role) ?? "/");
                 }}
                 className="rounded-lg bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20"
               >

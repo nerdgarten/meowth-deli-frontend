@@ -65,7 +65,11 @@ export function RestaurantAddressList() {
             <p className="text-app-brown/80">No addresses found.</p>
           ) : (
             // <h1>{addressList.length}</h1>
-            <AddressCard key={addressList.id} address={addressList.address} />
+            <AddressCard
+              key={addressList.id}
+              address={addressList}
+              setDefault={async () => {}}
+            />
           )}
         </div>
         <Button

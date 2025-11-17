@@ -130,7 +130,7 @@ export default function Restaurant({ params }: PageProps) {
       <div className="mb-8">
         <div className="relative mb-4 h-64 overflow-hidden rounded-lg md:h-80">
           <img
-            src={restaurant.image}
+            src={restaurant.banner}
             alt={restaurant.name}
             className="h-full w-full object-cover"
           />
@@ -151,7 +151,7 @@ export default function Restaurant({ params }: PageProps) {
             <div className="mb-4 flex items-center gap-4 text-gray-600">
               <div className="flex items-center gap-1">
                 <MapPin size={16} />
-                <span>{restaurant.location}</span>
+                <span>{restaurant.location?.address}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Phone size={16} />

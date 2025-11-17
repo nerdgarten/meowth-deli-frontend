@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import { useCart } from "@/components/context/CartProvider";
 import { OrderSummary } from "@/components/Main/OrderSummary";
@@ -11,6 +11,7 @@ import { getRestaurant } from "@/queries/restaurant";
 import { getRestaurantById } from "@/libs/restaurant";
 import type { IOrderDish } from "@/types/order";
 import { getCustomerLocations } from "@/libs/location";
+import { getDefaultCustomerLocation } from "@/libs/location";
 
 // Interface for storing order data in localStorage
 interface StoredOrder {
@@ -47,13 +48,34 @@ export default function OrderPage({
     },
     enabled: !!resolvedParams?.id,
   });
-  const {data: getLocation} = useQuery({
+  const { data: getLocation, isLoading: locationLoading } = useQuery({
     queryKey: ["location-info"],
     queryFn: async () => {
       return getCustomerLocations();
     },
   });
-
+  const { data: defaultLocation, isLoading: defaultLocationLoading } = useQuery(
+    {
+      queryKey: ["default-location-info"],
+      queryFn: async () => {
+        return getDefaultCustomerLocation();
+      },
+    }
+  );
+  const locations = useMemo(() => {
+    if (!Array.isArray(getLocation)) return [];
+    const list = [...getLocation];
+    const extractId = (loc: any) =>
+      Number(loc?.id ?? loc?.delivery_location_id ?? loc?.location_id);
+    const defId = extractId(defaultLocation);
+    if (!defId) return list;
+    const idx = list.findIndex((l) => extractId(l) === defId);
+    if (idx > 0) {
+      const [def] = list.splice(idx, 1);
+      if (def) list.unshift(def);
+    }
+    return list ?? [];
+  }, [getLocation, defaultLocation]);
 
   const createOrderMutation = useMutation({
     mutationFn: (orderData: {
@@ -128,13 +150,21 @@ export default function OrderPage({
     return orders.find((order) => order.restaurantId === restaurantId) ?? null;
   };
 
-  if (!resolvedParams) {
+  if (
+    !resolvedParams ||
+    restaurantQuery.isLoading ||
+    locationLoading ||
+    defaultLocationLoading
+  ) {
     return <div>Loading...</div>;
   }
 
   const cartItem = getCartItems(resolvedParams.id);
 
-  const onSubmit = async (remark: string): Promise<void> => {
+  const onSubmit = async (
+    remark: string,
+    selectedIndex: string
+  ): Promise<void> => {
     if (cartItem.length === 0) {
       alert("Your cart is empty!");
       return;
@@ -147,7 +177,9 @@ export default function OrderPage({
 
     try {
       await createOrderMutation.mutateAsync({
-        delivery_location_id: 1,
+        delivery_location_id: selectedIndex
+          ? (locations[Number(selectedIndex)]?.id ?? 0)
+          : 0,
         dishes: sending,
         restaurant_id: Number(resolvedParams.id),
         driver_fee: 30,
@@ -165,7 +197,7 @@ export default function OrderPage({
   return (
     <main className="h-230 w-full p-16">
       <OrderSummary
-        location={getLocation ?? []}
+        location={locations ?? []}
         cartItem={cartItem}
         restaurantName={restaurantQuery.data?.name ?? ""}
         TotalPrice={getTotalPrice(resolvedParams.id)}
