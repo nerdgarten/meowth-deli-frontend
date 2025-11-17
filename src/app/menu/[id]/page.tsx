@@ -73,11 +73,11 @@ export default function RestaurantPage({
     router.push(`/menu/${resolvedParams.id}/${dish.id}`);
   };
 
-  // if (!resolvedParams || favourite_restaurant === undefined) {
-  //   return (
-  //     <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
-  //   );
-  // }
+  if (!resolvedParams || favourite_restaurant === undefined) {
+    return (
+      <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
+    );
+  }
 
   return (
     <main className="min-h-screen w-full overflow-x-hidden overflow-y-auto p-4 sm:p-8 lg:p-16">
