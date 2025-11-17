@@ -49,10 +49,8 @@ export const LandingCarousel = () => {
   useEffect(() => {
     if (!restaurants) return;
     const idx = Math.floor(Math.random() * restaurants.length);
-    console.log(restaurants);
     setRandomRestaurant(restaurants[idx]!);
-    console.log("Random Restaurant:", randomRestaurant);
-  }, [restaurants, setRandomRestaurant, randomRestaurant]);
+  }, [restaurants, setRandomRestaurant]);
 
   useEffect(() => {
     if (!api) {
