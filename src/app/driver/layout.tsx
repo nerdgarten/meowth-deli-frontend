@@ -18,11 +18,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAVIGATION_ITEMS = [
-  {
-    title: "Dashboard",
-    href: `/driver/dashboard`,
-    icon: LayoutDashboard,
-  },
+  // {
+  //   title: "Dashboard",
+  //   href: `/driver/dashboard`,
+  //   icon: LayoutDashboard,
+  // },
   {
     title: "Orders",
     href: `/driver/orders`,
@@ -33,16 +33,6 @@ const NAVIGATION_ITEMS = [
     href: `/driver/reviews`,
     icon: Star,
   },
-  // {
-  //   title: "Reviews",
-  //   href: `/driver/reviews`,
-  //   icon: MessageSquare,
-  // },
-  // {
-  //   title: "Settings",
-  //   href: `/driver/settings`,
-  //   icon: Settings,
-  // },
 ] as const;
 
 export default function DashboardLayout({
