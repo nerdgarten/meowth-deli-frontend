@@ -5,6 +5,7 @@ import {
   Bike,
   ChefHat,
   ClipboardList,
+  Info,
   Plus,
   ReceiptText,
   Star,
@@ -85,6 +86,7 @@ export default function OrderPage({ params }: PageProps) {
   // Modal states - must be declared before any early returns
   const [isDriverModalOpen, setIsDriverModalOpen] = useState(false);
   const [isRestaurantModalOpen, setIsRestaurantModalOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   const {
     data: orderData,
@@ -227,14 +229,14 @@ export default function OrderPage({ params }: PageProps) {
     <main className="min-h-screen bg-[#F9F7F3] p-4 pt-20 pb-20 sm:p-6 sm:pt-24 lg:p-8 lg:pt-24">
       <div className="mx-auto max-w-[1400px] space-y-6">
         {/* Main Grid Layout */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-7">
           {/* Hero Section - Left, Row 1, Col 1-3 */}
           <div className="lg:col-span-3 lg:row-start-1">
-            <HeroSection message={heroMessage} reportLink="#" />
+            <HeroSection message={heroMessage} />
           </div>
 
           {/* Address - Right, Row 1, Col 4 */}
-          <div className="lg:col-span-1 lg:row-start-1">
+          <div className="lg:col-span-2 lg:row-start-1">
             <AddressSection
               address={orderData.location.address}
               driverNote={orderData.remark ?? "No special instructions"}
@@ -246,7 +248,7 @@ export default function OrderPage({ params }: PageProps) {
           </div>
 
           {/* Payment - Right, Row 1, Col 5 */}
-          <div className="lg:col-span-1 lg:row-start-1">
+          <div className="lg:col-span-2 lg:row-start-1">
             <PaymentStatus
               method="meowth-wallet"
               status={
@@ -257,7 +259,7 @@ export default function OrderPage({ params }: PageProps) {
           </div>
 
           {/* Status Timeline - Left, Row 2, Col 1-3 */}
-          <div className="lg:col-span-3 lg:row-start-2">
+          <div className="lg:col-span-4 lg:row-start-2">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {getStatusTimeline().map((status, index) => (
                 <StatusCard key={index} {...status} />
@@ -266,19 +268,19 @@ export default function OrderPage({ params }: PageProps) {
           </div>
 
           {/* Order Summary - Right, Row 2-4, Col 4-5 */}
-          <div className="lg:col-span-2 lg:col-start-4 lg:row-span-3 lg:row-start-2 lg:self-start">
+          <div className="lg:col-span-3 lg:col-start-5 lg:row-span-3 lg:row-start-2 lg:self-start">
             <div className="lg:sticky lg:top-28">
-            <OrderSummary
-              items={orderItems}
-              subtotal={subtotal}
-              deliveryFee={deliveryFee}
-              total={total}
-            />
+              <OrderSummary
+                items={orderItems}
+                subtotal={subtotal}
+                deliveryFee={deliveryFee}
+                total={total}
+              />
             </div>
           </div>
 
           {/* Order Details - Left, Row 3, Col 1-3 */}
-          <div className="lg:col-span-3 lg:row-start-3">
+          <div className="lg:col-span-4 lg:row-start-3">
             <Card className="rounded-2xl bg-white shadow-lg">
               <CardHeader className="p-6">
                 <CardTitle className="text-2xl font-bold text-gray-800">
@@ -366,6 +368,29 @@ export default function OrderPage({ params }: PageProps) {
                 </button>
               </div>
             </div>
+
+            {/* Report Section */}
+            <div className="rounded-lg border border-gray-200 bg-white p-6">
+              <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+                <div className="flex-1">
+                  <h2 className="mb-2 flex items-center gap-2 text-2xl font-bold text-gray-900">
+                    <Info size={24} className="text-red-500" />
+                    Submit a Report
+                  </h2>
+                  <p className="text-gray-600">
+                    Something went wrong with your order? Let us know so we can
+                    improve.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsReportModalOpen(true)}
+                  className="flex items-center gap-2 rounded-lg bg-red-500 px-6 py-3 font-medium whitespace-nowrap text-white transition-colors hover:bg-red-600"
+                >
+                  <Plus size={20} />
+                  Add Report
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
@@ -391,6 +416,17 @@ export default function OrderPage({ params }: PageProps) {
           orderId={orderData.id}
           title="Review Your Restaurant"
           description={`Share your experience with ${orderData.restaurant.name} to help other customers.`}
+        />
+
+        {/* Report Review Modal */}
+        <ReviewModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          type="report"
+          id={orderData.restaurant_id}
+          orderId={orderData.id}
+          title="Submit a Report"
+          description={`Something went wrong with your order? Let us know so we can improve.`}
         />
       </div>
     </main>
