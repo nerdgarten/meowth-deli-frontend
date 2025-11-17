@@ -1,14 +1,14 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-import type { IDriverProfile } from "@/types/user";
-import Image from "next/image";
-
 import { useQuery } from "@tanstack/react-query";
 import { UserRound } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { type z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,15 +19,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { queryCustomerProfile } from "@/queries/profile";
-import type { ICustomerProfile } from "@/types/user";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  updateDriverProfileMutation,
-  queryDriverProfile,
   DriverProfileFormSchema,
+  queryDriverProfile,
+  updateDriverProfileMutation,
 } from "@/libs/driver";
+import { driverUploadFile } from "@/queries/file";
+import { queryCustomerProfile } from "@/queries/profile";
+import type { IDriverProfile } from "@/types/user";
+import type { ICustomerProfile } from "@/types/user";
 
 export function DriverProfilePage() {
   return (
@@ -106,7 +106,6 @@ const CustomerProfileForm = () => {
 
   const onSubmit = (data: z.infer<typeof DriverProfileFormSchema>) => {
     const { profilePicture, firstname, lastname, tel } = data;
-    console.log("image", profilePicture);
     drivereMutation.mutate({
       firstname,
       lastname,
@@ -122,22 +121,10 @@ const CustomerProfileForm = () => {
   const handleFileUpload = async (file: File) => {
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch("http://localhost:3030/file/upload", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
-      }
-
+      await driverUploadFile(file);
       toast.success("File uploaded successfully!");
-    } catch (error: any) {
-      toast.error(error.message || "File upload failed!");
+    } catch {
+      toast.error( "File upload failed!");
     } finally {
       setUploading(false);
     }
@@ -292,9 +279,9 @@ const CustomerProfileForm = () => {
           <input
             type="file"
             accept="application/pdf"
-            onChange={(e) => {
+            onChange={async(e) => {
               const file = e.target.files?.[0];
-              if (file) handleFileUpload(file);
+              if (file) await handleFileUpload(file);
             }}
             className="text-app-dark-brown file:bg-app-dark-brown mt-2 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-white hover:file:bg-[#2F2721]"
             disabled={uploading}

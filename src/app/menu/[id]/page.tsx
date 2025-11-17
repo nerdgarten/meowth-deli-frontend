@@ -1,17 +1,16 @@
 "use client";
-
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { RestaurantList } from "@/components/Main/RestaurantList";
-import { authenticatedAs } from "@/libs/authentication";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { getDishRestaurantId } from "@/libs/dish";
 import {
   checkFavouriteRestaurant,
   getFavouriteDishesByRestaurant,
 } from "@/libs/favourite";
-import { getRestaurantById } from "@/libs/restaurant";
+import { getRestaurant } from "@/queries/restaurant";
 import type { IDish } from "@/types/dish";
 
 export default function RestaurantPage({
@@ -29,19 +28,15 @@ export default function RestaurantPage({
 
   const router = useRouter();
 
+  // Fetch restaurant info
   const { data: restaurant } = useQuery({
     queryKey: ["restaurant-info", resolvedParams?.id],
     queryFn: ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No id provided");
-      return getRestaurantById(restaurantId);
+      return getRestaurant(restaurantId);
     },
     enabled: !!resolvedParams?.id,
-  });
-
-  const { data: authenticatedAsRole } = useQuery({
-    queryKey: ["authenticate"],
-    queryFn: authenticatedAs,
   });
 
   const { data: favourite_restaurant } = useQuery({
@@ -51,7 +46,7 @@ export default function RestaurantPage({
       if (!restaurantId) throw new Error("No id provided");
       return checkFavouriteRestaurant(Number(restaurantId));
     },
-    enabled: !!resolvedParams?.id && !!authenticatedAsRole,
+    enabled: !!resolvedParams?.id,
   });
   const { data: favourite_dish } = useQuery({
     queryKey: ["restaurant-favourite-dish", resolvedParams?.id],
@@ -60,7 +55,7 @@ export default function RestaurantPage({
       if (!restaurantId) throw new Error("No id provided");
       return getFavouriteDishesByRestaurant(Number(restaurantId));
     },
-    enabled: !!resolvedParams?.id && !!authenticatedAsRole,
+    enabled: !!resolvedParams?.id,
   });
 
   const { data: dishes } = useQuery({
@@ -78,17 +73,23 @@ export default function RestaurantPage({
     router.push(`/menu/${resolvedParams.id}/${dish.id}`);
   };
 
-  console.log(dishes, restaurant);
+  // if (!resolvedParams || favourite_restaurant === undefined) {
+  //   return (
+  //     <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
+  //   );
+  // }
 
   return (
-    <main className="w-full overflow-auto p-16">
-      <RestaurantList
-        dishes={dishes ?? []}
-        favourite_dish={favourite_dish ?? []}
-        restaurant={restaurant}
-        onDishClick={onDishClick}
-        favourite_restaurant={favourite_restaurant ?? false}
-      />
+    <main className="min-h-screen w-full overflow-x-hidden overflow-y-auto p-4 sm:p-8 lg:p-16">
+      <div className="mx-auto max-w-7xl">
+        <RestaurantList
+          dishes={dishes ?? []}
+          favourite_dish={favourite_dish ?? []}
+          restaurant={restaurant}
+          onDishClick={onDishClick}
+          favourite_restaurant={favourite_restaurant ?? false}
+        />
+      </div>
     </main>
   );
 }

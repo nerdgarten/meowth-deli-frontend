@@ -2,14 +2,14 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import { useCart } from "@/components/context/CartProvider";
 import { OrderSummary } from "@/components/Main/OrderSummary";
-import { getLocationByCustomerId } from "@/libs/location";
+import { getCustomerLocations } from "@/libs/location";
+import { getDefaultCustomerLocation } from "@/libs/location";
 import { createOrder } from "@/libs/orders";
-import { getRestaurantById } from "@/libs/restaurant";
-import type { ILocation } from "@/types/location";
+import { getRestaurant } from "@/queries/restaurant";
 import type { IOrderDish } from "@/types/order";
 
 // Interface for storing order data in localStorage
@@ -43,24 +43,38 @@ export default function OrderPage({
     queryFn: async ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No id provided");
-      return getRestaurantById(restaurantId);
+      return getRestaurant(restaurantId);
     },
     enabled: !!resolvedParams?.id,
   });
-
-  const locationQuery = useQuery({
-    queryKey: ["location"],
+  const { data: getLocation, isLoading: locationLoading } = useQuery({
+    queryKey: ["location-info"],
     queryFn: async () => {
-      return getLocationByCustomerId();
+      return getCustomerLocations();
     },
-    enabled: !!resolvedParams?.id,
   });
-
-  const loc: ILocation[] = locationQuery.data ?? [{
-    customer_id: 0,
-    address: ""
-    
-  }];
+  const { data: defaultLocation, isLoading: defaultLocationLoading } = useQuery(
+    {
+      queryKey: ["default-location-info"],
+      queryFn: async () => {
+        return getDefaultCustomerLocation();
+      },
+    }
+  );
+  const locations = useMemo(() => {
+    if (!Array.isArray(getLocation)) return [];
+    const list = [...getLocation];
+    const extractId = (loc: any) =>
+      Number(loc?.id ?? loc?.delivery_location_id ?? loc?.location_id);
+    const defId = extractId(defaultLocation);
+    if (!defId) return list;
+    const idx = list.findIndex((l) => extractId(l) === defId);
+    if (idx > 0) {
+      const [def] = list.splice(idx, 1);
+      if (def) list.unshift(def);
+    }
+    return list ?? [];
+  }, [getLocation, defaultLocation]);
 
   const createOrderMutation = useMutation({
     mutationFn: (orderData: {
@@ -68,6 +82,7 @@ export default function OrderPage({
       dishes: IOrderDish[];
       restaurant_id: number;
       driver_fee: number;
+      remark: string;
     }) => createOrder(orderData),
 
     onSuccess: (data) => {
@@ -134,13 +149,21 @@ export default function OrderPage({
     return orders.find((order) => order.restaurantId === restaurantId) ?? null;
   };
 
-  if (!resolvedParams) {
+  if (
+    !resolvedParams ||
+    restaurantQuery.isLoading ||
+    locationLoading ||
+    defaultLocationLoading
+  ) {
     return <div>Loading...</div>;
   }
 
   const cartItem = getCartItems(resolvedParams.id);
 
-  const onSubmit = async (): Promise<void> => {
+  const onSubmit = async (
+    remark: string,
+    selectedIndex: string
+  ): Promise<void> => {
     if (cartItem.length === 0) {
       alert("Your cart is empty!");
       return;
@@ -153,10 +176,13 @@ export default function OrderPage({
 
     try {
       await createOrderMutation.mutateAsync({
-        delivery_location_id: 1,
+        delivery_location_id: selectedIndex
+          ? (locations[Number(selectedIndex)]?.id ?? 0)
+          : 0,
         dishes: sending,
         restaurant_id: Number(resolvedParams.id),
         driver_fee: 30,
+        remark: remark,
       });
 
       clearCart(resolvedParams.id);
@@ -170,10 +196,10 @@ export default function OrderPage({
   return (
     <main className="h-230 w-full p-16">
       <OrderSummary
+        location={locations ?? []}
         cartItem={cartItem}
         restaurantName={restaurantQuery.data?.name ?? ""}
         TotalPrice={getTotalPrice(resolvedParams.id)}
-        location={loc[0]!.address}
         onSubmit={onSubmit}
       />
     </main>

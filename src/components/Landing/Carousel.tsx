@@ -20,8 +20,6 @@ import type { ReviewResponse } from "@/types/review";
 import { TopCarouselCard } from "./TopCarouselCard";
 
 export const LandingCarousel = () => {
-  // hero index state removed (static hero image)
-
   const { data: restaurants } = useQuery<IRestaurant[]>({
     queryKey: ["restaurant-all"],
     queryFn: getAllRestaurant,
@@ -60,10 +58,6 @@ export const LandingCarousel = () => {
     const idx = Math.floor(Math.random() * restaurants.length);
     setRandomRestaurant(restaurants[idx]!);
   }, [restaurants, setRandomRestaurant]);
-
-  // No hero carousel — single background image only.
-
-  // hero nav removed
 
   return (
     <div className="relative">

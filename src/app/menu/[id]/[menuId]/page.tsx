@@ -1,16 +1,16 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 import { useCart } from "@/components/context/CartProvider";
 import { SelectMenu } from "@/components/Main/SelectMenu";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { getDishById } from "@/libs/dish";
 import { getDishRestaurantId } from "@/libs/dish";
 import { checkFavouriteDish } from "@/libs/favourite";
 import type { IDish } from "@/types/dish";
-import { useRouter } from "next/navigation";
 
 export default function MenuPage({
   params,
@@ -35,7 +35,6 @@ export default function MenuPage({
   const addCart = (dish: IDish, quantity: number) => {
     if (!resolvedParams) return;
     addToCart(resolvedParams.id, dish, quantity);
-    console.log("test");
   };
 
   const { data: dish } = useQuery({
@@ -69,14 +68,16 @@ export default function MenuPage({
   });
 
   return (
-    <main className="min-h-300 w-full overflow-auto p-16">
-      <SelectMenu
-        dish={dish!}
-        recommendations={recommendations ?? []}
-        addToCart={addCart}
-        onDishClick={onDishClick}
-        favourite_dish={favourite_dish ?? false}
-      />
+    <main className="min-h-screen w-full overflow-x-hidden overflow-y-auto p-4 sm:p-8 lg:p-16">
+      <div className="mx-auto max-w-7xl">
+        <SelectMenu
+          dish={dish!}
+          recommendations={recommendations ?? []}
+          addToCart={addCart}
+          onDishClick={onDishClick}
+          favourite_dish={favourite_dish ?? false}
+        />
+      </div>
     </main>
   );
 }

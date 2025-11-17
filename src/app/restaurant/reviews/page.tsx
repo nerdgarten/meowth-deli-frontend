@@ -1,5 +1,5 @@
-import { Star } from "lucide-react";
 import Image from "next/image";
+import { Star } from "lucide-react";
 
 type Review = {
   id: number;
@@ -12,7 +12,7 @@ type Review = {
   image?: string;
 };
 
-const DRIVER_NAME = "Mr. Suthinat Chonpaisarn";
+const RESTAURANT_NAME = "Meowth Deli";
 
 const reviews: Review[] = [
   {
@@ -43,16 +43,16 @@ const ratingColor = {
   empty: "#E9D7B9",
 };
 
-export default function DriverReviewsPage() {
+export default function RestairentDriverReviewsPage() {
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-10 text-[#2a1a0f]">
       <section className="border-b-app-background rounded-[36px] border bg-white px-8 py-10 shadow-[0_30px_60px_rgba(93,66,17,0.08)]">
         <header className="space-y-2">
           <p className="text-sm font-semibold tracking-[0.2em] text-[#c0a476] uppercase">
-            Driver Reviews
+            Restaurant Reviews
           </p>
           <h1 className="text-3xl font-semibold text-[#1d140d]">
-            {DRIVER_NAME}
+            {RESTAURANT_NAME}
           </h1>
         </header>
 

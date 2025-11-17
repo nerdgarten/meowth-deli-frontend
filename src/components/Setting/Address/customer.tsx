@@ -1,34 +1,19 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-
 import { useQuery } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { queryCustomerProfile } from "@/queries/profile";
-import type { ICustomerProfile } from "@/types/user";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  EditProfileFormSchema,
-  updateCustomerProfileMutation,
-} from "@/queries/profile";
+
 import { AddressCard } from "./addressCard";
 import { useSettingFloatPanel } from "../SettingFloatPanelProvider";
 import { AddAddressCard } from "./addAddressCard";
-import { getCustomerLocations } from "@/libs/location";
+import {
+  getCustomerLocations,
+  getDefaultCustomerLocation,
+  setDefaultCustomerLocation,
+} from "@/libs/location";
 import type { ICreateLocation } from "@/types/location";
 
 export function CustomerAddressPage() {
@@ -46,15 +31,27 @@ export function CustomerAddressList() {
     queryKey: ["address-profile"],
     queryFn: getCustomerLocations,
   });
+  const [defaultLocation, setDefaultLocation] =
+    useState<ICreateLocation | null>(null);
+
+  const { data: defaultL } = useQuery({
+    queryKey: ["default-customer-location"],
+    queryFn: async () => {
+      const response = await getDefaultCustomerLocation();
+      return response;
+    },
+  });
+
   const [addressList, setAddressList] = useState<ICreateLocation[]>([]);
   const { showPanel, setShowCloseButton, hidePanel } = useSettingFloatPanel();
 
-  // populate addressList when profile (data) arrives
   useEffect(() => {
     if (profile) setAddressList(profile);
-  }, [profile]);
+    if (defaultL !== undefined && defaultL !== null)
+      setDefaultLocation(defaultL);
+  }, [profile, defaultL]);
 
-  if (profile === undefined) {
+  if (profile === undefined || defaultL === undefined) {
     return <div>Loading...</div>;
   }
 
@@ -79,7 +76,15 @@ export function CustomerAddressList() {
             <p className="text-app-brown/80">No addresses found.</p>
           ) : (
             addressList.map((address) => (
-              <AddressCard key={address.id} address={address.address} />
+              <AddressCard
+                key={address.id}
+                address={address}
+                isDefault={address.id === defaultLocation?.id}
+                setDefault={async (location: ICreateLocation) => {
+                  await setDefaultCustomerLocation(String(location.id));
+                  setDefaultLocation(location);
+                }}
+              />
             ))
           )}
         </div>

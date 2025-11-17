@@ -1,13 +1,14 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-
 import { useQuery } from "@tanstack/react-query";
 import { UserRound } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { type z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,14 +20,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { queryCustomerProfile } from "@/queries/profile";
-import type { ICustomerProfile } from "@/types/user";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   EditProfileFormSchema,
-  updateCustomerProfileMutation,
   ProfileFormSchema,
+  updateCustomerProfileMutation,
 } from "@/queries/profile";
+import type { ICustomerProfile } from "@/types/user";
 
 export function CustomerProfilePage() {
   return (
@@ -105,7 +104,6 @@ const CustomerProfileForm = () => {
 
   const onSubmit = (data: z.infer<typeof ProfileFormSchema>) => {
     const { profilePicture, firstname, lastname, tel } = data;
-    console.log("image", profilePicture);
     profileMutation.mutate({
       firstname,
       lastname,
@@ -119,8 +117,8 @@ const CustomerProfileForm = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-    } catch (error: any) {
-      toast.error(error.message || "File upload failed!");
+    } catch {
+      toast.error("File upload failed!");
     } finally {
       setUploading(false);
     }

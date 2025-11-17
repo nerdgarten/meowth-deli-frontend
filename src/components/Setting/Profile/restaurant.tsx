@@ -1,12 +1,14 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
-import { UserRound, ShoppingBag, Clock } from "lucide-react";
+import { Clock,ShoppingBag, UserRound } from "lucide-react";
+import Image from "next/image";
+import { useEffect,useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { type z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,17 +19,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { queryCustomerProfile } from "@/queries/profile";
-import type { ICustomerProfile, IRestaurantProfile } from "@/types/user";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-
 import {
   queryRestaurantProfile,
   RestaurantProfileFormSchema,
   updateRestaurantProfileMutation,
 } from "@/libs/restaurant";
 import { restaurantUploadFile } from "@/queries/file";
+import { queryCustomerProfile } from "@/queries/profile";
+import type { ICustomerProfile, IRestaurantProfile } from "@/types/user";
 
 export function RestaurantProfilePage() {
   return (
@@ -107,8 +106,6 @@ const RestaurantProfileForm = () => {
   });
 
   const onSubmit = (data: z.infer<typeof RestaurantProfileFormSchema>) => {
-    // const { profilePicture, firstname, lastname, tel } = data;
-    // console.log("image", profilePicture);
     const { name, detail, tel, is_available, restaurantBanner } = data;
     restaurantMutation.mutate({
       name,
@@ -129,8 +126,8 @@ const RestaurantProfileForm = () => {
     try {
       await restaurantUploadFile(file);
       toast.success("File uploaded successfully!");
-    } catch (error: any) {
-      toast.error(error.message || "File upload failed!");
+    } catch (error) {
+      toast.error("File upload failed!");
     } finally {
       setUploading(false);
     }
@@ -286,9 +283,9 @@ const RestaurantProfileForm = () => {
             <input
               type="file"
               accept="application/pdf"
-              onChange={(e) => {
+              onChange={async (e) => {
                 const file = e.target.files?.[0];
-                if (file) handleFileUpload(file);
+                if (file) await handleFileUpload(file);
               }}
               className="text-app-dark-brown file:bg-app-dark-brown mt-2 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-white hover:file:bg-[#2F2721]"
               disabled={uploading}

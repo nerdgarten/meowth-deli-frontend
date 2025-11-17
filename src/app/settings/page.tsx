@@ -1,26 +1,25 @@
 "use client";
 
-import { CustomerProfilePage } from "@/components/Setting/Profile/customer";
-import { CustomerAddressPage } from "@/components/Setting/Address/customer";
-import { CustomerOrderPage } from "@/components/Setting/Order/customer";
-import { CustomerSecurityPage } from "@/components/Setting/Security/customer";
-import { CustomerPreferencePage } from "@/components/Setting/Preference/customer";
-
-import { RestaurantProfilePage } from "@/components/Setting/Profile/restaurant";
-import { RestaurantAddressPage } from "@/components/Setting/Address/restaurant";
-import { RestaurantSecurityPage } from "@/components/Setting/Security/restaurant";
-
-import { DriverProfilePage } from "@/components/Setting/Profile/driver";
-import { DriverSecurityPage } from "@/components/Setting/Security/driver";
-import { DriverVehiclePage } from "@/components/Setting/Vehicle/driver";
-
-import { useNavContext } from "@/components/Setting/SettingNavigationMenu";
 import { useQuery } from "@tanstack/react-query";
 
+import { useAuth } from "@/components/context/AuthContext";
+import { CustomerAddressPage } from "@/components/Setting/Address/customer";
+import { RestaurantAddressPage } from "@/components/Setting/Address/restaurant";
+import { CustomerOrderPage } from "@/components/Setting/Order/customer";
+import { CustomerPreferencePage } from "@/components/Setting/Preference/customer";
+import { CustomerProfilePage } from "@/components/Setting/Profile/customer";
+import { DriverProfilePage } from "@/components/Setting/Profile/driver";
+import { RestaurantProfilePage } from "@/components/Setting/Profile/restaurant";
+import { CustomerSecurityPage } from "@/components/Setting/Security/customer";
+import { DriverSecurityPage } from "@/components/Setting/Security/driver";
+import { RestaurantSecurityPage } from "@/components/Setting/Security/restaurant";
+import { useNavContext } from "@/components/Setting/SettingNavigationMenu";
+import { DriverVehiclePage } from "@/components/Setting/Vehicle/driver";
 import { authenticatedAs } from "@/libs/authentication";
 
 export default function SettingsPage() {
   const { select_key, role } = useNavContext();
+  console.log("role:", role);
 
   switch (`${select_key}-${role}`) {
     case "profile-customer":

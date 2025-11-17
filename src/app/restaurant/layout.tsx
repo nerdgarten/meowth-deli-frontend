@@ -12,44 +12,40 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "@ui/sidebar";
-import { Flag, Home, Shield,ShoppingBag } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Soup, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 const NAVIGATION_ITEMS = [
   {
     title: "Dashboard",
-    href: `/restaurant_2/dashboard`,
-    icon: Home,
+    href: `/restaurant/dashboard`,
+    icon: LayoutDashboard,
   },
   {
-    title: "Delete User",
-    href: `/restaurant_2/delete`,
+    title: "Orders",
+    href: `/restaurant/orders`,
     icon: ShoppingBag,
   },
   {
-    title: "Pending Reports",
-    href: `/restaurant_2/pending`,
-    icon: Flag,
+    title: "Reviews",
+    href: `/restaurant/reviews`,
+    icon: Star,
   },
   {
-    title: "License Approvals",
-    href: `/restaurant_2/license`,
-    icon: Shield,
+    title: "Menus",
+    href: `/restaurant/menus`,
+    icon: Soup,
   },
   // {
-  //   title: "Reviews",
-  //   href: `/driver/${driverId}/dashboard/reviews`,
-  //   icon: MessageSquare,
-  // },
-  // {
   //   title: "Settings",
-  //   href: `/driver/${driverId}/dashboard/settings`,
+  //   href: `/restaurant/settings`,
   //   icon: Settings,
   // },
 ] as const;
 
-export default function AdminLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -72,7 +68,7 @@ export default function AdminLayout({
               Meowth Delivery
             </h2>
             <p className="text-xs font-semibold text-gray-500 uppercase">
-              Admin Dashboard
+              Restaurant Dashboard
             </p>
           </div>
 
@@ -82,16 +78,13 @@ export default function AdminLayout({
                 {NAVIGATION_ITEMS.map((item) => {
                   const Icon = item.icon;
                   const isActive = pathname === item.href;
-                  // item.href === `/driver/${driverId}/dashboard`
-                  //   ? pathname === item.href
-                  //   : pathname.startsWith(item.href);
 
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         asChild
                         isActive={isActive}
-                        className="data-[active=true]:bg-app-peanut flex h-12 w-full rounded-none border-transparent bg-transparent pl-10 text-black hover:bg-black/10 active:bg-black/15 data-[active=true]:shadow-sm data-[active=true]:hover:brightness-90 data-[active=true]:active:brightness-75"
+                        className="data-[active=true]:bg-app-peanut flex h-12 w-full rounded-none border-transparent bg-transparent pl-10 text-black hover:bg-black/10 active:bg-black/15 data-[active=true]:text-white data-[active=true]:shadow-sm data-[active=true]:hover:brightness-90 data-[active=true]:active:brightness-75"
                       >
                         <Link href={item.href}>
                           <Icon />
@@ -109,7 +102,7 @@ export default function AdminLayout({
           <SidebarMenu>
             <SidebarMenuItem className="flex flex-col items-center gap-0 px-4 py-3">
               <p className="font-semibold text-black">
-                Meowth Delivery Admin Dashboard
+                Meowth Delivery Driver Dashboard
               </p>
               <p className="font-medium text-gray-500">
                 @2025 All Rights Reserved

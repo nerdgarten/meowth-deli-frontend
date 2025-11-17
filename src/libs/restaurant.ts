@@ -1,16 +1,16 @@
+import { z } from "zod";
+
 import { apiClient } from "@/libs/axios";
 import type { IDish } from "@/types/dish";
 import type { IRestaurant } from "@/types/restaurant";
 import type { IRestaurantProfile } from "@/types/user";
-
-import { z } from "zod";
 
 export const getRestaurantById = async (
   restaurant_id: string
 ): Promise<IRestaurant> => {
   try {
     const response = await apiClient.get<IRestaurant>(
-      `/restaurant/${restaurant_id}`
+      `/restaurant/profile/${restaurant_id}`
     );
     return response.data;
   } catch (error) {

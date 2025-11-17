@@ -1,19 +1,21 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { authenticatedAs } from "@/libs/authentication";
+import {
+  MapPin,
+  Settings,
+  ShieldCheck,
+  ShoppingBag,
+  SlidersHorizontal,
+  User,
+} from "lucide-react";
+
+import { useAuth } from "@/components/context/AuthContext";
+import { SettingFloatPanelProvider } from "@/components/Setting/SettingFloatPanelProvider";
 import {
   SettingNavigationMenu,
   type SettingNavItem,
 } from "@/components/Setting/SettingNavigationMenu";
-import { SettingFloatPanelProvider } from "@/components/Setting/SettingFloatPanelProvider";
-import {
-  MapPin,
-  ShieldCheck,
-  ShoppingBag,
-  Settings,
-  SlidersHorizontal,
-  User,
-} from "lucide-react";
+import { authenticatedAs } from "@/libs/authentication";
 
 const basePath = "/settings";
 
@@ -96,15 +98,10 @@ export default function CustomerSettingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { data: role, isLoading } = useQuery({
-    queryKey: ["authenticated-role"],
-    queryFn: authenticatedAs,
-    staleTime: 60_000,
-  });
+  const { role, isLoading } = useAuth();
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  console.log("role in layout:", role);
   return (
     <main className="bg-app-background flex h-full flex-col pt-[6rem]">
       <div className="flex w-full flex-col p-4">

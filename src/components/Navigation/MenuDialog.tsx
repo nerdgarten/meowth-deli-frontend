@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 
 import { logoutFunctionMutation } from "@/queries/logout";
 
+import { useAuth } from "../context/AuthContext";
+
 interface MenuDialogProps {
   isMenuDialogOpen: boolean;
   setIsMenuDialogOpen: (open: boolean) => void;
@@ -14,8 +16,9 @@ export const MenuDialog = ({
   isMenuDialogOpen,
   setIsMenuDialogOpen,
 }: MenuDialogProps) => {
+  const { logout } = useAuth();
   const logoutMutation = useMutation({
-    mutationFn: logoutFunctionMutation,
+    mutationFn: logout,
     onSuccess: () => {
       toast.success("Logged Out");
       setIsMenuDialogOpen(false);

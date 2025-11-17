@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -20,11 +21,12 @@ const AddAddressSchema = z.object({
   latitude: z.number().optional(),
   longitude: z.number().optional(),
 });
+import toast from "react-hot-toast";
+
 import {
   createCustomerLocation,
   createRestaurantLocation,
 } from "@/libs/location";
-import toast from "react-hot-toast";
 import type { ICreateLocation } from "@/types/location";
 type AddAddressFormValues = z.infer<typeof AddAddressSchema>;
 
@@ -46,7 +48,6 @@ export function AddAddressCard({
       address: "",
     },
   });
-
   const getCurrentPosition = (
     opts?: PositionOptions
   ): Promise<GeolocationPosition> =>
@@ -81,24 +82,22 @@ export function AddAddressCard({
         data.latitude = latitude!;
         data.longitude = longitude!;
         let d = null;
+        console.log("Creating location for type:", type);
         if (type === "customer") {
+          console.log("Creating customer location...");
           d = await createCustomerLocation({
             address: data.address,
-            latitude: data.latitude!,
-            longitude: data.longitude!,
+            latitude: data.latitude ?? 0,
+            longitude: data.longitude ?? 0,
           });
         } else {
           d = await createRestaurantLocation({
             address: data.address,
-            latitude: data.latitude!,
-            longitude: data.longitude!,
+            latitude: data.latitude ?? 0,
+            longitude: data.longitude ?? 0,
           });
         }
-        // d = await createRestaurantLocation({
-        //   address: data.address,
-        //   latitude: data.latitude!,
-        //   longitude: data.longitude!,
-        // });
+
         onClose(d);
       } catch (err) {
         toast.error(
@@ -142,14 +141,14 @@ export function AddAddressCard({
                   </FormItem>
                 )}
               />
-              <Button
+              {/* <Button
                 type="button"
                 variant="outline"
                 className="text-app-dark-brown hover:bg-app-brown/10 shad rounded-xl px-4 py-3 text-sm font-semibold shadow-sm transition"
                 onClick={() => setSetAsDefault((s) => !s)}
               >
                 {setAsDefault ? "Default ✓" : "Set as Default"}
-              </Button>
+              </Button> */}
             </div>
             <div className="h-80 w-1/2 rounded-2xl bg-amber-200">test</div>
           </div>
