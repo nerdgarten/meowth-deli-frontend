@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createFavouriteDish, deleteFavouriteDish } from "@/libs/favourite";
 
 import type { IDish } from "@/types/dish";
+import { DishCard } from "./DishCard";
 
 interface SelectMenuProps {
   dish: IDish;
@@ -175,36 +176,8 @@ export const SelectMenu = ({
       <div className="flex flex-col gap-4">
         <h3 className="text-2xl font-bold md:text-3xl">Pairing Suggestion</h3>
         <div className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4 sm:gap-6">
-          {recommendations.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className="h-full w-72 flex-shrink-0 snap-start overflow-hidden rounded-lg border bg-white p-2 text-left ring-1 ring-black/5 transition hover:scale-[1.01] active:scale-[0.99]"
-              onClick={() => onDishClick(item)}
-              aria-label={`View ${item.name}`}
-            >
-              <div className="relative h-40 w-full overflow-hidden rounded-lg bg-slate-200">
-                {item.image && (
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                  />
-                )}
-              </div>
-              <div className="grid h-24 grid-cols-3 grid-rows-2 text-black">
-                <h4 className="col-span-2 row-span-1 truncate font-semibold">
-                  {item.name}
-                </h4>
-                <h3 className="col-span-1 row-span-1 text-right text-xl font-bold">
-                  ฿{item.price.toFixed(2)}
-                </h3>
-                <p className="col-span-3 row-span-1 line-clamp-2 text-sm text-slate-600">
-                  {item.detail}
-                </p>
-              </div>
-            </button>
+          {recommendations.map((dish) => (
+            <DishCard dish={dish} onDishClick={onDishClick} />
           ))}
         </div>
       </div>
