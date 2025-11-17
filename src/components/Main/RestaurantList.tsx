@@ -61,9 +61,9 @@ export const RestaurantList = ({
   }, [favourite_dish, deferredSearch]);
 
   return (
-    <div className="g mx-4 flex flex-col gap-4 rounded-sm bg-white p-4">
-      <div className="grid h-80 grid-cols-2 gap-4">
-        <div className="bg-app-background relative overflow-hidden rounded-2xl">
+    <div className="flex flex-col gap-6 rounded-2xl bg-white p-4 sm:p-6">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="bg-app-background relative aspect-video overflow-hidden rounded-2xl lg:aspect-auto lg:min-h-[320px]">
           {restaurant?.banner && (
             <Image
               src={restaurant.banner}
@@ -87,7 +87,7 @@ export const RestaurantList = ({
             }}
           />
         </div>
-        <div className="bg-app-background flex flex-col justify-center gap-4 rounded-2xl p-8">
+        <div className="bg-app-background flex flex-col justify-center gap-4 rounded-2xl p-6 lg:p-8">
           <h2 className="text-4xl font-bold text-gray-900">
             {restaurant?.name}
           </h2>
@@ -102,7 +102,7 @@ export const RestaurantList = ({
       </div>
 
       <div className="flex items-center">
-        <h3 className="text-3xl font-bold">Recommend</h3>
+        <h3 className="text-2xl font-bold sm:text-3xl">Recommend</h3>
         <div className="mb-2 grow">
           <Toolbar
             placeholder="Search dishes..."
@@ -151,7 +151,7 @@ export const RestaurantList = ({
       )}
       {filteredFavouriteDishes.length > 0 ? (
         <div className="col-span-1 row-span-1 grid h-80 grid-cols-4 grid-rows-5 gap-4">
-          <h3 className="col-span-4 row-span-1 text-3xl font-bold">
+          <h3 className="text-2xl font-bold sm:text-3xl">
             Your Favourite Food
           </h3>
           <div className="col-span-4 row-span-4 flex w-full gap-4 overflow-x-auto p-3">
