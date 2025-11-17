@@ -80,14 +80,16 @@ export default function RestaurantPage({
   // }
 
   return (
-    <main className="w-full overflow-auto p-16">
-      <RestaurantList
-        dishes={dishes ?? []}
-        favourite_dish={favourite_dish ?? []}
-        restaurant={restaurant}
-        onDishClick={onDishClick}
-        favourite_restaurant={favourite_restaurant ?? false}
-      />
+    <main className="min-h-screen w-full overflow-x-hidden overflow-y-auto p-4 sm:p-8 lg:p-16">
+      <div className="mx-auto max-w-7xl">
+        <RestaurantList
+          dishes={dishes ?? []}
+          favourite_dish={favourite_dish ?? []}
+          restaurant={restaurant}
+          onDishClick={onDishClick}
+          favourite_restaurant={favourite_restaurant ?? false}
+        />
+      </div>
     </main>
   );
 }
