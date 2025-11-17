@@ -55,15 +55,15 @@ export async function submitDriverReview(
   reviewData: SubmitReviewData
 ): Promise<void> {
   const formData = new FormData();
-  formData.append('orderId', reviewData.orderId.toString());
-  formData.append('rate', reviewData.rate.toString());
+  formData.append('driverId', driverId.toString());
+  formData.append('rating', reviewData.rate.toString());
   if (reviewData.reviewText) {
-    formData.append('reviewText', reviewData.reviewText);
+    formData.append('comment', reviewData.reviewText);
   }
   if (reviewData.file) {
-    formData.append('file', reviewData.file);
+    formData.append('files', reviewData.file);
   }
-  await apiClient.post(`/review/driver/${driverId}`, formData);
+  await apiClient.post(`/review/driver`, formData);
 }
 
 export async function submitRestaurantReview(
@@ -71,13 +71,13 @@ export async function submitRestaurantReview(
   reviewData: SubmitReviewData
 ): Promise<void> {
   const formData = new FormData();
-  formData.append('orderId', reviewData.orderId.toString());
-  formData.append('rate', reviewData.rate.toString());
+  formData.append('restaurantId', restaurantId.toString());
+  formData.append('rating', reviewData.rate.toString());
   if (reviewData.reviewText) {
-    formData.append('reviewText', reviewData.reviewText);
+    formData.append('comment', reviewData.reviewText);
   }
   if (reviewData.file) {
-    formData.append('file', reviewData.file);
+    formData.append('files', reviewData.file);
   }
-  await apiClient.post(`/review/restaurant/${restaurantId}`, formData);
+  await apiClient.post(`/review/restaurant`, formData);
 }

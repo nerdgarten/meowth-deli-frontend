@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { Plus, Star, Upload } from "lucide-react";
+import { Star, Upload } from "lucide-react";
 import type { FC } from "react";
 import { useState } from "react";
 
@@ -83,6 +83,7 @@ const AddReviewForm: FC<AddReviewFormProps> = ({
       orderId,
       rate: rating,
       reviewText: description || undefined,
+      file: selectedFile ?? undefined,
     };
 
     submitReviewMutation.mutate(reviewData);
