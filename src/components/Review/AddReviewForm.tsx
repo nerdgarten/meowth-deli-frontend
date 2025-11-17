@@ -80,6 +80,7 @@ const AddReviewForm: FC<AddReviewFormProps> = ({
     }
 
     const reviewData: SubmitReviewData = {
+      title,
       orderId,
       rate: rating,
       reviewText: description || undefined,
