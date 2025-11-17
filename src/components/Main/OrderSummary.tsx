@@ -1,13 +1,16 @@
 import { ChevronLeft } from "lucide-react";
+import { useState } from "react";
+import Image from "next/image";
 
 import type { CartItem } from "@/types/order";
+import type { ICreateLocation } from "@/types/location";
 
 interface OrderSummaryProps {
+  location: ICreateLocation[];
   cartItem: CartItem[];
   restaurantName: string;
   TotalPrice: number;
-  location: string;
-  onSubmit: () => void;
+  onSubmit: (remark: string) => void;
 }
 
 // Safe type guard for dish
@@ -36,7 +39,7 @@ export const OrderSummary = ({
   }, 0);
 
   const deliveryFee = 0; // Replace with actual delivery logic
-
+  const [remark, setRemark] = useState<string>("");
   return (
     <div className="flex flex-col rounded-sm bg-white p-4">
       {/* Header */}
@@ -52,11 +55,17 @@ export const OrderSummary = ({
           {cartItem.map((item, idx) => {
             if (!isValidDish(item.dish)) return null;
             if (typeof item.quantity !== "number") return null;
-
+            console.log("Rendering item:", item);
             return (
               <div key={idx} className="mt-4 flex h-full justify-between">
                 <div className="flex gap-6">
-                  <div className="aspect-square h-24 rounded-sm bg-slate-200" />
+                  <Image
+                    src={item.dish.image || "/placeholder.png"}
+                    alt={item.dish.name}
+                    width={96}
+                    height={96}
+                    className="aspect-square h-24 rounded-sm bg-slate-200"
+                  />
                   <div className="text-lg font-bold">
                     <h4 className="text-black">
                       {item.dish.name} x {item.quantity}
@@ -86,7 +95,9 @@ export const OrderSummary = ({
         </div>
 
         <div className="flex h-16 w-full items-center justify-between rounded-md border border-slate-300 p-8 transition hover:bg-gray-100 active:bg-gray-300">
-          <h2 className="mx-4 text-lg font-bold">{location}</h2>
+          <h2 className="mx-4 text-lg font-bold">
+            {location[0]?.address ?? "No address available"}
+          </h2>
           <ChevronLeft size={20} />
         </div>
 
@@ -107,6 +118,9 @@ export const OrderSummary = ({
           </div>
           <input
             type="text"
+            onChange={(e) => {
+              setRemark(e.target.value);
+            }}
             className="focus:border-app-brown focus:ring-app-brown col-span-2 row-span-5 mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm focus:ring-1 focus:outline-none"
             placeholder="E.g. No onions, extra spicy, etc."
           />
@@ -114,7 +128,9 @@ export const OrderSummary = ({
 
         <button
           className="bg-app-yellow active:bg-app-bronze mt-8 w-full rounded-full p-4 text-center text-2xl font-bold text-white transition hover:bg-amber-500"
-          onClick={onSubmit}
+          onClick={() => {
+            onSubmit(remark);
+          }}
         >
           Place Order
         </button>
