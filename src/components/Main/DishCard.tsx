@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
-
 import type { IDish } from "@/types/dish";
+import Image from "next/image";
 
 interface DishCardProps {
   dish: IDish;
@@ -36,7 +35,7 @@ export const DishCard = ({ dish, onDishClick }: DishCardProps) => {
           ฿{dish.price.toFixed(2)}
         </h3>
         <p className="col-span-3 row-span-1 text-sm text-slate-600">
-          <div className="line-clamp-2">{dish.detail}</div> 
+          <div className="line-clamp-2">{dish.detail}</div>
         </p>
       </div>
     </button>

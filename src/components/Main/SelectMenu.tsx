@@ -3,8 +3,42 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { createFavouriteDish, deleteFavouriteDish } from "@/libs/favourite";
-import type { IDish } from "@/types/dish";
+import type { Allergy, IDish } from "@/types/dish";
 import { DishCard } from "./DishCard";
+
+import {
+  Bean,
+  Egg,
+  Fish,
+  Info,
+  Leaf,
+  Milk,
+  Nut,
+  Shell,
+  Shrimp,
+  Wheat,
+} from "lucide-react";
+import { Badge } from "../ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { getAllergy } from "@/libs/customer";
+import { cn } from "@/libs/utils";
+
+const ALLERGENS: Array<{
+  key: Allergy;
+  label: string;
+  Icon: React.ComponentType<{ className?: string }>;
+}> = [
+  { key: "eggs", label: "Eggs", Icon: Egg },
+  { key: "dairy", label: "Dairy", Icon: Milk },
+  { key: "soy", label: "Soy", Icon: Bean },
+  { key: "tree_nuts", label: "Nuts", Icon: Nut },
+  { key: "seafood", label: "Sea Foods", Icon: Shrimp },
+  { key: "fish", label: "Fish", Icon: Fish },
+  { key: "peanuts", label: "peanuts", Icon: Leaf },
+  { key: "wheat", label: "Wheat", Icon: Wheat },
+  { key: "shellfish", label: "Shellfish", Icon: Shell },
+  { key: "gluten", label: "Gluten", Icon: Info },
+];
 
 interface SelectMenuProps {
   dish: IDish;
@@ -52,6 +86,13 @@ export const SelectMenu = ({
       setFavPending(false);
     }
   };
+
+  const { data: allergy } = useQuery<Allergy[]>({
+    queryKey: ["allergy-profile"],
+    queryFn: () => {
+      return getAllergy();
+    },
+  });
 
   if (!dish) {
     return (
@@ -120,6 +161,32 @@ export const SelectMenu = ({
               {dish.detail}
             </p>
           </div>
+
+          {dish.allergy.length > 0 && (
+            <div>
+              <h2 className="text-lg font-bold">Allergy</h2>
+              <div className="mt-2 flex gap-2">
+                {dish.allergy.map((a) => {
+                  const item = ALLERGENS.find((allergen) => allergen.key === a);
+                  if (!item) return null;
+                  const isAllergic = allergy && allergy.includes(item.key);
+                  return (
+                    <Badge
+                      key={item.key}
+                      className={cn(
+                        "flex w-fit items-center gap-2 rounded-full text-sm shadow-sm",
+                        isAllergic ? "text-app-white" : "text-app-black"
+                      )}
+                      variant={isAllergic ? "destructive" : "outline"}
+                    >
+                      <item.Icon className="size-4" />
+                      {item.label}
+                    </Badge>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
