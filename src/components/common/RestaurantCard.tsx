@@ -1,6 +1,5 @@
 "use client";
 
-// import { Badge } from "@/components/ui/badge";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -26,7 +25,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
 
   return (
     <Card
-      className="h-[300px] w-[375px] cursor-pointer transition-all hover:scale-105 hover:shadow-lg flex-shrink-0"
+      className="h-[300px] w-[375px] flex-shrink-0 cursor-pointer transition-all hover:scale-105 hover:shadow-lg"
       onClick={handleCardClick}
     >
       <CardHeader className="p-0">
@@ -73,7 +72,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           <div className="flex items-center gap-1">
             <MapPin className="h-3 w-3" />
             <span className="max-w-[120px] truncate">
-              {restaurant.location}
+              {restaurant.location ? restaurant.location.address : "No address"}
             </span>
           </div>
         </div>
