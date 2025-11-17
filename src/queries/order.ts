@@ -14,6 +14,18 @@ export async function queryDriverOrders(): Promise<IOrderDetails[]> {
   return response.data;
 }
 
+export async function queryRestaurantOrders(): Promise<IOrderDetails[]> {
+  const response = await apiClient.get<IOrderDetails[]>(`/order/restaurant`);
+  console.log(response.data);
+  return response.data;
+}
+
+export async function queryCustomerOrders(): Promise<IOrderDetails[]> {
+  const response = await apiClient.get<IOrderDetails[]>(`/order/customer`);
+  console.log(response.data);
+  return response.data;
+}
+
 const IOrderDetailsZod = z.object({
   id: z.number(),
   customer_id: z.number(),
