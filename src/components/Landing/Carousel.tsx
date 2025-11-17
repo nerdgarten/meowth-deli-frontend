@@ -2,20 +2,14 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Carousel, CarouselContent, CarouselItem } from "@ui/carousel";
-import {
-  Carousel as LandingCarouselContainer,
-  type CarouselApi as LandingCarouselApi,
-  CarouselContent as LandingCarouselContent,
-  CarouselItem as LandingCarouselItem,
-} from "@ui/custom/LandingCarousel";
 import Autoplay from "embla-carousel-autoplay";
-import { Circle, Coffee, MessageSquare } from "lucide-react";
+import { Coffee, MessageSquare } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { MS_IN_SEC } from "@/constants/misc";
 import { getAllRestaurant } from "@/libs/restaurant";
-import { cn } from "@/libs/utils";
+// import { cn } from "@/libs/utils"; // not needed after hero removal
 import { getDishesByRestaurnatId } from "@/queries/dish";
 import { getRestaurantReviews } from "@/queries/reviews";
 // zod not used here
@@ -26,8 +20,7 @@ import type { ReviewResponse } from "@/types/review";
 import { TopCarouselCard } from "./TopCarouselCard";
 
 export const LandingCarousel = () => {
-  const [api, setApi] = useState<LandingCarouselApi>();
-  const [currentIdx, setCurrentIdx] = useState(0);
+  // hero index state removed (static hero image)
 
   const { data: restaurants } = useQuery<IRestaurant[]>({
     queryKey: ["restaurant-all"],
@@ -68,60 +61,20 @@ export const LandingCarousel = () => {
     setRandomRestaurant(restaurants[idx]!);
   }, [restaurants, setRandomRestaurant]);
 
-  useEffect(() => {
-    if (!api) {
-      return;
-    }
+  // No hero carousel — single background image only.
 
-    api.on("scroll", () => {
-      setCurrentIdx(api.selectedScrollSnap());
-    });
-  }, [api, currentIdx]);
-
-  const setCarouselIndex = (idx: number) => {
-    if (!api) {
-      return;
-    }
-
-    setCurrentIdx(idx);
-    api.scrollTo(idx);
-  };
+  // hero nav removed
 
   return (
     <div className="relative">
-      <LandingCarouselContainer
-        setApi={setApi}
-        plugins={[Autoplay({ delay: 15 * MS_IN_SEC })]}
-      >
-        <LandingCarouselContent>
-          <LandingCarouselItem key="1">
-            <div className="h-[calc(100svh-4rem)] w-full bg-gray-300">
-              <Image
-                src={"/images/landing-carousel-1.jpg"}
-                alt="Landing Carousel 1"
-                fill={true}
-              />
-            </div>
-          </LandingCarouselItem>
-          <LandingCarouselItem key="2">
-            <div className="h-[calc(100svh-4rem)] w-full bg-gray-400" />
-          </LandingCarouselItem>
-          <LandingCarouselItem key="3">
-            <div className="h-[calc(100svh-4rem)] w-full bg-gray-500" />
-          </LandingCarouselItem>
-        </LandingCarouselContent>
-      </LandingCarouselContainer>
-      <div className="absolute bottom-3 left-1/2 flex gap-x-4">
-        {[0, 1, 2].map((idx) => (
-          <button key={idx} onClick={() => setCarouselIndex(idx)}>
-            <Circle
-              className={cn(
-                `${currentIdx === idx ? "text-app-yellow fill-app-yellow rounded-full" : "fill-white text-white"}`,
-                "hover:fill-app-yellow hover:text-app-yellow h-4 w-4 transition-colors"
-              )}
-            />
-          </button>
-        ))}
+      <div className="relative h-[calc(100svh-4rem)] w-full bg-gray-300">
+        <Image
+          src={"/images/landing-carousel-1.jpg"}
+          // src={randomRestaurant?.banner ?? "/images/landing-carousel-1.jpg"}
+          alt="Landing Carousel 1"
+          fill={true}
+          className="object-cover"
+        />
       </div>
       <div className="absolute top-[5.5rem] right-4 flex w-140 flex-col gap-y-6">
         <TopCarouselCard>
