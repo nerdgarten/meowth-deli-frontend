@@ -1,8 +1,7 @@
 "use client";
 
-import type { ComponentType } from "react";
-
 import { useQuery } from "@tanstack/react-query";
+import type { ComponentType } from "react";
 
 import { CustomerSecurityPage } from "@/components/Setting/Security/customer";
 import { authenticatedAs } from "@/libs/authentication";

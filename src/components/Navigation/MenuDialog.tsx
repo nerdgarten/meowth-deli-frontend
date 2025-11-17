@@ -2,9 +2,10 @@ import { useMutation } from "@tanstack/react-query";
 import { Button } from "@ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/dialog";
 import toast from "react-hot-toast";
-import { useAuth } from "../context/AuthContext";
 
 import { logoutFunctionMutation } from "@/queries/logout";
+
+import { useAuth } from "../context/AuthContext";
 
 interface MenuDialogProps {
   isMenuDialogOpen: boolean;

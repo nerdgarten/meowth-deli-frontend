@@ -1,9 +1,10 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { useAuth } from "./AuthContext";
 import { useRouter } from "next/navigation";
+import { createContext, useContext, useEffect,useState } from "react";
 import { tr } from "zod/v4/locales";
+
+import { useAuth } from "./AuthContext";
 
 interface AllowedContextType {
   isAllowed: boolean;
@@ -37,7 +38,7 @@ export const AllowedProvider = ({
       allowedPaths &&
       typeof (allowedPaths as any)?.get === "function"
     ) {
-      bases = (allowedPaths as Map<string, string[]>).get(role) ?? [];
+      bases = (allowedPaths).get(role) ?? [];
     }
     const roleBase = pathMap?.get?.(role);
     if (roleBase) bases.push(roleBase);
@@ -82,7 +83,7 @@ export const AllowedProvider = ({
       allowedPaths &&
       typeof (allowedPaths as any)?.get === "function"
     ) {
-      bases = (allowedPaths as Map<string, string[]>).get(role) ?? [];
+      bases = (allowedPaths).get(role) ?? [];
     }
     const roleBase = pathMap?.get?.(role);
     if (roleBase) bases.push(roleBase);

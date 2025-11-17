@@ -1,9 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ShoppingBag, Home, Flag, Shield } from "lucide-react";
-import Image from "next/image";
 import {
   Sidebar,
   SidebarContent,
@@ -16,6 +12,10 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "@ui/sidebar";
+import { Flag, Home, Shield,ShoppingBag } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 const NAVIGATION_ITEMS = [
   {
     title: "Dashboard",

@@ -1,19 +1,13 @@
 "use client";
 
-import { useForm, type FieldErrors } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
-import {
-  VehicleFormSchema,
-  queryVehicle,
-  updateDriverProfileMutation,
-  updateVehicleProfileMutation,
-} from "@/libs/driver";
+import { useEffect,useState } from "react";
+import { type FieldErrors,useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +18,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  queryVehicle,
+  updateDriverProfileMutation,
+  updateVehicleProfileMutation,
+  VehicleFormSchema,
+} from "@/libs/driver";
 import type { IVehicle } from "@/types/user";
 
 const ChangePasswordFormSchema = z.object({

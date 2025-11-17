@@ -1,8 +1,9 @@
-import { apiClient } from "@/libs/axios";
-import type { ICreateLocation } from "@/types/location";
-import type { IDish } from "@/types/dish";
-import type { IRestaurant } from "@/types/restaurant";
 import { check } from "zod";
+
+import { apiClient } from "@/libs/axios";
+import type { IDish } from "@/types/dish";
+import type { ICreateLocation } from "@/types/location";
+import type { IRestaurant } from "@/types/restaurant";
 export const createCustomerLocation = async (
   data: ICreateLocation
 ): Promise<ICreateLocation> => {

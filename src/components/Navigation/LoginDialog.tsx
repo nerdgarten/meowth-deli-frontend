@@ -21,8 +21,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { type z } from "zod";
-import { useAuth } from "../context/AuthContext";
+
 import { LoginFormSchema, loginSubmitMutation } from "@/queries/auth";
+
+import { useAuth } from "../context/AuthContext";
 interface LoginDialogProps {
   isLoginDialogOpen: boolean;
   setIsLoginDialogOpen: (open: boolean) => void;

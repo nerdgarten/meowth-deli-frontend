@@ -1,9 +1,8 @@
 "use client";
+import { Car, FileArchive,Flag, ForkKnifeCrossed, Users2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { ForkKnifeCrossed, Flag, Car, Users2, FileArchive } from "lucide-react";
-
-import Image from "next/image";
 
 interface License {
   id: number;
