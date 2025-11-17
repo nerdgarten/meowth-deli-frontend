@@ -27,7 +27,7 @@ export default function Restaurant({ params }: PageProps) {
     isLoading: isRestaurantLoading,
   } = useQuery({
     queryKey: ["restaurant", restaurantId],
-    queryFn: () => getRestaurant(restaurantId),
+    queryFn: () => getRestaurant(restaurantId.toString()),
   });
 
   // Fetch reviews with infinite scroll

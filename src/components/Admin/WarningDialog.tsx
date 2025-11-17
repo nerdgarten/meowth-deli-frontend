@@ -1,7 +1,7 @@
 "use client";
+import { TriangleAlert,X } from "lucide-react";
 import { createContext, useContext, useState } from "react";
 import { boolean } from "zod";
-import { X, TriangleAlert } from "lucide-react";
 interface WarningDialogContextProps {
   open: (s: string, role: string) => void;
   close: () => void;

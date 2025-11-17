@@ -1,8 +1,9 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { Truck, TrendingUp, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { TrendingUp, Truck, Users } from "lucide-react";
+import { useParams } from "next/navigation";
+
 import { getDriver } from "@/queries/driver";
 
 export default function DashboardPage() {

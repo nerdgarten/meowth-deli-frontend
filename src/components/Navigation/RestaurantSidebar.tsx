@@ -2,6 +2,7 @@
 
 import { Home, ShoppingBag, Star } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+
 import { cn } from "@/libs/utils";
 
 interface NavItemProps {

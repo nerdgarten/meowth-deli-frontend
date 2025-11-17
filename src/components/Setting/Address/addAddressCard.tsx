@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -20,11 +21,12 @@ const AddAddressSchema = z.object({
   latitude: z.number().optional(),
   longitude: z.number().optional(),
 });
+import toast from "react-hot-toast";
+
 import {
   createCustomerLocation,
   createRestaurantLocation,
 } from "@/libs/location";
-import toast from "react-hot-toast";
 import type { ICreateLocation } from "@/types/location";
 type AddAddressFormValues = z.infer<typeof AddAddressSchema>;
 

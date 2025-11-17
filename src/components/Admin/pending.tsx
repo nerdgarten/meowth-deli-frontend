@@ -1,17 +1,17 @@
 "use client";
+import {
+  ArrowRight,
+  Car,
+  Flag,
+  ForkKnifeCrossed,
+  MoveRight,
+  Users2,
+} from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import {
-  ForkKnifeCrossed,
-  Flag,
-  Car,
-  Users2,
-  MoveRight,
-  ArrowRight,
-} from "lucide-react";
-import { useResolveReport } from "./ResolveReport";
 
-import Image from "next/image";
+import { useResolveReport } from "./ResolveReport";
 interface Report {
   id: number;
   type: "restaurant" | "driver";

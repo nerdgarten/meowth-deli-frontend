@@ -1,12 +1,8 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-
 import { useQuery } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
@@ -19,7 +15,6 @@ import {
   setDefaultCustomerLocation,
 } from "@/libs/location";
 import type { ICreateLocation } from "@/types/location";
-import { de } from "zod/v4/locales";
 
 export function CustomerAddressPage() {
   return (

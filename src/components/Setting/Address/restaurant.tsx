@@ -1,19 +1,19 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-
 import { useQuery } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
-import { AddressCard } from "./addressCard";
-import { useSettingFloatPanel } from "../SettingFloatPanelProvider";
-import { AddAddressCard } from "./addAddressCard";
 import { getRestaurantLocations } from "@/libs/location";
 import type { ICreateLocation } from "@/types/location";
+
+import { useSettingFloatPanel } from "../SettingFloatPanelProvider";
+import { AddAddressCard } from "./addAddressCard";
+import { AddressCard } from "./addressCard";
 
 export function RestaurantAddressPage() {
   return (

@@ -1,17 +1,18 @@
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
   MapPin,
+  Settings,
   ShieldCheck,
   ShoppingBag,
   SlidersHorizontal,
-  Settings,
   User,
 } from "lucide-react";
-import { useContext, createContext, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import * as React from "react";
+import { createContext, useContext, useState } from "react";
+
 import {
   NavigationMenu,
   NavigationMenuItem,

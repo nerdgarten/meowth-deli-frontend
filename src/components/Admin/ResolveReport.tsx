@@ -1,7 +1,6 @@
 "use client";
+import { X } from "lucide-react";
 import { createContext, useContext, useState } from "react";
-import { boolean } from "zod";
-import { X, TriangleAlert } from "lucide-react";
 interface ResolveReportContextProps {
   open: () => void;
   close: () => void;

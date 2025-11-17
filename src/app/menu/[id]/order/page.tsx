@@ -6,12 +6,11 @@ import { useEffect, useState, useMemo } from "react";
 
 import { useCart } from "@/components/context/CartProvider";
 import { OrderSummary } from "@/components/Main/OrderSummary";
-import { createOrder } from "@/libs/orders";
-import { getRestaurant } from "@/queries/restaurant";
-import { getRestaurantById } from "@/libs/restaurant";
-import type { IOrderDish } from "@/types/order";
 import { getCustomerLocations } from "@/libs/location";
 import { getDefaultCustomerLocation } from "@/libs/location";
+import { createOrder } from "@/libs/orders";
+import { getRestaurant } from "@/queries/restaurant";
+import type { IOrderDish } from "@/types/order";
 
 // Interface for storing order data in localStorage
 interface StoredOrder {
