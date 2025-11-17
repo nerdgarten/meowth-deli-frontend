@@ -1,3 +1,5 @@
+import type { ICreateLocation } from "./location";
+
 export interface IRestaurant {
   id: number;
   verification_status: "approved" | "pending" | "rejected";
@@ -5,7 +7,7 @@ export interface IRestaurant {
   name: string;
   banner: string;
   fee_rate: number;
-  location?: string;
+  location?: ICreateLocation;
   detail: string;
   tel: string;
   created_at: string;

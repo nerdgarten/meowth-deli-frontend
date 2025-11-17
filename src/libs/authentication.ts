@@ -10,3 +10,20 @@ export const authenticatedAs = async (): Promise<Role | null> => {
     return null;
   }
 };
+export const resetPassword = async (
+  currentPassword: string,
+  newPassword: string
+): Promise<void> => {
+  try {
+    const data = {
+      currentPassword,
+      newPassword,
+    };
+    await apiClient.post("/reset-password", {
+      currentPassword,
+      newPassword,
+    });
+  } catch (error) {
+    throw new Error("Failed to reset password");
+  }
+};

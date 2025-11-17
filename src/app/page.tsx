@@ -16,12 +16,12 @@ export default function HomePage() {
       return getAllRestaurant();
     },
   });
-  const { data: favourite_restaurant, isLoading } = useQuery({
-    queryKey: ["favourite-restaurant"],
-    queryFn: () => {
-      return getFavouriteRestaurant();
-    },
-  });
+  // const { data: favourite_restaurant, isLoading } = useQuery({
+  //   queryKey: ["favourite-restaurant"],
+  //   queryFn: () => {
+  //     return getFavouriteRestaurant();
+  //   },
+  // });
 
   return (
     <main className="mt-[4rem]">
@@ -32,13 +32,16 @@ export default function HomePage() {
           <div className="flex flex-nowrap gap-4 py-4">
             <div className="min-w-5"></div>
             {restaurant?.map((data, index_2) => {
+              console.log("Rendering restaurant:", data);
+              // return <></>;
               return <RestaurantCard key={index_2} restaurant={data} />;
             })}
             <div className="min-w-5"></div>
           </div>
         </div>
       ))}
-      {!isLoading ? (
+      {/* {!isLoading ? 
+      (
         <>
           <h1 className="mt-10 mb-5 text-center text-5xl font-bold">
             Your Favourite
@@ -63,7 +66,7 @@ export default function HomePage() {
         </>
       ) : (
         <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
-      )}
+      )} */}
     </main>
   );
 }

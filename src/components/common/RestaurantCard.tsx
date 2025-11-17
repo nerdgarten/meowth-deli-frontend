@@ -76,7 +76,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           <div className="flex items-center gap-1">
             <MapPin className="h-3 w-3" />
             <span className="max-w-[120px] truncate">
-              {restaurant.location}
+              {restaurant.location?.address}
             </span>
           </div>
         </div>

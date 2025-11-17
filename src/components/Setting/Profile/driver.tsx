@@ -28,6 +28,7 @@ import {
   queryDriverProfile,
   DriverProfileFormSchema,
 } from "@/libs/driver";
+import { driverUploadFile } from "@/queries/file";
 
 export function DriverProfilePage() {
   return (
@@ -121,19 +122,7 @@ const CustomerProfileForm = () => {
   const handleFileUpload = async (file: File) => {
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch("http://localhost:3030/file/upload", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
-      }
-
+      await driverUploadFile(file);
       toast.success("File uploaded successfully!");
     } catch (error: any) {
       toast.error(error.message || "File upload failed!");
