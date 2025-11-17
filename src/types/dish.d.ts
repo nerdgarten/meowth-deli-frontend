@@ -20,5 +20,5 @@ export interface IDish {
   allergy: Allergy[];
   restaurant_id: string;
   is_out_of_stock: boolean;
-  image?: string;
+  image: string;
 }

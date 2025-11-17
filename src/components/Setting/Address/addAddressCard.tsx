@@ -46,7 +46,6 @@ export function AddAddressCard({
       address: "",
     },
   });
-
   const getCurrentPosition = (
     opts?: PositionOptions
   ): Promise<GeolocationPosition> =>
@@ -81,7 +80,9 @@ export function AddAddressCard({
         data.latitude = latitude!;
         data.longitude = longitude!;
         let d = null;
+        console.log("Creating location for type:", type);
         if (type === "customer") {
+          console.log("Creating customer location...");
           d = await createCustomerLocation({
             address: data.address,
             latitude: data.latitude!,
@@ -94,11 +95,7 @@ export function AddAddressCard({
             longitude: data.longitude!,
           });
         }
-        // d = await createRestaurantLocation({
-        //   address: data.address,
-        //   latitude: data.latitude!,
-        //   longitude: data.longitude!,
-        // });
+
         onClose(d);
       } catch (err) {
         toast.error(

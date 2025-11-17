@@ -41,10 +41,10 @@ export const getCustomerLocations = async (): Promise<ICreateLocation[]> => {
     throw error;
   }
 };
-export const getRestaurantLocations = async (): Promise<ICreateLocation[]> => {
+export const getRestaurantLocations = async (): Promise<ICreateLocation> => {
   try {
     const response =
-      await apiClient.get<ICreateLocation[]>(`/location/restaurant`);
+      await apiClient.get<ICreateLocation>(`/location/restaurant`);
     return response.data;
   } catch (error) {
     console.error("Error fetching restaurant locations:", error);

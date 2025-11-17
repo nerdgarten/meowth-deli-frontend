@@ -1,11 +1,4 @@
-export interface IRestaurantLocation {
-  id: number;
-  latitude: number;
-  longitude: number;
-  address: string;
-  created_at: string;
-  updated_at: string;
-}
+import type { ICreateLocation } from "./location";
 
 export interface IRestaurant {
   id: number;
@@ -14,11 +7,7 @@ export interface IRestaurant {
   name: string;
   banner: string;
   fee_rate: number;
-  location?: {
-    latitude: number;
-    longitude: number;
-    address?: string;
-  };
+  location?: ICreateLocation;
   detail: string;
   tel: string;
   created_at: string;

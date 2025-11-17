@@ -9,22 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { queryCustomerProfile } from "@/queries/profile";
-import type { ICustomerProfile } from "@/types/user";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  EditProfileFormSchema,
-  updateCustomerProfileMutation,
-} from "@/queries/profile";
+
 import { AddressCard } from "./addressCard";
 import { useSettingFloatPanel } from "../SettingFloatPanelProvider";
 import { AddAddressCard } from "./addAddressCard";
@@ -49,7 +34,6 @@ export function CustomerAddressList() {
   const [addressList, setAddressList] = useState<ICreateLocation[]>([]);
   const { showPanel, setShowCloseButton, hidePanel } = useSettingFloatPanel();
 
-  // populate addressList when profile (data) arrives
   useEffect(() => {
     if (profile) setAddressList(profile);
   }, [profile]);

@@ -45,7 +45,6 @@ export async function updateCustomerProfileMutation(
     form.append("tel", tel);
     form.append("profilePicture", profilePicture); // adjust key if backend expects another name
 
-    console.log(form.get("profilePicture"));
     const response = await apiClient.patch<ICustomerProfile>(
       "/customer/profile",
       form,

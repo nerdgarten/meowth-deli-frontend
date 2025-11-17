@@ -40,6 +40,11 @@ const ChangePasswordFormSchema = z
 type ChangePasswordFormValues = z.infer<typeof ChangePasswordFormSchema>;
 
 const changePassword = async (_payload: ChangePasswordFormValues) => {
+  const { currentPassword, newPassword, confirmPassword } = _payload;
+  if (newPassword !== confirmPassword) {
+    toast.error("Passwords do not match.");
+    return;
+  }
   await new Promise((resolve) => setTimeout(resolve, 600));
 };
 
