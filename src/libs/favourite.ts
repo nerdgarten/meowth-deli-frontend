@@ -2,6 +2,7 @@ import { apiClient } from "@/libs/axios";
 import type { IDish } from "@/types/dish";
 import type { IRestaurant } from "@/types/restaurant";
 import type { IAuthenticatedAs } from "@/libs/authentication";
+import type { Role } from "@/types/role";
 
 export const getFavouriteRestaurants = async (): Promise<IRestaurant[]> => {
   try {
@@ -120,8 +121,8 @@ export const getFavouriteDishesByRestaurant = async (
   restaurant_id: number
 ): Promise<IDish[]> => {
   try {
-    const isUser = await apiClient.get<IAuthenticatedAs>("/authenticate");
-    if (!isUser) {
+    const authResponse = await apiClient.get<IAuthenticatedAs>("/authenticate");
+    if (authResponse.data.role !== "customer") {
       return [];
     }
     const response = await apiClient.get<IDish[]>(

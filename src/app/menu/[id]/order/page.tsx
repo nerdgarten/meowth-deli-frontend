@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 
 import { useCart } from "@/components/context/CartProvider";
 import { OrderSummary } from "@/components/Main/OrderSummary";
-import { getLocationByCustomerId } from "@/libs/location";
 import { createOrder } from "@/libs/orders";
 import { getRestaurantById } from "@/libs/restaurant";
 import type { ILocation } from "@/types/location";
@@ -48,7 +47,7 @@ export default function OrderPage({
     },
     enabled: !!resolvedParams?.id,
   });
-  const {data: getLocation} = useQuery({
+  const { data: getLocation } = useQuery({
     queryKey: ["location-info"],
     queryFn: async () => {
       return getCustomerLocations();
@@ -58,16 +57,16 @@ export default function OrderPage({
   const locationQuery = useQuery({
     queryKey: ["location"],
     queryFn: async () => {
-      return getLocationByCustomerId();
+      return getCustomerLocations();
     },
     enabled: !!resolvedParams?.id,
   });
 
-  const loc: ILocation[] = locationQuery.data ?? [{
-    customer_id: 0,
-    address: ""
-    
-  }];
+  const loc: ILocation[] = locationQuery.data ?? [
+    {
+      address: "",
+    },
+  ];
 
   const createOrderMutation = useMutation({
     mutationFn: (orderData: {
@@ -183,7 +182,7 @@ export default function OrderPage({
         cartItem={cartItem}
         restaurantName={restaurantQuery.data?.name ?? ""}
         TotalPrice={getTotalPrice(resolvedParams.id)}
-        location={loc[0]!.address}
+        // location={loc[0]!.address}
         onSubmit={onSubmit}
       />
     </main>
