@@ -7,11 +7,7 @@ import { Spinner } from "@ui/shadcn-io/spinner";
 import { RestaurantCard } from "@/components/common/RestaurantCard";
 import { LandingCarousel } from "@/components/Landing/Carousel";
 import { Toolbar } from "@/components/Landing/Toolbar";
-<<<<<<< HEAD
-=======
 import { commandScore } from "@/libs/command-score";
-import { getAllRestaurant } from "@/libs/restaurant";
->>>>>>> 395ec7da9f5a72d7d27ae8deb89c416d10faca98
 import { getFavouriteRestaurant } from "@/libs/favourite";
 import { getAllRestaurant } from "@/libs/restaurant";
 

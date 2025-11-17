@@ -69,13 +69,9 @@ export async function getAdminRestaurants(
   }
 }
 
-export async function getAdminDrivers(
-  status?: string
-): Promise<AdminGenericResponse> {
+export async function getAdminDrivers(): Promise<AdminGenericResponse> {
   try {
-    const response = await apiClient.get(`/admin/drivers`, {
-      params: { status },
-    });
+    const response = await apiClient.get(`/admin/drivers`);
     return response.data as AdminGenericResponse;
   } catch (error) {
     console.error("getAdminDrivers error", error);

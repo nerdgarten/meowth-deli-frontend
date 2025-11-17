@@ -1,23 +1,12 @@
 "use client";
 
-<<<<<<< HEAD
-import { History,Menu, User } from "lucide-react";
-import { LayoutDashboard } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { use, useState } from "react";
-import toast from "react-hot-toast";
-
 import { EditProfileDialog } from "@/components/Navigation/EditProfileDialog";
-import { MenuDialog } from "@/components/Navigation/MenuDialog";
-=======
 import { useMutation } from "@tanstack/react-query";
 import { History, LogOut, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { EditProfileDialog } from "@/components/Navigation/EditProfileDialog";
->>>>>>> 395ec7da9f5a72d7d27ae8deb89c416d10faca98
 import { ResetPasswordDialog } from "@/components/Navigation/ResetPasswordDialog";
 import { authenticatedAs } from "@/libs/authentication";
 

@@ -1,12 +1,6 @@
 "use client";
-<<<<<<< HEAD
-import { Heart } from "lucide-react";
-import { useState } from "react";
 
-=======
-import type { IDish } from "@/types/dish";
 import { useDeferredValue, useMemo, useState } from "react";
->>>>>>> 395ec7da9f5a72d7d27ae8deb89c416d10faca98
 import {
   checkFavouriteRestaurant,
   createFavouriteRestaurant,

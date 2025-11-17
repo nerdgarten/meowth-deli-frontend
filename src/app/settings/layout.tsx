@@ -9,10 +9,7 @@ import {
   User,
 } from "lucide-react";
 
-<<<<<<< HEAD
-=======
 import { useAuth } from "@/components/context/AuthContext";
->>>>>>> 395ec7da9f5a72d7d27ae8deb89c416d10faca98
 import { SettingFloatPanelProvider } from "@/components/Setting/SettingFloatPanelProvider";
 import {
   SettingNavigationMenu,

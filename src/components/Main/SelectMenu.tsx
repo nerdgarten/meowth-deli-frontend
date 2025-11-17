@@ -1,14 +1,9 @@
-<<<<<<< HEAD
 // ...existing code...
-import { Heart,Minus, Plus } from "lucide-react";
+import { Heart, Minus, Plus } from "lucide-react";
 import { useState } from "react";
 
-import { createFavouriteDish, deleteFavouriteDish } from "@/libs/favourite";
 import type { IDish } from "@/types/dish";
-=======
-import { Heart, Minus, Plus } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
 
 import { createFavouriteDish, deleteFavouriteDish } from "@/libs/favourite";
 import type { Allergy, IDish } from "@/types/dish";
@@ -47,7 +42,6 @@ const ALLERGENS: Array<{
   { key: "shellfish", label: "Shellfish", Icon: Shell },
   { key: "gluten", label: "Gluten", Icon: Info },
 ];
->>>>>>> 395ec7da9f5a72d7d27ae8deb89c416d10faca98
 
 interface SelectMenuProps {
   dish: IDish;

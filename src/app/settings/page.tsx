@@ -2,10 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-<<<<<<< HEAD
-=======
 import { useAuth } from "@/components/context/AuthContext";
->>>>>>> 395ec7da9f5a72d7d27ae8deb89c416d10faca98
 import { CustomerAddressPage } from "@/components/Setting/Address/customer";
 import { RestaurantAddressPage } from "@/components/Setting/Address/restaurant";
 import { CustomerOrderPage } from "@/components/Setting/Order/customer";

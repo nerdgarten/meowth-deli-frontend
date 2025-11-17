@@ -24,10 +24,7 @@ import {
   queryDriverProfile,
   updateDriverProfileMutation,
 } from "@/libs/driver";
-<<<<<<< HEAD
-=======
 import { driverUploadFile } from "@/queries/file";
->>>>>>> 395ec7da9f5a72d7d27ae8deb89c416d10faca98
 import { queryCustomerProfile } from "@/queries/profile";
 import type { IDriverProfile } from "@/types/user";
 import type { ICustomerProfile } from "@/types/user";
@@ -127,7 +124,7 @@ const CustomerProfileForm = () => {
       await driverUploadFile(file);
       toast.success("File uploaded successfully!");
     } catch {
-      toast.error( "File upload failed!");
+      toast.error("File upload failed!");
     } finally {
       setUploading(false);
     }
@@ -282,7 +279,7 @@ const CustomerProfileForm = () => {
           <input
             type="file"
             accept="application/pdf"
-            onChange={async(e) => {
+            onChange={async (e) => {
               const file = e.target.files?.[0];
               if (file) await handleFileUpload(file);
             }}
