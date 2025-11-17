@@ -1,6 +1,7 @@
+import { MapPin } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/libs/utils";
-import { MapPin } from "lucide-react";
 
 type AddressCardProps = {
   address: string;

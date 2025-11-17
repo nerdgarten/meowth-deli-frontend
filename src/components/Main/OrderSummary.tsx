@@ -1,9 +1,9 @@
 import { ChevronLeft } from "lucide-react";
-import { useState } from "react";
 import Image from "next/image";
+import { useState } from "react";
 
-import type { CartItem } from "@/types/order";
 import type { ICreateLocation } from "@/types/location";
+import type { CartItem } from "@/types/order";
 
 interface OrderSummaryProps {
   location: ICreateLocation[];

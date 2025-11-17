@@ -1,18 +1,19 @@
 "use client";
 
 import { Menu, User } from "lucide-react";
+import { LayoutDashboard } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { use, useState } from "react";
 import toast from "react-hot-toast";
-import { LayoutDashboard } from "lucide-react";
+
 import { EditProfileDialog } from "@/components/Navigation/EditProfileDialog";
 import { MenuDialog } from "@/components/Navigation/MenuDialog";
+import { ResetPasswordDialog } from "@/components/Navigation/ResetPasswordDialog";
 import { authenticatedAs } from "@/libs/authentication";
 
+import { useAuth } from "../context/AuthContext";
 import BreadcrumbNav from "./BreadCrumbNav";
 import { LoginDialog } from "./LoginDialog";
-import { useRouter } from "next/navigation";
-import { ResetPasswordDialog } from "@/components/Navigation/ResetPasswordDialog";
-import { useAuth } from "../context/AuthContext";
 
 export const Navigation = () => {
   const router = useRouter();

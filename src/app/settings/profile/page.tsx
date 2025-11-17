@@ -1,11 +1,10 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import type { ComponentType } from "react";
 
-import { useQuery } from "@tanstack/react-query";
-
-import { DriverProfilePage } from "@/components/Setting/Profile/driver";
 import { CustomerProfilePage } from "@/components/Setting/Profile/customer";
+import { DriverProfilePage } from "@/components/Setting/Profile/driver";
 import { RestaurantProfilePage } from "@/components/Setting/Profile/restaurant";
 import { authenticatedAs } from "@/libs/authentication";
 

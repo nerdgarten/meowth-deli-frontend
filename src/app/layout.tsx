@@ -5,10 +5,10 @@ import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 
 import { QueryProvider } from "@/components/common/QueryProvider";
+import { AllowedProvider } from "@/components/context/AllowedContext";
+import { AuthProvider } from "@/components/context/AuthContext";
 import { CartProvider } from "@/components/context/CartProvider";
 import { Navigation } from "@/components/Navigation/Navigation";
-import { AuthProvider } from "@/components/context/AuthContext";
-import { AllowedProvider } from "@/components/context/AllowedContext";
 
 export const metadata: Metadata = {
   title: "Meowth Delivery",

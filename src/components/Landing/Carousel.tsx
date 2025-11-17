@@ -1,8 +1,6 @@
 "use client";
 
 import { Carousel, CarouselContent, CarouselItem } from "@ui/carousel";
-// import landing1 from "@/public/images/landing-carousel-1.jpg";
-import Image from "next/image";
 import {
   Carousel as LandingCarouselContainer,
   type CarouselApi as LandingCarouselApi,
@@ -11,6 +9,8 @@ import {
 } from "@ui/custom/LandingCarousel";
 import Autoplay from "embla-carousel-autoplay";
 import { Circle, Coffee, MessageSquare } from "lucide-react";
+// import landing1 from "@/public/images/landing-carousel-1.jpg";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { MS_IN_SEC } from "@/constants/misc";

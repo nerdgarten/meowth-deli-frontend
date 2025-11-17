@@ -1,12 +1,14 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-
 import { useQuery } from "@tanstack/react-query";
 import { ShoppingBag } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { z } from "zod";
+import { id } from "zod/v4/locales";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,14 +20,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { queryCustomerProfile } from "@/queries/profile";
-import type { ICustomerProfile } from "@/types/user";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   EditProfileFormSchema,
   updateCustomerProfileMutation,
 } from "@/queries/profile";
-import { id } from "zod/v4/locales";
+import type { ICustomerProfile } from "@/types/user";
 
 export function CustomerOrderPage() {
   return (

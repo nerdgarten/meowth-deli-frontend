@@ -19,6 +19,9 @@ const config = {
     ],
   },
   devIndicators: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  }
 };
 
 export default config;

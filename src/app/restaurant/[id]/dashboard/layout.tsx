@@ -1,8 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-
 import {
   Sidebar,
   SidebarContent,
@@ -21,6 +18,8 @@ import {
   Settings,
   ShoppingBag,
 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
 export default function DashboardLayout({

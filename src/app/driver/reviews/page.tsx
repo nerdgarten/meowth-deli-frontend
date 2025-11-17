@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { Star } from "lucide-react";
+import Image from "next/image";
 
 type Review = {
   id: number;

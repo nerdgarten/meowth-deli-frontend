@@ -4,7 +4,7 @@
 import { MapPin } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useAllowed } from "../context/AllowedContext";
+import toast from "react-hot-toast";
 
 import {
   Card,
@@ -13,7 +13,8 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import type { IRestaurant } from "@/types/restaurant";
-import toast from "react-hot-toast";
+
+import { useAllowed } from "../context/AllowedContext";
 
 interface RestaurantCardProps {
   restaurant: IRestaurant;

@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { CustomerOrderPage } from "@/components/Setting/Order/customer";
+import { CustomerAddressPage } from "@/components/Setting/Address/customer";
 import { authenticatedAs } from "@/libs/authentication";
 
 export default function SettingsProfilePage() {
