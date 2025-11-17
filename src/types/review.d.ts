@@ -60,6 +60,8 @@ export interface ReviewResponse {
   rate: number;
   review_text?: string;
   image?: string;
+  created_at: string;
+  updated_at?: string;
   restaurant: {
     id: number;
     name: string;

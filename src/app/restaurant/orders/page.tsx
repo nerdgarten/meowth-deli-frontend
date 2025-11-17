@@ -1,5 +1,9 @@
 "use client";
 
+import * as React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Package } from "lucide-react";
+
 import { Button } from "@ui/button";
 import {
   Dialog,
@@ -9,68 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@ui/dialog";
-import { Package } from "lucide-react";
-import * as React from "react";
-
+import { getRestaurantOrders } from "@/libs/orders";
 import type { IOrder } from "@/types/order";
-
-const orders: IOrder[] = [
-  {
-    id: 2380,
-    restaurant_id: 1,
-    customer_id: 102,
-    driver_id: null,
-    location: "123 Catnip Street, Downtown",
-    status: "pending",
-    remark: "Allergies: no peanuts",
-    total_amount: 48.5,
-    driver_fee: 5.25,
-  },
-  {
-    id: 2381,
-    restaurant_id: 1,
-    customer_id: 219,
-    driver_id: 18,
-    location: "77 Whiskers Ave, Midtown",
-    status: "preparing",
-    remark: null,
-    total_amount: 32.9,
-    driver_fee: 4.1,
-  },
-  {
-    id: 2382,
-    restaurant_id: 1,
-    customer_id: 356,
-    driver_id: 24,
-    location: "12 Garden Lane, Riverside",
-    status: "delivered",
-    remark: "Leave at concierge",
-    total_amount: 61.75,
-    driver_fee: 6.8,
-  },
-  {
-    id: 2383,
-    restaurant_id: 1,
-    customer_id: 410,
-    driver_id: 33,
-    location: "908 Market Road, Uptown",
-    status: "success",
-    remark: null,
-    total_amount: 27.4,
-    driver_fee: 3.5,
-  },
-  {
-    id: 2384,
-    restaurant_id: 1,
-    customer_id: 512,
-    driver_id: 45,
-    location: "52 Fisherman Wharf, Riverside",
-    status: "pending",
-    remark: "Ring the doorbell twice",
-    total_amount: 43.2,
-    driver_fee: 5.05,
-  },
-];
 
 const STATUS_LABELS: Record<IOrder["status"], string> = {
   pending: "Awaiting Confirmation",
@@ -104,6 +48,13 @@ const formatCurrency = (value: number) =>
   })}`;
 
 export default function OrdersPage() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["restaurant-orders"] as const,
+    queryFn: getRestaurantOrders,
+  });
+
+  const orders = React.useMemo<IOrder[]>(() => data ?? [], [data]);
+
   const totalOrders = orders.length;
   const preparingOrders = orders.filter(
     (order) => order.status === "preparing"
@@ -125,7 +76,7 @@ export default function OrdersPage() {
       return orders;
     }
     return orders.filter((order) => order.status === statusFilter);
-  }, [statusFilter]);
+  }, [statusFilter, orders]);
 
   const handleCloseModal = React.useCallback(() => {
     setActiveOrder(null);
@@ -183,64 +134,69 @@ export default function OrdersPage() {
               </div>
 
               <div className="mt-4 space-y-4">
-                {filteredOrders.map((order) => {
-                  const statusClass = STATUS_ACCENTS[order.status];
+                {isLoading ? (
+                  <p className="py-8 text-center text-[#8a7a70]">
+                    Loading orders...
+                  </p>
+                ) : filteredOrders.length === 0 ? (
+                  <p className="py-8 text-center text-[#8a7a70]">
+                    No orders found
+                  </p>
+                ) : (
+                  filteredOrders.map((order) => {
+                    const statusClass = STATUS_ACCENTS[order.status];
 
-                  return (
-                    <div
-                      className="cursor-pointer space-y-2 rounded-xl bg-white px-6 py-5 shadow-lg ring-1 ring-[#f4dba7] transition hover:ring-[#c8942c] md:flex-row md:items-center md:justify-between"
-                      key={order.id}
-                      onClick={() => setActiveOrder(order)}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                          event.preventDefault();
-                          setActiveOrder(order);
-                        }
-                      }}
-                    >
-                      <div className="flex w-full flex-row flex-wrap items-center gap-2 text-[#5a3a1c]">
-                        <p className="text-sm font-semibold text-[#8f5a20]">
-                          Order ID #{order.id}
-                        </p>
-                        <div className="flex-auto"></div>
-                        <span
-                          className={`inline-flex items-center rounded-full px-2 py-1 text-[0.7rem] font-semibold tracking-wide uppercase ${statusClass}`}
-                        >
-                          {STATUS_LABELS[order.status]}
-                        </span>
-                      </div>
-                      <p className="text-xs text-[#a88553]">
-                        Deliver to {order.location}
-                      </p>
-                      <div className="flex flex-wrap gap-3 text-xs text-[#7a5a35]">
-                        <span>
-                          Total:{" "}
-                          <span className="font-semibold text-[#5f3b15]">
-                            {formatCurrency(order.total_amount)}
+                    return (
+                      <div
+                        className="cursor-pointer space-y-2 rounded-xl bg-white px-6 py-5 shadow-lg ring-1 ring-[#f4dba7] transition hover:ring-[#c8942c] md:flex-row md:items-center md:justify-between"
+                        key={order.id}
+                        onClick={() => setActiveOrder(order)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            setActiveOrder(order);
+                          }
+                        }}
+                      >
+                        <div className="flex w-full flex-row flex-wrap items-center gap-2 text-[#5a3a1c]">
+                          <p className="text-sm font-semibold text-[#8f5a20]">
+                            Order ID #{order.id}
+                          </p>
+                          <div className="flex-auto"></div>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2 py-1 text-[0.7rem] font-semibold tracking-wide uppercase ${statusClass}`}
+                          >
+                            {STATUS_LABELS[order.status]}
                           </span>
-                        </span>
-                        <span>
-                          Driver fee: {formatCurrency(order.driver_fee)}
-                        </span>
-                        {order.remark ? (
-                          <span>Remark: {order.remark}</span>
-                        ) : null}
-                      </div>
+                        </div>
+                        <p className="text-xs text-[#9b7a4d]">
+                          Deliver to {order.location.address}
+                        </p>
+                        <div className="flex flex-wrap gap-3 text-xs text-[#7a5a35]">
+                          <span>
+                            Total:{" "}
+                            <span className="font-semibold text-[#5f3b15]">
+                              {formatCurrency(order.total_amount)}
+                            </span>
+                          </span>
+                          <span>
+                            Driver fee: {formatCurrency(order.driver_fee)}
+                          </span>
+                          {order.remark ? (
+                            <span>Remark: {order.remark}</span>
+                          ) : null}
+                        </div>
 
-                      <OrderActions
-                        order={order}
-                        setActiveOrder={setActiveOrder}
-                      />
-                    </div>
-                  );
-                })}
-                {!filteredOrders.length ? (
-                  <div className="rounded-xl border border-dashed border-[#ddb77a] px-6 py-12 text-center text-sm text-[#7a5a35]">
-                    No orders found for this status.
-                  </div>
-                ) : null}
+                        <OrderActions
+                          order={order}
+                          setActiveOrder={setActiveOrder}
+                        />
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </div>
 
@@ -290,7 +246,7 @@ export default function OrdersPage() {
                 <h4 className="font-semibold text-[#8f5a20]">
                   Delivery Address
                 </h4>
-                <p>{activeOrder.location}</p>
+                <p>{activeOrder.location.address}</p>
               </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <DetailItem

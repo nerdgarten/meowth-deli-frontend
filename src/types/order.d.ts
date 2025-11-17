@@ -5,11 +5,53 @@ export interface IOrder {
   customer_id: number;
   driver_id?: number | null;
   restaurant_id: number;
+  delivery_location_id: number;
   status: "pending" | "preparing" | "delivered" | "rejected" | "success";
   remark?: string | null;
   total_amount: number;
   driver_fee: number;
-  location: string;
+  created_at: string;
+  customer: {
+    firstname: string;
+    lastname: string;
+    tel: string;
+    image?: string;
+  };
+  restaurant: {
+    name: string;
+    tel: string;
+    detail?: string;
+    banner?: string;
+    location: {
+      latitude: number;
+      longitude: number;
+      address: string;
+    };
+  };
+  driver: {
+    firstname: string;
+    lastname: string;
+    tel: string;
+    image?: string;
+    licence: string;
+    vehicle: string;
+  } | null;
+  location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  };
+  orderDishes: Array<{
+    amount: number;
+    remark?: string | null;
+    dish: {
+      id: number;
+      name: string;
+      detail?: string;
+      price: number;
+      image?: string;
+    };
+  }>;
 }
 
 export interface CartItem {

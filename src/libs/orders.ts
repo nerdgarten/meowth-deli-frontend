@@ -1,7 +1,6 @@
 import { apiClient } from "@/libs/axios";
 import type { IOrder } from "@/types/order";
 import type { IOrderDish } from "@/types/order";
-import type { IRestaurant } from "@/types/restaurant";
 
 export const createOrder = async ({
   delivery_location_id,
@@ -37,7 +36,12 @@ export const getOrderById = async (order_id: number): Promise<IOrder> => {
     const response = await apiClient.get<IOrder>(`/order/${order_id}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching dish:", error);
+    console.error("Error fetching order:", error);
     throw error;
   }
 };
+
+export async function getRestaurantOrders(): Promise<IOrder[]> {
+  const response = await apiClient.get<IOrder[]>(`/order/restaurant`);
+  return response.data;
+}
