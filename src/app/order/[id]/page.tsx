@@ -21,6 +21,7 @@ import ReviewModal from "@/components/Review/ReviewModal";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type IOrderDetails, queryOrderById } from "@/queries/order";
+import { queryWalletBalance } from "@/queries/profile";
 import type { StatusTimeline } from "@/types/order";
 
 type PageProps = {
@@ -86,9 +87,23 @@ export default function OrderPage({ params }: PageProps) {
   const [isDriverModalOpen, setIsDriverModalOpen] = useState(false);
   const [isRestaurantModalOpen, setIsRestaurantModalOpen] = useState(false);
 
-  const { data: orderData, isLoading, isError } = useQuery<IOrderDetails>({
-    queryKey: ['order', orderId],
-    queryFn: async() => queryOrderById(orderId),
+  // Payment states
+  const [paymentMethod, setPaymentMethod] = useState<
+    "meowth-wallet" | "cash" | "mobilebanking" | "creditcard"
+  >("cash");
+
+  const {
+    data: orderData,
+    isLoading,
+    isError,
+  } = useQuery<IOrderDetails>({
+    queryKey: ["order", orderId],
+    queryFn: async () => queryOrderById(orderId),
+  });
+
+  const { data: walletBalance = 0 } = useQuery<number>({
+    queryKey: ["wallet-balance"],
+    queryFn: queryWalletBalance,
   });
 
   if (isLoading) {
@@ -106,7 +121,9 @@ export default function OrderPage({ params }: PageProps) {
     return (
       <main className="mt-16 flex h-screen items-center justify-center bg-[#F9F7F3]">
         <div className="text-center">
-          <p className="text-xl font-semibold text-red-600">Failed to load order details</p>
+          <p className="text-xl font-semibold text-red-600">
+            Failed to load order details
+          </p>
           <p className="mt-2 text-gray-600">Please try again later</p>
         </div>
       </main>
@@ -126,12 +143,12 @@ export default function OrderPage({ params }: PageProps) {
         {
           icon: <ClipboardList size={20} />,
           title: "Order Rejected",
-          time: new Date(orderData.created_at).toLocaleString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
+          time: new Date(orderData.created_at).toLocaleString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
           }),
           status: "Complete",
         },
@@ -142,27 +159,31 @@ export default function OrderPage({ params }: PageProps) {
       {
         icon: <ClipboardList size={20} />,
         title: "Order Received",
-        time: new Date(orderData.created_at).toLocaleString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
+        time: new Date(orderData.created_at).toLocaleString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
         }),
         status: orderData.status === "pending" ? "In Progress" : "Complete",
       },
     ];
 
-    if (orderData.status === "preparing" || orderData.status === "delivered" || orderData.status === "success") {
+    if (
+      orderData.status === "preparing" ||
+      orderData.status === "delivered" ||
+      orderData.status === "success"
+    ) {
       baseTimeline.push({
         icon: <ChefHat size={20} />,
         title: "In Kitchen",
-        time: new Date(orderData.created_at).toLocaleString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
+        time: new Date(orderData.created_at).toLocaleString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
         }),
         status: orderData.status === "preparing" ? "In Progress" : "Complete",
       });
@@ -172,12 +193,12 @@ export default function OrderPage({ params }: PageProps) {
       baseTimeline.push({
         icon: <Bike size={20} />,
         title: "Delivering",
-        time: new Date(orderData.created_at).toLocaleString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
+        time: new Date(orderData.created_at).toLocaleString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
         }),
         status: orderData.status === "delivered" ? "In Progress" : "Complete",
       });
@@ -194,21 +215,63 @@ export default function OrderPage({ params }: PageProps) {
     price: orderDish.dish.price,
   }));
 
-  const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = orderItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
   const deliveryFee = orderData.driver_fee;
   const total = orderData.total_amount;
+
+  // Payment handlers
+  const handlePaymentMethodChange = (
+    method: "meowth-wallet" | "cash" | "mobilebanking" | "creditcard"
+  ) => {
+    setPaymentMethod(method);
+  };
+
+  const handleProcessPayment = async () => {
+    try {
+      // Call the backend API to process payment
+      const response = await fetch("/api/customer/process-payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId: orderData.id,
+          amount: total,
+          paymentMethod: paymentMethod,
+        }),
+      });
+
+      if (response.ok) {
+        // Refresh the page or update the order status
+        window.location.reload();
+      } else {
+        const errorData = (await response
+          .json()
+          .catch(() => ({ message: undefined as string | undefined }))) as {
+          message?: string;
+        };
+        alert(errorData.message ?? "Payment failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      alert("Payment failed. Please try again.");
+    }
+  };
 
   // Hero message based on order status
   const heroMessage =
     orderData.status === "success"
       ? `Your food from ${orderData.restaurant.name} has arrived!`
       : orderData.status === "delivered"
-      ? `Your food from ${orderData.restaurant.name} is on the way!`
-      : orderData.status === "preparing"
-      ? `Your order from ${orderData.restaurant.name} is being prepared!`
-      : orderData.status === "rejected"
-      ? `Sorry, your order from ${orderData.restaurant.name} was rejected.`
-      : `Your order from ${orderData.restaurant.name} has been received!`;
+        ? `Your food from ${orderData.restaurant.name} is on the way!`
+        : orderData.status === "preparing"
+          ? `Your order from ${orderData.restaurant.name} is being prepared!`
+          : orderData.status === "rejected"
+            ? `Sorry, your order from ${orderData.restaurant.name} was rejected.`
+            : `Your order from ${orderData.restaurant.name} has been received!`;
 
   return (
     <main className="mt-16 min-h-screen bg-[#F9F7F3] p-4 pb-20 sm:p-6 lg:p-8">
@@ -217,10 +280,7 @@ export default function OrderPage({ params }: PageProps) {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
           {/* Hero Section - Left, Row 1, Col 1-3 */}
           <div className="lg:col-span-3 lg:row-start-1">
-            <HeroSection
-              message={heroMessage}
-              reportLink="#"
-            />
+            <HeroSection message={heroMessage} reportLink="#" />
           </div>
 
           {/* Address - Right, Row 1, Col 4 */}
@@ -238,9 +298,15 @@ export default function OrderPage({ params }: PageProps) {
           {/* Payment - Right, Row 1, Col 5 */}
           <div className="lg:col-span-1 lg:row-start-1">
             <PaymentStatus
-              method="meowth-wallet"
-              status={orderData.status === "success" ? "Paid" : "Payment Waiting"}
-              walletBalance={20.0}
+              method={paymentMethod}
+              status={
+                orderData.status === "success" ? "Paid" : "Payment Waiting"
+              }
+              walletBalance={walletBalance}
+              onPaymentMethodChange={handlePaymentMethodChange}
+              onProcessPayment={handleProcessPayment}
+              orderId={orderData.id}
+              orderAmount={total}
             />
           </div>
 
@@ -274,13 +340,17 @@ export default function OrderPage({ params }: PageProps) {
               <CardContent className="space-y-4 p-6 pt-2">
                 <div className="flex items-center space-x-4">
                   <ReceiptText className="text-gray-500" />
-                  <span className="w-24 font-medium text-gray-600">Order ID</span>
+                  <span className="w-24 font-medium text-gray-600">
+                    Order ID
+                  </span>
                   <span className="font-mono text-gray-800">{orderId}</span>
                 </div>
                 {driverName && (
                   <div className="flex items-center space-x-4">
                     <User className="text-gray-500" />
-                    <span className="w-24 font-medium text-gray-600">Driver</span>
+                    <span className="w-24 font-medium text-gray-600">
+                      Driver
+                    </span>
                     <span className="text-gray-800">{driverName}</span>
                   </div>
                 )}
@@ -317,7 +387,7 @@ export default function OrderPage({ params }: PageProps) {
                   </div>
                   <button
                     onClick={() => setIsDriverModalOpen(true)}
-                    className="flex items-center gap-2 whitespace-nowrap rounded-lg bg-blue-500 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-600"
+                    className="flex items-center gap-2 rounded-lg bg-blue-500 px-6 py-3 font-medium whitespace-nowrap text-white transition-colors hover:bg-blue-600"
                   >
                     <Plus size={20} />
                     Add Review
@@ -335,13 +405,13 @@ export default function OrderPage({ params }: PageProps) {
                     Rate Your Restaurant
                   </h2>
                   <p className="text-gray-600">
-                    Share your experience with {orderData.restaurant.name} that prepared your
-                    order.
+                    Share your experience with {orderData.restaurant.name} that
+                    prepared your order.
                   </p>
                 </div>
                 <button
                   onClick={() => setIsRestaurantModalOpen(true)}
-                  className="flex items-center gap-2 whitespace-nowrap rounded-lg bg-yellow-500 px-6 py-3 font-medium text-white transition-colors hover:bg-yellow-600"
+                  className="flex items-center gap-2 rounded-lg bg-yellow-500 px-6 py-3 font-medium whitespace-nowrap text-white transition-colors hover:bg-yellow-600"
                 >
                   <Plus size={20} />
                   Add Review
@@ -378,4 +448,3 @@ export default function OrderPage({ params }: PageProps) {
     </main>
   );
 }
-
