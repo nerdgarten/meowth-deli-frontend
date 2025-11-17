@@ -3,126 +3,12 @@
 import { Button } from "@ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/dialog";
 import Image from "next/image";
-import * as React from "react";
+import { useState, useMemo, useCallback } from "react";
+import { queryDriverOrders, type IOrderDetails } from "@/queries/order";
+import { useQuery } from "node_modules/@tanstack/react-query/build/modern/useQuery";
+import { updateOrderStatus } from "@/libs/orders";
 
-import type { IOrder } from "@/types/order";
-
-interface OrderItem {
-  name: string;
-  quantity: number;
-  price: number;
-  note?: string;
-  image?: string;
-}
-
-interface OrderDetails extends IOrder {
-  restaurant_name: string;
-  restaurant_image?: string;
-  driver_name?: string;
-  delivery_address: string;
-  items: OrderItem[];
-  subtotal: number;
-  location: string;
-}
-
-const orders: OrderDetails[] = [
-  {
-    id: 2380,
-    restaurant_id: 1,
-    customer_id: 102,
-    driver_id: null,
-    location: "Pizza Com บ้าน",
-    status: "preparing",
-    remark: "Allergies: no peanuts",
-    total_amount: 920,
-    driver_fee: 22,
-    restaurant_name: "Pizza Com บ้าน ชาย มูรา - บางพลัด",
-    driver_name: "John Doorson",
-    delivery_address: "285/17 The King Hotel ถนนพชนาเฮม",
-    subtotal: 898,
-    items: [
-      {
-        name: "Premium French Imported Artisanal Avocado Oil",
-        quantity: 1,
-        price: 299,
-        note: "Avocado oil 100ML *1",
-        // image: "/placeholder-dish.jpg",
-      },
-      {
-        name: "French Imported Walnut Bread Spread",
-        quantity: 1,
-        price: 599,
-        note: "200g *1",
-        // image: "/placeholder-dish.jpg",
-      },
-    ],
-  },
-  {
-    id: 2381,
-    restaurant_id: 2,
-    customer_id: 219,
-    driver_id: 18,
-    location: "Pizza อีก",
-    status: "success",
-    remark: null,
-    total_amount: 320,
-    driver_fee: 15,
-    restaurant_name: "Pizza อีก",
-    delivery_address: "123 Main Street",
-    subtotal: 305,
-    items: [
-      {
-        name: "Margherita Pizza",
-        quantity: 1,
-        price: 305,
-      },
-    ],
-  },
-  {
-    id: 2382,
-    restaurant_id: 3,
-    customer_id: 356,
-    driver_id: 24,
-    location: "โดนเบ Pizza",
-    status: "rejected",
-    remark: "Leave at concierge",
-    total_amount: 617,
-    driver_fee: 20,
-    restaurant_name: "โดนเบ Pizza",
-    delivery_address: "456 Garden Lane",
-    subtotal: 597,
-    items: [
-      {
-        name: "Pepperoni Pizza",
-        quantity: 1,
-        price: 597,
-      },
-    ],
-  },
-  {
-    id: 2383,
-    restaurant_id: 1,
-    customer_id: 410,
-    driver_id: 33,
-    location: "โดนเบ Pizza",
-    status: "success",
-    remark: null,
-    total_amount: 274,
-    driver_fee: 20,
-    restaurant_name: "โดนเบ Pizza",
-    delivery_address: "789 Market Road",
-    subtotal: 254,
-    items: [
-      {
-        name: "Hawaiian Pizza",
-        quantity: 1,
-        price: 254,
-      },
-    ],
-  },
-];
-
-const STATUS_LABELS: Record<IOrder["status"], string> = {
+const STATUS_LABELS: Record<IOrderDetails["status"], string> = {
   pending: "Pending",
   preparing: "In Progress",
   delivered: "Delivered",
@@ -130,13 +16,25 @@ const STATUS_LABELS: Record<IOrder["status"], string> = {
   success: "Complete",
 };
 
-const STATUS_STYLES: Record<IOrder["status"], string> = {
-  pending: "bg-[#6c757d] text-white",
-  preparing: "bg-[#6c757d] text-white",
-  delivered: "bg-[#0dcaf0] text-white",
-  rejected: "bg-[#dc3545] text-white",
-  success: "bg-[#0dcaf0] text-white",
+const STATUS_STYLES: Record<IOrderDetails["status"], string> = {
+  pending: "bg-[#fff3cd] text-[#856404]",
+  preparing: "bg-[#d1ecf1] text-[#0c5460]",
+  delivered: "bg-[#d4edda] text-[#155724]",
+  rejected: "bg-[#f8d7da] text-[#721c24]",
+  success: "bg-[#d4edda] text-[#155724]",
 };
+
+const FILTERS: Array<{
+  label: string;
+  value: IOrderDetails["status"] | "all";
+}> = [
+  { label: "All", value: "all" },
+  { label: "Pending", value: "pending" },
+  { label: "Preparing", value: "preparing" },
+  { label: "Delivered", value: "delivered" },
+  { label: "Success", value: "success" },
+  { label: "Rejected", value: "rejected" },
+];
 
 const formatCurrency = (value: number) =>
   `${value.toLocaleString("en-US", {
@@ -145,23 +43,28 @@ const formatCurrency = (value: number) =>
   })} ฿`;
 
 export default function OrdersPage() {
-  const [activeOrder, setActiveOrder] = React.useState<OrderDetails | null>(
-    null
-  );
+  const { data = [], isLoading } = useQuery<IOrderDetails[]>({
+    queryKey: ["driver-orders"],
+    queryFn: queryDriverOrders,
+  });
+  const orders = useMemo(() => {
+    return data.filter((order) => order.status !== "pending");
+  }, [data]);
+  const [activeOrder, setActiveOrder] = useState<IOrderDetails | null>(null);
 
-  const incomingOrders = React.useMemo(() => {
+  const incomingOrders = useMemo(() => {
     return orders.filter((order) =>
-      ["pending", "preparing"].includes(order.status)
+      ["preparing", "delivered"].includes(order.status)
     );
-  }, []);
+  }, [orders]);
 
-  const completeOrders = React.useMemo(() => {
+  const completeOrders = useMemo(() => {
     return orders.filter((order) =>
-      ["success", "rejected", "delivered"].includes(order.status)
+      ["success", "rejected"].includes(order.status)
     );
-  }, []);
+  }, [orders]);
 
-  const handleCloseModal = React.useCallback(() => {
+  const handleCloseModal = useCallback(() => {
     setActiveOrder(null);
   }, []);
 
@@ -244,10 +147,10 @@ export default function OrdersPage() {
               {/* Restaurant Info */}
               <div className="flex items-start gap-3">
                 <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-[#f5f5f5]">
-                  {activeOrder.restaurant_image ? (
+                  {activeOrder.restaurant.banner ? (
                     <Image
-                      src={activeOrder.restaurant_image}
-                      alt={activeOrder.restaurant_name}
+                      src={activeOrder.restaurant.banner}
+                      alt={activeOrder.restaurant.name}
                       width={64}
                       height={64}
                       className="h-full w-full object-cover"
@@ -260,11 +163,12 @@ export default function OrdersPage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-black">
-                    {activeOrder.restaurant_name}
+                    {activeOrder.restaurant.name}
                   </h3>
-                  {activeOrder.driver_name && (
+                  {activeOrder.driver?.firstname && (
                     <p className="text-sm text-[#6c757d]">
-                      Delivered by {activeOrder.driver_name}
+                      Delivered by {activeOrder.driver.firstname}{" "}
+                      {activeOrder.driver.lastname}
                     </p>
                   )}
                 </div>
@@ -272,13 +176,13 @@ export default function OrdersPage() {
 
               {/* Order Items */}
               <div className="space-y-3">
-                {activeOrder.items.map((item, index) => (
+                {activeOrder.orderDishes.map((orderDish, index) => (
                   <div key={index} className="flex items-start gap-3">
                     <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-[#f5f5f5]">
-                      {item.image ? (
+                      {orderDish.dish.image ? (
                         <Image
-                          src={item.image}
-                          alt={item.name}
+                          src={orderDish.dish.image}
+                          alt={orderDish.dish.name}
                           width={64}
                           height={64}
                           className="h-full w-full object-cover"
@@ -293,17 +197,17 @@ export default function OrdersPage() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <p className="font-medium text-black">
-                            <span className="mr-2">{item.quantity}x</span>
-                            {item.name}
+                            <span className="mr-2">{orderDish.amount}x</span>
+                            {orderDish.dish.name}
                           </p>
-                          {item.note && (
+                          {orderDish.remark && (
                             <p className="text-xs text-[#6c757d]">
-                              {item.note}
+                              {orderDish.remark}
                             </p>
                           )}
                         </div>
                         <span className="ml-3 font-semibold text-black">
-                          ฿ {item.price}
+                          ฿ {orderDish.dish.price * orderDish.amount}
                         </span>
                       </div>
                     </div>
@@ -319,7 +223,7 @@ export default function OrdersPage() {
                   </div>
                   <div className="flex-1">
                     <p className="text-sm text-black">
-                      {activeOrder.restaurant_name}
+                      {activeOrder.restaurant.name}
                     </p>
                   </div>
                 </div>
@@ -348,7 +252,7 @@ export default function OrdersPage() {
                   </div>
                   <div className="flex-1">
                     <p className="text-sm text-black">
-                      {activeOrder.delivery_address}
+                      {activeOrder.location.address}
                     </p>
                   </div>
                 </div>
@@ -358,7 +262,9 @@ export default function OrdersPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-[#6c757d]">Subtotal</span>
-                  <span className="text-black">฿ {activeOrder.subtotal}</span>
+                  <span className="text-black">
+                    ฿ {activeOrder.total_amount}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-[#6c757d]">Delivery fee</span>
@@ -367,14 +273,14 @@ export default function OrdersPage() {
                 <div className="flex items-center justify-between border-t pt-2 text-base font-semibold">
                   <span className="text-black">Total</span>
                   <span className="text-black">
-                    ฿ {activeOrder.total_amount}
+                    ฿ {activeOrder.total_amount + activeOrder.driver_fee}
                   </span>
                 </div>
               </div>
             </div>
 
             {/* Action Button */}
-            <div className="border-t pt-4">
+            {/* <div className="border-t pt-4">
               {activeOrder.status === "preparing" && (
                 <Button
                   className="w-full rounded-lg bg-[#f5c563] py-6 text-lg font-medium text-white hover:bg-[#f0b84a]"
@@ -385,7 +291,7 @@ export default function OrdersPage() {
                   Mark as complete
                 </Button>
               )}
-            </div>
+            </div> */}
           </>
         ) : null}
       </DialogContent>
@@ -394,7 +300,7 @@ export default function OrdersPage() {
 }
 
 type OrderCardProps = {
-  order: OrderDetails;
+  order: IOrderDetails;
   onViewDetails: () => void;
 };
 
@@ -414,18 +320,38 @@ function OrderCard({ order, onViewDetails }: OrderCardProps) {
             {STATUS_LABELS[order.status]}
           </span>
         </div>
-        <p className="text-sm text-[#6c757d]">{order.location}</p>
+        <p className="text-sm text-[#6c757d]">{order.location.address}</p>
         <p className="text-base font-semibold text-[#d2691e]">
           Delivery Fee {formatCurrency(order.driver_fee)}
         </p>
       </div>
-      <Button
-        variant="outline"
-        className="rounded-lg border-[#6c757d] px-6 py-2 text-sm font-medium text-[#6c757d] hover:bg-[#f8f9fa]"
-        onClick={onViewDetails}
-      >
-        View Details
-      </Button>
+      <div className="flex min-w-[11rem] flex-col gap-2">
+        {order.status === "preparing" && (
+          <Button
+            className="rounded-lg bg-[#f5c563] px-6 py-2 text-sm font-medium text-white hover:bg-[#f0b84a]"
+            type="button"
+            onClick={() => updateOrderStatus(order.id, "delivered")}
+          >
+            Received Food
+          </Button>
+        )}
+        {order.status === "delivered" && (
+          <Button
+            className="rounded-lg bg-[#6f5236] px-6 py-2 text-sm font-medium text-[#f6e9d2] hover:bg-[#5e432e]"
+            type="button"
+            onClick={() => updateOrderStatus(order.id, "success")}
+          >
+            Complete Delivery
+          </Button>
+        )}
+        <Button
+          variant="outline"
+          className="rounded-lg border-[#6c757d] px-6 py-2 text-sm font-medium text-[#6c757d] hover:bg-[#f8f9fa]"
+          onClick={onViewDetails}
+        >
+          View Details
+        </Button>
+      </div>
     </div>
   );
 }
