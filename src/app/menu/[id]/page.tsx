@@ -11,7 +11,8 @@ import {
   getFavouriteDishesByRestaurant,
 } from "@/libs/favourite";
 import { getRestaurant } from "@/queries/restaurant";
-import type { IDish } from "@/types/dish";
+import type { Allergy, IDish } from "@/types/dish";
+import { getAllergy } from "@/libs/customer";
 
 export default function RestaurantPage({
   params,
