@@ -45,3 +45,8 @@ export async function getRestaurantOrders(): Promise<IOrder[]> {
   const response = await apiClient.get<IOrder[]>(`/order/restaurant`);
   return response.data;
 }
+
+export async function updateOrderStatus(order_id: number, status: IOrder["status"]): Promise<void> {
+  // TODO: implement update order status function
+  return;
+}
