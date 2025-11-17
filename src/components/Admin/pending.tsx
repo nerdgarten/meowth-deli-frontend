@@ -1,4 +1,5 @@
 "use client";
+// removed unused imports
 import {
   ArrowRight,
   Car,
@@ -7,11 +8,14 @@ import {
   MoveRight,
   Users2,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
+import type { AdminReport, AdminGenericResponse } from "@/queries/admin";
+import { getAdminReports, resolveAdminReport } from "@/queries/admin";
 import { useResolveReport } from "./ResolveReport";
+
+// Image import removed (unused)
 interface Report {
   id: number;
   type: "restaurant" | "driver";
@@ -111,29 +115,63 @@ const ReportCard = ({
 };
 export function AdminPending() {
   const { open } = useResolveReport();
-  const handleResolveClick = () => {
-    open();
+  const [reports, setReports] = useState<Report[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [limit, setLimit] = useState<number>(10);
+  const [offset, setOffset] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
+
+  const fetchReports = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await getAdminReports(limit, offset);
+      if (res.success) {
+        const mappedReports: Report[] = res.data.map((r: AdminReport) => ({
+          id: r.id,
+          type: r.reported.role === "restaurant" ? "restaurant" : "driver",
+          description: r.reason,
+          dateSubmitted: new Date(r.created_at).toLocaleDateString(),
+          status: "Pending",
+          customerName: r.customer.user.email,
+          restaurantName: r.reported.restaurant?.name,
+          driverName: r.reported.driver?.name,
+        }));
+        setReports(mappedReports);
+        setTotal(res.total ?? 0);
+      } else {
+        setError(res.message ?? "Failed to load reports");
+      }
+    } catch (err) {
+      setError("Failed to load reports");
+    }
+    setLoading(false);
+  }, [limit, offset]);
+
+  useEffect(() => {
+    void fetchReports();
+  }, [fetchReports]);
+
+  const handleResolveClick = (reportId: number) => {
+    // open confirm modal and resolve once confirmed
+    open(async () => {
+      try {
+        const result: AdminGenericResponse = await resolveAdminReport(reportId);
+        if (result?.success) {
+          // Remove the resolved report from the list
+          setReports((prev) => prev.filter((r) => r.id !== reportId));
+          // Optionally refresh list or adjust total
+          setTotal((t) => Math.max(0, t - 1));
+        } else {
+          console.error(result?.message ?? "Failed to resolve report");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
   };
-  const pendingReports: Report[] = [
-    {
-      id: 1,
-      type: "driver",
-      description: "My order arrived 2 hours late.",
-      dateSubmitted: "2024-06-10",
-      status: "Pending",
-      customerName: "Alice Johnson",
-      driverName: "Bob the Driver",
-    },
-    {
-      id: 2,
-      type: "restaurant",
-      description: "I received the wrong item in my order.",
-      dateSubmitted: "2024-06-11",
-      status: "Pending",
-      customerName: "Michael Smith",
-      restaurantName: "Pasta Palace",
-    },
-  ];
+
   return (
     <div className="flex w-full flex-col gap-8 p-8">
       <div className="flex w-full flex-col gap-6 rounded-2xl bg-white/30 p-8 shadow-md">
@@ -145,16 +183,60 @@ export function AdminPending() {
           </p>
         </div>
         <div className="flex w-full flex-col gap-8">
-          {pendingReports.map((report) => {
-            return (
+          {loading ? (
+            <p>Loading reports...</p>
+          ) : error ? (
+            <p className="text-red-500">{error}</p>
+          ) : reports.length === 0 ? (
+            <p>No pending reports.</p>
+          ) : (
+            reports.map((report) => (
               <div
                 key={report.id}
                 className="w-full rounded-xl bg-white/80 shadow-xl"
               >
-                <ReportCard data={report} onClick={handleResolveClick} />
+                <ReportCard
+                  data={report}
+                  onClick={() => handleResolveClick(report.id)}
+                />
               </div>
-            );
-          })}
+            ))
+          )}
+        </div>
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-gray-500">
+            Page {Math.floor(offset / limit) + 1} of{" "}
+            {Math.max(1, Math.ceil(total / limit))}
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-500">Per page:</label>
+            <select
+              className="rounded border p-1"
+              value={limit}
+              onChange={(e) => {
+                setLimit(Number(e.target.value));
+                setOffset(0);
+              }}
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+            <button
+              disabled={offset === 0}
+              className="rounded border px-3 py-1"
+              onClick={() => setOffset(Math.max(offset - limit, 0))}
+            >
+              Previous
+            </button>
+            <button
+              disabled={offset + limit >= total}
+              className="rounded border px-3 py-1"
+              onClick={() => setOffset(offset + limit)}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </div>

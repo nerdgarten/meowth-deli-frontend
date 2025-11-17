@@ -2,6 +2,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Carousel, CarouselContent, CarouselItem } from "@ui/carousel";
+import {
+  Carousel as LandingCarouselContainer,
+  type CarouselApi as LandingCarouselApi,
+  CarouselContent as LandingCarouselContent,
+  CarouselItem as LandingCarouselItem,
+} from "@ui/custom/LandingCarousel";
+// import landing1 from "@/public/images/landing-carousel-1.jpg";
 import Autoplay from "embla-carousel-autoplay";
 import { Coffee, MessageSquare } from "lucide-react";
 import Image from "next/image";

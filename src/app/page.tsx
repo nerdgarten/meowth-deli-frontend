@@ -8,8 +8,8 @@ import { RestaurantCard } from "@/components/common/RestaurantCard";
 import { LandingCarousel } from "@/components/Landing/Carousel";
 import { Toolbar } from "@/components/Landing/Toolbar";
 import { commandScore } from "@/libs/command-score";
-import { getAllRestaurant } from "@/libs/restaurant";
 import { getFavouriteRestaurant } from "@/libs/favourite";
+import { getAllRestaurant } from "@/libs/restaurant";
 
 export default function HomePage() {
   const { data: restaurant } = useQuery({

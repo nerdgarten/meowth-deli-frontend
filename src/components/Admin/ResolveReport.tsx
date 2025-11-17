@@ -1,8 +1,10 @@
 "use client";
+
+import { boolean } from "zod";
 import { X } from "lucide-react";
 import { createContext, useContext, useState } from "react";
 interface ResolveReportContextProps {
-  open: () => void;
+  open: (onConfirm?: () => void | Promise<void>) => void;
   close: () => void;
 }
 const ResolveReportContext = createContext<ResolveReportContextProps | null>(
@@ -11,11 +13,16 @@ const ResolveReportContext = createContext<ResolveReportContextProps | null>(
 
 export function ResolveReport({ children }: { children?: React.ReactNode }) {
   const [open, setOpen] = useState<boolean>(false);
-  const updateOpen = () => {
+  const [onConfirm, setOnConfirm] = useState<
+    (() => void | Promise<void>) | undefined
+  >();
+  const updateOpen = (handler?: () => void) => {
+    setOnConfirm(() => handler);
     setOpen(true);
   };
   const updateClose = () => {
     setOpen(false);
+    setOnConfirm(undefined);
   };
   return (
     <ResolveReportContext.Provider
@@ -46,7 +53,13 @@ export function ResolveReport({ children }: { children?: React.ReactNode }) {
                 Keep pending
               </button>
               <button
-                onClick={updateClose}
+                onClick={() => {
+                  try {
+                    void onConfirm?.();
+                  } finally {
+                    updateClose();
+                  }
+                }}
                 className="flex-1 rounded-full bg-red-600 px-4 py-2 font-semibold text-white shadow-md hover:bg-red-700 active:bg-red-800"
               >
                 Resolve

@@ -1,13 +1,31 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+import { queryCustomerProfile } from "@/queries/profile";
+import {
+  EditProfileFormSchema,
+  updateCustomerProfileMutation,
+} from "@/queries/profile";
+import type { ICustomerProfile } from "@/types/user";
+
 import { getRestaurantLocations } from "@/libs/location";
 import type { ICreateLocation } from "@/types/location";
 
@@ -68,7 +86,7 @@ export function RestaurantAddressList() {
             <AddressCard
               key={addressList.id}
               address={addressList}
-              setDefault={async () => {}}
+              setDefault={async () => console.log("Set default called")}
             />
           )}
         </div>

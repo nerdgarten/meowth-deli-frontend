@@ -1,12 +1,12 @@
 "use client";
 
+import { EditProfileDialog } from "@/components/Navigation/EditProfileDialog";
 import { useMutation } from "@tanstack/react-query";
 import { History, LogOut, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { EditProfileDialog } from "@/components/Navigation/EditProfileDialog";
 import { ResetPasswordDialog } from "@/components/Navigation/ResetPasswordDialog";
 import { authenticatedAs } from "@/libs/authentication";
 

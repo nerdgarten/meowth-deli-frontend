@@ -1,6 +1,9 @@
+// ...existing code...
 import { Heart, Minus, Plus } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
+
+import type { IDish } from "@/types/dish";
+import Image from "next/image";
 
 import { createFavouriteDish, deleteFavouriteDish } from "@/libs/favourite";
 import type { Allergy, IDish } from "@/types/dish";

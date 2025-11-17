@@ -1,12 +1,12 @@
 "use client";
-import type { IDish } from "@/types/dish";
+
 import { useDeferredValue, useMemo, useState } from "react";
 import {
   checkFavouriteRestaurant,
   createFavouriteRestaurant,
   deleteFavouriteRestaurant,
 } from "@/libs/favourite";
-import { Heart } from "lucide-react";
+import type { IDish } from "@/types/dish";
 import type { IRestaurant } from "@/types/restaurant";
 import Image from "next/image";
 import { commandScore } from "@/libs/command-score";

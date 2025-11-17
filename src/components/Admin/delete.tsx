@@ -1,9 +1,12 @@
 "use client";
-import { Trash2, TriangleAlert } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+
+import type { AdminUser, AdminUsersResponse } from "@/queries/admin";
+import { adminDeleteUser, getAdminUsers } from "@/queries/admin";
+import { Trash2, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { useState } from "react";
 
 import { useWarningDialog } from "./WarningDialog";
 const DeleteRoleCard = ({
@@ -41,7 +44,11 @@ const DeleteRoleCard = ({
         active ? "border-black" : "border-transparent"
       }`}
     >
-      <h1 className="text-xl font-bold text-white">{header}</h1>
+      <h1
+        className={`text-xl font-bold ${header === "Customer" ? "text-black" : "text-white"}`}
+      >
+        {header}
+      </h1>
       <div className="flex gap-2">
         <div className="relative h-35 w-45">
           <Image
@@ -53,7 +60,11 @@ const DeleteRoleCard = ({
           />
         </div>
         <div className="flex flex-col items-center justify-center gap-2">
-          <p className="text-md font-medium text-white">{content}</p>
+          <p
+            className={`text-md font-medium ${header === "Customer" ? "text-black" : "text-white"}`}
+          >
+            {content}
+          </p>
           <button
             className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-gray-500 shadow-md hover:bg-white active:bg-white/80"
             onClick={onClick}
@@ -67,7 +78,42 @@ const DeleteRoleCard = ({
 };
 export function AdminDelete() {
   const [select, setSelect] = useState<number>(0);
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [usersError, setUsersError] = useState<string | null>(null);
+  const [limit, setLimit] = useState<number>(10);
+  const [offset, setOffset] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
   const { open } = useWarningDialog();
+
+  async function fetchAndSetUsers(
+    role?: string,
+    limitParam?: number,
+    offsetParam?: number
+  ) {
+    setLoadingUsers(true);
+    setUsersError(null);
+    const res = await getAdminUsers(
+      role,
+      limitParam ?? limit,
+      offsetParam ?? offset
+    );
+    if (res.success) {
+      setUsers(res.data ?? []);
+      setTotal(res.total ?? 0);
+    } else {
+      setUsersError(res.message ?? "Failed to load users");
+    }
+    setLoadingUsers(false);
+  }
+
+  useEffect(() => {
+    const role = roleToQueryParam(select);
+    setLoadingUsers(true);
+    setUsersError(null);
+    void fetchAndSetUsers(role, limit, offset);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [select, limit, offset]);
   return (
     <div className="flex w-full flex-col gap-8 p-8">
       <div className="flex w-full flex-col gap-6 rounded-2xl bg-white/30 p-8 shadow-md">
@@ -99,6 +145,7 @@ export function AdminDelete() {
               color="red"
               onClick={() => {
                 setSelect(1);
+                setOffset(0);
               }}
               active={1 == select}
             />
@@ -109,6 +156,7 @@ export function AdminDelete() {
               color="sky"
               onClick={() => {
                 setSelect(2);
+                setOffset(0);
               }}
               active={2 == select}
             />
@@ -119,6 +167,7 @@ export function AdminDelete() {
               color="yellow"
               onClick={() => {
                 setSelect(3);
+                setOffset(0);
               }}
               active={3 == select}
             />
@@ -138,14 +187,162 @@ export function AdminDelete() {
             </ul>
           </div>
         </div>
-        <button
-          className="border-app-tan/30 flex w-full items-center justify-center gap-4 rounded-full border bg-red-800/90 px-8 py-2 text-white shadow-md hover:bg-red-900 active:bg-red-950"
-          onClick={() => open("user", "Customer")}
-        >
-          <Trash2 />
-          Delete
-        </button>
+        {/* <div className="flex items-center gap-4">
+          <input
+            type="number"
+            placeholder="Enter User ID"
+            className="rounded px-4 py-2"
+            onChange={(e) => setUserIdToDelete(Number(e.target.value))}
+          />
+          <button
+            className="border-app-tan/30 flex items-center justify-center gap-4 rounded-full border bg-red-800/90 px-8 py-2 text-white shadow-md hover:bg-red-900 active:bg-red-950"
+            onClick={() =>
+              open("user", "Customer", () => {
+                void (async () => {
+                  if (!userIdToDelete || isNaN(userIdToDelete)) return;
+                  try {
+                    await adminDeleteUser(userIdToDelete);
+                    const r: AdminUsersResponse = await getAdminUsers(
+                      roleToQueryParam(select),
+                      limit,
+                      offset
+                    );
+                    setUsers(r.data ?? []);
+                    setTotal(r.total ?? 0);
+                  } catch (err) {
+                    console.error(err);
+                  }
+                })();
+              })
+            }
+          >
+            <Trash2 />
+            Delete
+          </button>
+        </div> */}
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold">Users</h2>
+          {loadingUsers ? (
+            <p>Loading users...</p>
+          ) : usersError ? (
+            <p className="text-red-500">{usersError}</p>
+          ) : (
+            <div className="mt-4 grid gap-2">
+              {users.length === 0 ? (
+                <p>No users found for selected role.</p>
+              ) : (
+                users.map((u) => (
+                  /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument */
+                  <div
+                    key={u.id}
+                    className="flex items-center justify-between rounded-md border p-2"
+                  >
+                    <div className="flex items-center gap-4">
+                      <p className="font-medium">{u.id}</p>
+                      <p>{u.email}</p>
+                      <p className="text-sm text-gray-500">{u.role}</p>
+                    </div>
+                    <div>
+                      <button
+                        className="rounded border bg-red-700 px-4 py-1 text-white"
+                        onClick={() =>
+                          open(
+                            {
+                              id: u.id,
+                              email: u.email,
+                              role: u.role,
+                              name: u.email.split("@")[0] ?? undefined,
+                            },
+                            () => {
+                              void (async () => {
+                                try {
+                                  const deleteResult = await adminDeleteUser(
+                                    u.id
+                                  );
+                                  if (!deleteResult.success) {
+                                    console.error(deleteResult.message);
+                                    return;
+                                  }
+                                  const r = await getAdminUsers(
+                                    roleToQueryParam(select),
+                                    limit,
+                                    offset
+                                  );
+                                  if (r.success) {
+                                    setUsers(r.data ?? []);
+                                    setTotal(r.total ?? 0);
+                                  } else {
+                                    console.error(r.message);
+                                  }
+                                } catch (err) {
+                                  console.error(err);
+                                }
+                              })();
+                            }
+                          )
+                        }
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                  /* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument */
+                ))
+              )}
+            </div>
+          )}
+          <div className="mt-4 flex items-center justify-between">
+            <div className="text-sm text-gray-500">
+              Page {Math.floor(offset / limit) + 1} of{" "}
+              {Math.max(1, Math.ceil(total / limit))}
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-500">Per page:</label>
+              <select
+                className="rounded border p-1"
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setOffset(0);
+                }}
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
+              <button
+                disabled={offset === 0}
+                className="rounded border px-3 py-1"
+                onClick={() => setOffset(Math.max(offset - limit, 0))}
+              >
+                Previous
+              </button>
+              <button
+                disabled={offset + limit >= total}
+                className="rounded border px-3 py-1"
+                onClick={() => setOffset(offset + limit)}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+
+function roleToQueryParam(select: number): string | undefined {
+  switch (select) {
+    case 1:
+      return "customer";
+    case 2:
+      return "driver";
+    case 3:
+      return "restaurant";
+    default:
+      return undefined;
+  }
+}
+
+// fetch users when role selection changes — handled inside component

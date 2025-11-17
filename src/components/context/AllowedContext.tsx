@@ -1,5 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
+import path from "path";
+
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { tr } from "zod/v4/locales";
@@ -77,8 +79,10 @@ export const AllowedProvider = ({
     let bases: string[] = [];
     if (Array.isArray(allowedPaths)) {
       bases = allowedPaths;
-    } else if (allowedPaths instanceof Map) {
-      // use instanceof Map here as well
+    } else if (
+      allowedPaths &&
+      typeof (allowedPaths as any)?.get === "function"
+    ) {
       bases = allowedPaths.get(role) ?? [];
     }
     const roleBase = pathMap?.get?.(role);
