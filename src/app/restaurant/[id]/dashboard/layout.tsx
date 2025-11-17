@@ -2,13 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useParams, usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  MessageSquare,
-  Settings,
-  ShoppingBag,
-} from "lucide-react";
 
 import {
   Sidebar,
@@ -28,7 +21,6 @@ import {
   Settings,
   ShoppingBag,
 } from "lucide-react";
-import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
 export default function DashboardLayout({
