@@ -118,8 +118,8 @@ const CustomerProfileForm = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-    } catch (error: any) {
-      toast.error(error.message || "File upload failed!");
+    } catch {
+      toast.error("File upload failed!");
     } finally {
       setUploading(false);
     }

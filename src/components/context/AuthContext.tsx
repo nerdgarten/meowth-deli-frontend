@@ -39,12 +39,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAuthenticated(true);
     const d = await authenticatedAs();
     console.log("Authenticated as:", d);
-    role.current = d || "";
+    role.current = d ?? "";
     if (d) {
       setIsAuthenticated(true);
     }
     if (!d) return;
-    router.replace(pathMap.get(d) || "/");
+    router.replace(pathMap.get(d) ?? "/");
   };
   const logout = async () => {
     await logoutFunctionMutation();
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Authentication logic would go here
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = async (): Promise<void> => {
       const d = await authenticatedAs();
       if (d) {
         setIsAuthenticated(true);
@@ -65,7 +65,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       setIsLoading(false);
     };
-    checkAuth();
+    checkAuth().catch(() => {
+      console.error("Error during authentication check");
+      setIsLoading(false);
+    });
   }, []);
 
   return (

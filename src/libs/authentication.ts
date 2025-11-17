@@ -3,9 +3,9 @@ import type { Role } from "@/types/role";
 
 export const authenticatedAs = async (): Promise<Role | null> => {
   try {
-    const response = await apiClient.get("/authenticate");
+    const response = await apiClient.get<{ role: string }>("/authenticate");
 
-    return response.data.role;
+    return response.data.role as Role;
   } catch {
     return null;
   }

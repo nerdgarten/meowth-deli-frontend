@@ -30,7 +30,7 @@ export function WarningDialogProvider() {
             </button>
             <h1 className="text-2xl font-bold">Warning Dialog</h1>
             <h2 className="text-center text-lg font-semibold">
-              Delete is permanently, system can't recover deleted data.
+              Delete is permanently, system can&apos;t recover deleted data.
             </h2>
           </div>
         </div>

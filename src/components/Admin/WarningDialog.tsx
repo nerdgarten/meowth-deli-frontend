@@ -6,10 +6,9 @@ interface WarningDialogContextProps {
   open: (s: string, role: string) => void;
   close: () => void;
 }
-const WarningDialogContext = createContext<WarningDialogContextProps>({
-  open: (s: string, role: string) => {},
-  close: () => {},
-});
+const WarningDialogContext = createContext<WarningDialogContextProps | null>(
+  null
+);
 
 export function WarningDialog({ children }: { children?: React.ReactNode }) {
   const [open, setOpen] = useState<boolean>(false);
@@ -99,7 +98,7 @@ export function WarningDialog({ children }: { children?: React.ReactNode }) {
 
 export function useWarningDialog() {
   const context = useContext(WarningDialogContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error(
       "useWarningDialog must be used within a WarningDialogProvider"
     );
