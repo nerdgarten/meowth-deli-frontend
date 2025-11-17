@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, User } from "lucide-react";
+import { Menu, User, History } from "lucide-react";
 import { use, useState } from "react";
 import toast from "react-hot-toast";
 import { LayoutDashboard } from "lucide-react";
@@ -22,6 +22,15 @@ export const Navigation = () => {
   const [isMenuDialogOpen, setIsMenuDialogOpen] = useState<boolean>(false);
   const [isResetPasswordDialogOpen, setIsResetPasswordDialogOpen] =
     useState<boolean>(false);
+
+  const handleHistoryClick = async () => {
+    const authenticated = await authenticatedAs();
+    if (authenticated) {
+      router.push("/history");
+    } else {
+      toast.error("You have to be logged in to access the history.");
+    }
+  };
 
   const handleProfileClick = async () => {
     const authenticated = await authenticatedAs();
@@ -58,8 +67,10 @@ export const Navigation = () => {
           <BreadcrumbNav />
         </div>
         <div className="flex w-full items-center justify-end">
-          <div className="mr-3 flex gap-x-6"></div>
-          <div className="flex gap-x-4">
+          <div className="mr-5 flex gap-x-4">
+            <button onClick={handleHistoryClick} className="cursor-pointer">
+              <History className="h-[1.75rem] text-white" />
+            </button>
             <button onClick={handleProfileClick} className="cursor-pointer">
               <User className="h-[1.75rem] text-white" />
             </button>

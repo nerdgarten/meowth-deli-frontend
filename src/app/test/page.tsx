@@ -7,7 +7,7 @@ import { RestaurantCard } from "@/components/common/RestaurantCard";
 import { LandingCarousel } from "@/components/Landing/Carousel";
 import { Toolbar } from "@/components/Landing/Toolbar";
 import { getAllRestaurant } from "@/libs/restaurant";
-import { getFavouriteRestaurant } from "@/libs/favourite";
+import { getFavouriteRestaurants } from "@/libs/favourite";
 // import { WarningDialog } from "@/components/common/WarningDialog";
 
 // export default function TestPage() {
