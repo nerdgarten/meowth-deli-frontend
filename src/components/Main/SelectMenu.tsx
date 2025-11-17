@@ -100,7 +100,7 @@ export const SelectMenu = ({
               >
                 <Heart
                   size={28}
-                  className={fav ? "text-pink-600" : "text-black"}
+                  className={`cursor-pointer ${fav ? "fill-red-500 text-red-500" : "fill-white text-black"}`}
                 />
               </button>
             </div>
