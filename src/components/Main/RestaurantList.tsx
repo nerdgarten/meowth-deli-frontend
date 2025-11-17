@@ -1,6 +1,6 @@
 "use client";
 import type { IDish } from "@/types/dish";
-import { useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import {
   checkFavouriteRestaurant,
   createFavouriteRestaurant,
@@ -9,6 +9,8 @@ import {
 import { Heart } from "lucide-react";
 import type { IRestaurant } from "@/types/restaurant";
 import Image from "next/image";
+import { commandScore } from "@/libs/command-score";
+import { Toolbar } from "../Landing/Toolbar";
 interface RestaurantListProps {
   dishes: IDish[];
   favourite_dish: IDish[];
@@ -25,6 +27,39 @@ export const RestaurantList = ({
   favourite_restaurant,
 }: RestaurantListProps) => {
   const [fav, setFav] = useState<boolean>(favourite_restaurant);
+  const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search);
+
+  const filteredDishes = useMemo(() => {
+    if (!dishes || !dishes.length) return [];
+    const term = deferredSearch.trim();
+    if (!term) return dishes;
+
+    return dishes
+      .map((dish) => {
+        const score = commandScore(dish.name, term, [dish.detail ?? ""]);
+        return { dish, score };
+      })
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(({ dish }) => dish);
+  }, [dishes, deferredSearch]);
+
+  const filteredFavouriteDishes = useMemo(() => {
+    if (!favourite_dish || !favourite_dish.length) return [];
+    const term = deferredSearch.trim();
+    if (!term) return favourite_dish;
+
+    return favourite_dish
+      .map((dish) => {
+        const score = commandScore(dish.name, term, [dish.detail ?? ""]);
+        return { dish, score };
+      })
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(({ dish }) => dish);
+  }, [favourite_dish, deferredSearch]);
+
   return (
     <div className="g mx-4 flex flex-col gap-4 rounded-sm bg-white p-4">
       <div className="grid h-80 grid-cols-2 gap-4">
@@ -66,49 +101,65 @@ export const RestaurantList = ({
         </div>
       </div>
 
-      <div className="col-span-1 row-span-1 grid h-80 grid-cols-4 grid-rows-5 gap-4">
-        <h3 className="col-span-4 row-span-1 text-3xl font-bold">Recommend</h3>
-        <div className="col-span-4 row-span-4 flex w-full gap-20 overflow-x-auto p-3">
-          {dishes.map((item) => (
-            <div
-              key={item.id}
-              className="h-full w-72 flex-shrink-0 overflow-hidden rounded-lg bg-white p-2 shadow-2xl transition hover:bg-gray-100 active:bg-gray-400"
-              onClick={() => onDishClick(item)}
-            >
-              <div className="relative h-3/5 overflow-hidden rounded-lg bg-slate-200">
-                {item.image && (
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                  />
-                )}
-              </div>
-              <div className="grid h-2/5 grid-cols-3 grid-rows-2 text-black">
-                <h4 className="col-span-2 row-span-1 font-semibold">
-                  {item.name}
-                </h4>
-                <h3 className="col-span-1 row-span-1 text-right text-2xl font-bold">
-                  ฿{item.price.toFixed(2)}
-                </h3>
-                <p className="col-span-2 row-span-1">{item.detail}</p>
-              </div>
-            </div>
-          ))}
+      <div className="flex items-center">
+        <h3 className="text-3xl font-bold">Recommend</h3>
+        <div className="mb-2 grow">
+          <Toolbar
+            placeholder="Search dishes..."
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
         </div>
       </div>
-      {favourite_dish.length > 0 ? (
+
+      {!filteredDishes.length && dishes.length ? (
+        <p className="text-app-brown text-center text-lg">
+          No dishes match your search.
+        </p>
+      ) : (
+        <div className="col-span-1 row-span-1 grid h-80 grid-cols-4 grid-rows-5 gap-4">
+          <div className="col-span-4 row-span-4 flex w-full gap-4 overflow-x-auto p-3">
+            {filteredDishes.map((item) => (
+              <div
+                key={item.id}
+                className="h-full w-72 flex-shrink-0 overflow-hidden rounded-lg border bg-white p-2 transition hover:bg-gray-100 active:bg-gray-400"
+                onClick={() => onDishClick(item)}
+              >
+                <div className="relative h-3/5 overflow-hidden rounded-lg bg-slate-200">
+                  {item.image && (
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                    />
+                  )}
+                </div>
+                <div className="grid h-2/5 grid-cols-3 grid-rows-2 text-black">
+                  <h4 className="col-span-2 row-span-1 font-semibold">
+                    {item.name}
+                  </h4>
+                  <h3 className="col-span-1 row-span-1 text-right text-2xl font-bold">
+                    ฿{item.price.toFixed(2)}
+                  </h3>
+                  <p className="col-span-2 row-span-1">{item.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {filteredFavouriteDishes.length > 0 ? (
         <div className="col-span-1 row-span-1 grid h-80 grid-cols-4 grid-rows-5 gap-4">
           <h3 className="col-span-4 row-span-1 text-3xl font-bold">
             Your Favourite Food
           </h3>
-          <div className="col-span-4 row-span-4 flex w-full gap-20 overflow-x-auto p-3">
-            {favourite_dish.map((item) => {
+          <div className="col-span-4 row-span-4 flex w-full gap-4 overflow-x-auto p-3">
+            {filteredFavouriteDishes.map((item) => {
               return (
                 <div
                   key={item.id}
-                  className="h-full w-72 flex-shrink-0 overflow-hidden rounded-lg bg-white p-2 shadow-2xl"
+                  className="h-full w-72 flex-shrink-0 overflow-hidden rounded-lg border bg-white p-2"
                   onClick={() => onDishClick(item)}
                 >
                   <div className="relative h-3/5 overflow-hidden rounded-lg bg-slate-200">
