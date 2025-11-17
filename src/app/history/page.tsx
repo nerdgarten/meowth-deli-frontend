@@ -8,8 +8,13 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
 import { type IOrderDetails } from "@/queries/order";
-import { queryDriverOrders } from "@/queries/order";
+import {
+  queryDriverOrders,
+  queryCustomerOrders,
+  queryRestaurantOrders,
+} from "@/queries/order";
 import type { IOrder } from "@/types/order";
+import { useAuth } from "@/components/context/AuthContext";
 
 // Use react-query directly inside the component.
 
@@ -38,13 +43,26 @@ const formatCurrency = (value: number) =>
 export default function OrdersPage() {
   const [activeOrder, setActiveOrder] = useState<IOrderDetails | null>(null);
   const router = useRouter();
+  const { role } = useAuth();
   const {
     data: orders = [],
     isLoading,
     error,
   } = useQuery<IOrderDetails[]>({
-    queryKey: ["driverOrders"],
-    queryFn: () => queryDriverOrders(),
+    queryKey: ["driverOrders", role],
+    queryFn: () => {
+      if (role === "driver") {
+        return queryDriverOrders();
+      }
+      if (role === "restaurant") {
+        return queryRestaurantOrders();
+      }
+      if (role === "customer") {
+        return queryCustomerOrders();
+      }
+
+      return Promise.resolve([] as IOrderDetails[]);
+    },
   });
 
   const handleCloseModal = useCallback(() => {
@@ -56,7 +74,7 @@ export default function OrdersPage() {
       open={!!activeOrder}
       onOpenChange={(open) => !open && handleCloseModal()}
     >
-      <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">
+      <div className="mx-auto mt-[4rem] w-full max-w-6xl flex-1 px-6 py-8">
         <section className="space-y-8 rounded-3xl bg-[#fff8eb] p-8">
           <div className="space-y-2">
             <h1 className="text-3xl font-bold text-[#b8860b]">Order History</h1>
