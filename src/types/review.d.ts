@@ -53,8 +53,26 @@ export interface Pagination {
 }
 
 export interface ReviewResponse {
-  data: Review[];
-  pagination: Pagination;
+  id: number;
+  title: string;
+  customer_id: number;
+  restaurant_id: number;
+  rate: number;
+  review_text?: string;
+  image?: string;
+  restaurant: {
+    id: number;
+    name: string;
+    banner?: string;
+    tel: string;
+  };
+  customer: {
+    id: number;
+    firstname: string;
+    lastname: string;
+    image?: string;
+    tel: string;
+  };
 }
 
 export interface DriverReviewResponse {
