@@ -208,7 +208,7 @@ export async function adminVerifyRestaurant(
   status: string
 ): Promise<AdminGenericResponse> {
   try {
-    const response = await apiClient.patch(`/admin/restaurants/${id}/verify`, {
+    const response = await apiClient.patch(`/admin/restaurants/verify`, {
       id,
       status,
     });
@@ -224,7 +224,7 @@ export async function adminVerifyDriver(
   status: string
 ): Promise<AdminGenericResponse> {
   try {
-    const response = await apiClient.patch(`/admin/drivers/${id}/verify`, {
+    const response = await apiClient.patch(`/admin/drivers/verify`, {
       id,
       status,
     });
