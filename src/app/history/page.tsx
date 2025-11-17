@@ -37,17 +37,14 @@ const formatCurrency = (value: number) =>
 export default function OrdersPage() {
   const [activeOrder, setActiveOrder] = useState<IOrderDetails | null>(null);
 
-  // const {
-  //   data: orders = [],
-  //   isLoading,
-  //   error,
-  // } = useQuery<IOrderDetails[]>({
-  //   queryKey: ["driverOrders"],
-  //   queryFn: () => queryDriverOrders(),
-  // });
-  const orders: IOrderDetails[] = [];
-  const isLoading = false;
-  const error = null;
+  const {
+    data: orders = [],
+    isLoading,
+    error,
+  } = useQuery<IOrderDetails[]>({
+    queryKey: ["driverOrders"],
+    queryFn: () => queryDriverOrders(),
+  });
 
   const handleCloseModal = useCallback(() => {
     setActiveOrder(null);
