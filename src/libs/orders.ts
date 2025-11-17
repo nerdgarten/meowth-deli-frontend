@@ -41,12 +41,7 @@ export const getOrderById = async (order_id: number): Promise<IOrder> => {
   }
 };
 
-export const getRestaurantOrders = async (): Promise<IOrder[]> => {
-  try {
-    const response = await apiClient.get<IOrder[]>(`/order/restaurant`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching restaurant orders:", error);
-    throw error;
-  }
-};
+export async function getRestaurantOrders(): Promise<IOrder[]> {
+  const response = await apiClient.get<IOrder[]>(`/order/restaurant`);
+  return response.data;
+}

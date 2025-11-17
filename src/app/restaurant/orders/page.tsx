@@ -1,5 +1,9 @@
 "use client";
 
+import * as React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Package } from "lucide-react";
+
 import { Button } from "@ui/button";
 import {
   Dialog,
@@ -9,11 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@ui/dialog";
-import { Package } from "lucide-react";
-import * as React from "react";
-import { useQuery } from "@tanstack/react-query";
 import { getRestaurantOrders } from "@/libs/orders";
-
 import type { IOrder } from "@/types/order";
 
 const STATUS_LABELS: Record<IOrder["status"], string> = {
@@ -48,10 +48,12 @@ const formatCurrency = (value: number) =>
   })}`;
 
 export default function OrdersPage() {
-  const { data: orders = [], isLoading } = useQuery<IOrder[]>({
-    queryKey: ["restaurant-orders"],
+  const { data, isLoading } = useQuery({
+    queryKey: ["restaurant-orders"] as const,
     queryFn: getRestaurantOrders,
   });
+
+  const orders = React.useMemo<IOrder[]>(() => data ?? [], [data]);
 
   const totalOrders = orders.length;
   const preparingOrders = orders.filter(
