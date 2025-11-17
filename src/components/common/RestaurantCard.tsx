@@ -4,6 +4,7 @@
 import { MapPin } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 import {
   Card,
@@ -13,20 +14,27 @@ import {
 } from "@/components/ui/card";
 import type { IRestaurant } from "@/types/restaurant";
 
+import { useAllowed } from "../context/AllowedContext";
+
 interface RestaurantCardProps {
   restaurant: IRestaurant;
 }
 
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const router = useRouter();
+  const { checkAllowed } = useAllowed();
 
   const handleCardClick = () => {
-    router.push(`/menu/${restaurant.id}`);
+    if (checkAllowed(`/menu/${restaurant.id}`)) {
+      router.push(`/menu/${restaurant.id}`);
+      return;
+    }
+    toast.error("You have to be logged in to access the menu.");
   };
 
   return (
     <Card
-      className="h-[300px] w-[375px] cursor-pointer transition-all hover:scale-105 hover:shadow-lg"
+      className="h-[300px] w-[375px] flex-shrink-0 cursor-pointer transition-all hover:scale-105 hover:shadow-lg"
       onClick={handleCardClick}
     >
       <CardHeader className="p-0">
@@ -40,11 +48,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           ) : ( */}
           <div className="flex h-full w-full items-center justify-center bg-gray-200">
             <Image
-              src={
-                restaurant.banner
-                  ? restaurant.banner
-                  : "http://localhost:3030/uploads/dish_pictures/restaurant/128/image_128_1763221253977_e81b156b6bf.jpg"
-              }
+              src={restaurant.banner}
               alt={restaurant.name}
               fill
               className="object-cover"
@@ -73,7 +77,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           <div className="flex items-center gap-1">
             <MapPin className="h-3 w-3" />
             <span className="max-w-[120px] truncate">
-              {restaurant.location}
+              {restaurant.location?.address}
             </span>
           </div>
         </div>

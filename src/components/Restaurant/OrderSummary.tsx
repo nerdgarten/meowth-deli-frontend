@@ -48,14 +48,19 @@ export const OrderSummary = ({
                 <div className="flex gap-6">
                   <div className="aspect-square h-24 rounded-sm bg-slate-200" />
                   <div className="text-lg font-bold">
-                    <h4 className="text-black">
-                      {menuItem.dish.name} x {menuItem.quantity}
-                    </h4>
+                    {menuItem.dish?.name && menuItem.quantity && (
+                      <h4 className="text-black">
+                        {menuItem.dish.name} x {menuItem.quantity}
+                      </h4>
+                    )}
                     <h4 className="text-purple-700">Edit</h4>
                   </div>
                 </div>
                 <h4 className="text-lg font-semibold">
-                  {(menuItem.quantity * menuItem.dish.price).toFixed(2)} THB
+                  {menuItem.quantity &&
+                    menuItem.dish?.price &&
+                    (menuItem.quantity * menuItem.dish.price).toFixed(2)}{" "}
+                  THB
                 </h4>
               </div>
             ))}

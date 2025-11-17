@@ -1,10 +1,12 @@
 "use client";
-import { TriangleAlert } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import type { AdminUser, AdminUsersResponse } from "@/queries/admin";
 import { adminDeleteUser, getAdminUsers } from "@/queries/admin";
+import { Trash2, TriangleAlert } from "lucide-react";
+import Link from "next/link";
+import { useParams, usePathname } from "next/navigation";
 
 import { useWarningDialog } from "./WarningDialog";
 const DeleteRoleCard = ({
@@ -100,7 +102,7 @@ export function AdminDelete() {
       setUsers(res.data ?? []);
       setTotal(res.total ?? 0);
     } else {
-      setUsersError(res.message || "Failed to load users");
+      setUsersError(res.message ?? "Failed to load users");
     }
     setLoadingUsers(false);
   }

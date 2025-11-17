@@ -17,6 +17,7 @@ import type { IOrder } from "@/types/order";
 const orders: IOrder[] = [
   {
     id: 2380,
+    restaurant_id: 1,
     customer_id: 102,
     driver_id: null,
     location: "123 Catnip Street, Downtown",
@@ -27,6 +28,7 @@ const orders: IOrder[] = [
   },
   {
     id: 2381,
+    restaurant_id: 1,
     customer_id: 219,
     driver_id: 18,
     location: "77 Whiskers Ave, Midtown",
@@ -37,6 +39,7 @@ const orders: IOrder[] = [
   },
   {
     id: 2382,
+    restaurant_id: 1,
     customer_id: 356,
     driver_id: 24,
     location: "12 Garden Lane, Riverside",
@@ -47,6 +50,7 @@ const orders: IOrder[] = [
   },
   {
     id: 2383,
+    restaurant_id: 1,
     customer_id: 410,
     driver_id: 33,
     location: "908 Market Road, Uptown",
@@ -57,6 +61,7 @@ const orders: IOrder[] = [
   },
   {
     id: 2384,
+    restaurant_id: 1,
     customer_id: 512,
     driver_id: 45,
     location: "52 Fisherman Wharf, Riverside",

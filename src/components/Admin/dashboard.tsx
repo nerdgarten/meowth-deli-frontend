@@ -7,6 +7,8 @@ import { authenticatedAs } from "@/libs/authentication";
 import { getAdminDrivers, getAdminRestaurants } from "@/queries/admin";
 
 // Image import removed (unused)
+import Image from "next/image";
+import { useParams, usePathname } from "next/navigation";
 const DashboardCard = ({
   header,
   Icon,
@@ -87,7 +89,7 @@ export function AdminDashboard() {
         } else if (err?.response && err.response.status === 401) {
           setError("Unauthorized — please sign in");
         } else {
-          setError(String((err)?.response?.data?.message ?? err));
+          setError(String(err?.response?.data?.message ?? err));
         }
       } finally {
         setLoading(false);

@@ -22,6 +22,7 @@ interface OrderDetails extends IOrder {
   delivery_address: string;
   items: OrderItem[];
   subtotal: number;
+  location: string;
 }
 
 const orders: OrderDetails[] = [

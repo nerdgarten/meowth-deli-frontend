@@ -45,7 +45,7 @@ export const SettingNavigationMenu = ({
   children?: React.ReactNode;
   role: string;
 }) => {
-  const [select, setSelect] = useState<string>(items[0]?.key || "");
+  const [select, setSelect] = useState<string>(items[0]?.key ?? "");
 
   return (
     <SettingNavContext.Provider value={{ select_key: select, role: role }}>

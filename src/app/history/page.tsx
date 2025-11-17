@@ -1,147 +1,323 @@
 "use client";
 
-export default function OrdersPage() {
-  // Mock data - replace with actual data fetching
-  const orders = [
-    {
-      id: 1,
-      orderId: "ORD-001",
-      timestamp: "20 Oct 14:00",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      orderId: "ORD-002",
-      timestamp: "20 Oct 12:00",
-      status: "Cooking",
-    },
-    {
-      id: 3,
-      orderId: "ORD-003",
-      timestamp: "20 Oct 14:02",
-      status: "Complete",
-    },
-    {
-      id: 4,
-      orderId: "ORD-004",
-      timestamp: "20 Oct 14:01",
-      status: "Complete",
-    },
-    {
-      id: 5,
-      orderId: "ORD-005",
-      timestamp: "20 Oct 14:05",
-      status: "Cooking",
-    },
-    {
-      id: 6,
-      orderId: "ORD-006",
-      timestamp: "20 Oct 14:10",
-      status: "Cooking",
-    },
-    {
-      id: 7,
-      orderId: "ORD-007",
-      timestamp: "20 Oct 14:23",
-      status: "Cooking",
-    },
-    {
-      id: 8,
-      orderId: "ORD-008",
-      timestamp: "20 Oct 14:00",
-      status: "Cooking",
-    },
-    {
-      id: 9,
-      orderId: "ORD-009",
-      timestamp: "20 Oct 13:57",
-      status: "Pending",
-    },
-  ];
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/dialog";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "text-red-500";
-      case "cooking":
-        return "text-gray-500";
-      case "complete":
-        return "text-green-500";
-      default:
-        return "text-gray-500";
-    }
-  };
+import { type IOrderDetails } from "@/queries/order";
+import {
+  queryDriverOrders,
+  queryCustomerOrders,
+  queryRestaurantOrders,
+} from "@/queries/order";
+import type { IOrder } from "@/types/order";
+import { useAuth } from "@/components/context/AuthContext";
+
+// Use react-query directly inside the component.
+
+const STATUS_LABELS: Record<IOrder["status"], string> = {
+  pending: "Pending",
+  preparing: "In Progress",
+  delivered: "Delivered",
+  rejected: "Cancelled",
+  success: "Complete",
+};
+
+const STATUS_STYLES: Record<IOrder["status"], string> = {
+  pending: "bg-[#6c757d] text-white",
+  preparing: "bg-[#6c757d] text-white",
+  delivered: "bg-[#0dcaf0] text-white",
+  rejected: "bg-[#dc3545] text-white",
+  success: "bg-[#0dcaf0] text-white",
+};
+
+const formatCurrency = (value: number) =>
+  `${value.toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  })} ฿`;
+
+export default function OrdersPage() {
+  const [activeOrder, setActiveOrder] = useState<IOrderDetails | null>(null);
+  const router = useRouter();
+  const { role } = useAuth();
+  const {
+    data: orders = [],
+    isLoading,
+    error,
+  } = useQuery<IOrderDetails[]>({
+    queryKey: ["driverOrders", role],
+    queryFn: () => {
+      if (role === "driver") {
+        return queryDriverOrders();
+      }
+      if (role === "restaurant") {
+        return queryRestaurantOrders();
+      }
+      if (role === "customer") {
+        return queryCustomerOrders();
+      }
+
+      return Promise.resolve([] as IOrderDetails[]);
+    },
+  });
+
+  const handleCloseModal = useCallback(() => {
+    setActiveOrder(null);
+  }, []);
 
   return (
-    <div className="bg-app-white flex min-h-screen pt-20">
-      {/* Main Content Area */}
-      <main className="flex-1 p-8">
-        <div className="mx-auto max-w-7xl">
-          <h1 className="text-app-bronze mb-2 text-4xl font-bold">
-            Order History
-          </h1>
-          <p className="mb-8 text-lg text-gray-500">
-            Viewing and managing your past orders here.
-          </p>
+    <Dialog
+      open={!!activeOrder}
+      onOpenChange={(open) => !open && handleCloseModal()}
+    >
+      <div className="mx-auto mt-[4rem] w-full max-w-6xl flex-1 px-6 py-8">
+        <section className="space-y-8 rounded-3xl bg-[#fff8eb] p-8">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold text-[#b8860b]">Order History</h1>
+            <p className="text-[#8b7355]">
+              Viewing and managing your past orders here.
+            </p>
+          </div>
 
-          {/* Orders Table */}
-          <div className="overflow-hidden rounded-lg bg-white shadow-md">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="border-b-2 border-gray-200">
-                  <tr>
-                    <th className="text-app-dark-brown px-6 py-4 text-left text-lg font-bold">
-                      No.
-                    </th>
-                    <th className="text-app-dark-brown px-6 py-4 text-left text-lg font-bold">
-                      Order ID
-                    </th>
-                    <th className="text-app-dark-brown px-6 py-4 text-left text-lg font-bold">
-                      Timestamp
-                    </th>
-                    <th className="text-app-dark-brown px-6 py-4 text-left text-lg font-bold">
-                      Status
-                    </th>
-                    <th className="text-app-dark-brown px-6 py-4 text-left text-lg font-bold">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((order) => (
-                    <tr
-                      key={order.id}
-                      className="border-b border-gray-100 transition-colors hover:bg-gray-50"
-                    >
-                      <td className="text-app-dark-brown px-6 py-4 text-base font-semibold">
-                        {order.id}
-                      </td>
-                      <td className="text-app-dark-brown px-6 py-4 text-base font-medium">
-                        {order.orderId}
-                      </td>
-                      <td className="text-app-dark-brown px-6 py-4 text-base">
-                        {order.timestamp}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`text-base font-semibold ${getStatusColor(order.status)}`}
-                        >
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button className="bg-app-yellow hover:bg-app-yellow/90 rounded-lg px-6 py-2 text-sm font-semibold text-white transition-colors">
-                          View Detail
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="space-y-8">
+            <div>
+              <h2 className="mb-4 text-xl font-bold text-black">Order</h2>
+              <div className="space-y-4">
+                {isLoading ? (
+                  <div className="rounded-2xl border-2 border-dashed border-[#d4c5a9] bg-white px-6 py-12 text-center">
+                    <p className="text-[#8b7355]">Loading orders…</p>
+                  </div>
+                ) : error ? (
+                  <div className="rounded-2xl border-2 border-dashed border-[#d4c5a9] bg-white px-6 py-12 text-center">
+                    <p className="text-[#8b7355]">Unable to load orders</p>
+                  </div>
+                ) : (
+                  <>
+                    {orders.map((order) => (
+                      <OrderCard
+                        key={order.id}
+                        order={order}
+                        onViewDetails={() => setActiveOrder(order)}
+                      />
+                    ))}
+                    {orders.length === 0 && (
+                      <div className="rounded-2xl border-2 border-dashed border-[#d4c5a9] bg-white px-6 py-12 text-center">
+                        <p className="text-[#8b7355]">No incoming orders</p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
+        </section>
+      </div>
+
+      <DialogContent className="max-h-[75vh] overflow-y-scroll sm:max-w-[425px]">
+        {activeOrder ? (
+          <>
+            <DialogHeader className="border-b pr-8 pb-4">
+              <div className="flex items-baseline justify-between gap-2">
+                <DialogTitle className="text-2xl font-bold">
+                  Customer Order
+                </DialogTitle>
+                <span className="text-lg font-semibold text-[#6c757d]">
+                  ORD-{String(activeOrder.id).padStart(3, "0")}
+                </span>
+              </div>
+            </DialogHeader>
+
+            <div className="space-y-6 py-4">
+              {/* Restaurant Info */}
+              <div className="flex items-start gap-3">
+                <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-[#f5f5f5]">
+                  {activeOrder.restaurant.banner ? (
+                    <Image
+                      src={activeOrder.restaurant.banner}
+                      alt={activeOrder.restaurant.name}
+                      width={64}
+                      height={64}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-[#999]">
+                      <span className="text-2xl">🍕</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-black">
+                    {activeOrder.restaurant.name}
+                  </h3>
+                  {activeOrder.driver?.firstname && (
+                    <p className="text-sm text-[#6c757d]">
+                      Delivered by {activeOrder.driver.firstname}{" "}
+                      {activeOrder.driver.lastname}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Order Items */}
+              <div className="space-y-3">
+                {activeOrder.orderDishes.map((item, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-[#f5f5f5]">
+                      {item.dish?.image ? (
+                        <Image
+                          src={item.dish.image}
+                          alt={item.dish.name}
+                          width={64}
+                          height={64}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-[#999]">
+                          <span className="text-2xl">🍽️</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium text-black">
+                            <span className="mr-2">{item.amount}x</span>
+                            {item.dish.name}
+                          </p>
+                          {item.remark && (
+                            <p className="text-xs text-[#6c757d]">
+                              {item.remark}
+                            </p>
+                          )}
+                        </div>
+                        <span className="ml-3 font-semibold text-black">
+                          ฿ {item.dish.price * item.amount}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Delivery Addresses */}
+              <div className="space-y-3 border-t border-b py-4">
+                <div className="flex items-start gap-2">
+                  <div className="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 border-[#6c757d]">
+                    <div className="h-2 w-2 rounded-full bg-[#6c757d]"></div>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-black">
+                      {activeOrder.restaurant.name}
+                    </p>
+                  </div>
+                </div>
+                <div className="ml-2.5 h-6 w-0.5 bg-[#d4c5a9]"></div>
+                <div className="flex items-start gap-2">
+                  <div className="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center">
+                    <svg
+                      className="h-5 w-5 text-[#6c757d]"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-black">
+                      {activeOrder.location.address}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-[#6c757d]">Subtotal</span>
+                  <span className="text-black">
+                    ฿ {activeOrder.total_amount}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-[#6c757d]">Delivery fee</span>
+                  <span className="text-black">{activeOrder.driver_fee}</span>
+                </div>
+                <div className="flex items-center justify-between border-t pt-2 text-base font-semibold">
+                  <span className="text-black">Total</span>
+                  <span className="text-black">
+                    ฿ {activeOrder.total_amount}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-row-reverse">
+                <Button
+                  className="bg-app-dark-brown hover:bg-app-dark-brown/90 px-4 py-2"
+                  onClick={() => {
+                    if (activeOrder) {
+                      router.push(`/order/${activeOrder.id}`);
+                    }
+                  }}
+                >
+                  <span className="text-white">More Details</span>
+                </Button>
+              </div>
+            </div>
+          </>
+        ) : null}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+type OrderCardProps = {
+  order: IOrderDetails;
+  onViewDetails: () => void;
+};
+
+function OrderCard({ order, onViewDetails }: OrderCardProps) {
+  const statusClass = STATUS_STYLES[order.status];
+
+  return (
+    <div className="flex items-center justify-between gap-4 rounded-2xl border border-[#d4c5a9] bg-white px-6 py-5 shadow-sm">
+      <div className="flex-1 space-y-2">
+        <div className="flex items-center gap-3">
+          <span className="font-semibold text-black">
+            ORD-{String(order.id).padStart(3, "0")}
+          </span>
+          <span
+            className={`inline-flex items-center rounded-md px-3 py-1 text-xs font-medium ${statusClass}`}
+          >
+            {STATUS_LABELS[order.status]}
+          </span>
         </div>
-      </main>
+        <p className="text-sm text-[#6c757d]">{order.location.address}</p>
+        <p className="text-base font-semibold text-[#d2691e]">
+          Delivery Fee {formatCurrency(order.driver_fee)}
+        </p>
+      </div>
+      <Button
+        variant="outline"
+        className="rounded-lg border-[#6c757d] px-6 py-2 text-sm font-medium text-[#6c757d] hover:bg-[#f8f9fa]"
+        onClick={onViewDetails}
+      >
+        View Details
+      </Button>
     </div>
   );
 }

@@ -15,7 +15,7 @@ export default function DashboardPage() {
 
   const { data: restaurantData, isLoading } = useQuery({
     queryKey: ["restaurant", restaurantId],
-    queryFn: async () => getRestaurant(parseInt(restaurantId)),
+    queryFn: async () => getRestaurant(restaurantId.toString()),
   });
 
   if (isLoading) {

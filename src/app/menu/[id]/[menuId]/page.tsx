@@ -35,7 +35,6 @@ export default function MenuPage({
   const addCart = (dish: IDish, quantity: number) => {
     if (!resolvedParams) return;
     addToCart(resolvedParams.id, dish, quantity);
-    console.log("test");
   };
 
   const { data: dish } = useQuery({
@@ -68,15 +67,23 @@ export default function MenuPage({
     enabled: !!resolvedParams?.menuId,
   });
 
+  if (!resolvedParams || favourite_dish === undefined) {
+    return (
+      <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
+    );
+  }
+
   return (
-    <main className="min-h-300 w-full overflow-auto p-16">
-      <SelectMenu
-        dish={dish!}
-        recommendations={recommendations ?? []}
-        addToCart={addCart}
-        onDishClick={onDishClick}
-        favourite_dish={favourite_dish ?? false}
-      />
+    <main className="min-h-screen w-full overflow-x-hidden overflow-y-auto p-4 sm:p-8 lg:p-16">
+      <div className="mx-auto max-w-7xl">
+        <SelectMenu
+          dish={dish!}
+          recommendations={recommendations ?? []}
+          addToCart={addCart}
+          onDishClick={onDishClick}
+          favourite_dish={favourite_dish ?? false}
+        />
+      </div>
     </main>
   );
 }

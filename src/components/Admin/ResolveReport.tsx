@@ -1,15 +1,15 @@
 "use client";
-import { TriangleAlert, X } from "lucide-react";
-import { createContext, useContext, useState } from "react";
+
 import { boolean } from "zod";
+import { X } from "lucide-react";
+import { createContext, useContext, useState } from "react";
 interface ResolveReportContextProps {
   open: (onConfirm?: () => void | Promise<void>) => void;
   close: () => void;
 }
-const ResolveReportContext = createContext<ResolveReportContextProps>({
-  open: () => {},
-  close: () => {},
-});
+const ResolveReportContext = createContext<ResolveReportContextProps | null>(
+  null
+);
 
 export function ResolveReport({ children }: { children?: React.ReactNode }) {
   const [open, setOpen] = useState<boolean>(false);
@@ -75,7 +75,7 @@ export function ResolveReport({ children }: { children?: React.ReactNode }) {
 
 export function useResolveReport() {
   const context = useContext(ResolveReportContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error(
       "useWarningDialog must be used within a WarningDialogProvider"
     );

@@ -48,7 +48,6 @@ export function AddAddressCard({
       address: "",
     },
   });
-
   const getCurrentPosition = (
     opts?: PositionOptions
   ): Promise<GeolocationPosition> =>
@@ -83,24 +82,22 @@ export function AddAddressCard({
         data.latitude = latitude!;
         data.longitude = longitude!;
         let d = null;
+        console.log("Creating location for type:", type);
         if (type === "customer") {
+          console.log("Creating customer location...");
           d = await createCustomerLocation({
             address: data.address,
-            latitude: data.latitude,
-            longitude: data.longitude,
+            latitude: data.latitude ?? 0,
+            longitude: data.longitude ?? 0,
           });
         } else {
           d = await createRestaurantLocation({
             address: data.address,
-            latitude: data.latitude,
-            longitude: data.longitude,
+            latitude: data.latitude ?? 0,
+            longitude: data.longitude ?? 0,
           });
         }
-        // d = await createRestaurantLocation({
-        //   address: data.address,
-        //   latitude: data.latitude!,
-        //   longitude: data.longitude!,
-        // });
+
         onClose(d);
       } catch (err) {
         toast.error(
@@ -144,14 +141,14 @@ export function AddAddressCard({
                   </FormItem>
                 )}
               />
-              <Button
+              {/* <Button
                 type="button"
                 variant="outline"
                 className="text-app-dark-brown hover:bg-app-brown/10 shad rounded-xl px-4 py-3 text-sm font-semibold shadow-sm transition"
                 onClick={() => setSetAsDefault((s) => !s)}
               >
                 {setAsDefault ? "Default ✓" : "Set as Default"}
-              </Button>
+              </Button> */}
             </div>
             <div className="h-80 w-1/2 rounded-2xl bg-amber-200">test</div>
           </div>

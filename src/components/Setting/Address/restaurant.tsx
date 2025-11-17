@@ -18,14 +18,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { getRestaurantLocations } from "@/libs/location";
+
 import { queryCustomerProfile } from "@/queries/profile";
 import {
   EditProfileFormSchema,
   updateCustomerProfileMutation,
 } from "@/queries/profile";
-import type { ICreateLocation } from "@/types/location";
 import type { ICustomerProfile } from "@/types/user";
+
+import { getRestaurantLocations } from "@/libs/location";
+import type { ICreateLocation } from "@/types/location";
 
 import { useSettingFloatPanel } from "../SettingFloatPanelProvider";
 import { AddAddressCard } from "./addAddressCard";
@@ -43,21 +45,23 @@ export function RestaurantAddressPage() {
 
 export function RestaurantAddressList() {
   const { data: profile } = useQuery({
-    queryKey: ["address-profile"],
+    queryKey: ["restaurant-address-profile"],
     queryFn: getRestaurantLocations,
   });
-  const [addressList, setAddressList] = useState<ICreateLocation[]>([]);
+  const [addressList, setAddressList] = useState<ICreateLocation | null>();
   const { showPanel, setShowCloseButton, hidePanel } = useSettingFloatPanel();
 
   // populate addressList when profile (data) arrives
   useEffect(() => {
-    if (profile) setAddressList(profile);
+    if (profile === undefined || profile === null) {
+      return;
+    }
+    setAddressList(profile);
   }, [profile]);
 
   if (profile === undefined) {
     return <div>Loading...</div>;
   }
-
   return (
     <section className="rounded-3xl border border-black/10 bg-white shadow-[0_15px_40px_rgba(64,56,49,0.08)]">
       <div className="px-4 py-6 md:px-8 md:py-8">
@@ -75,12 +79,15 @@ export function RestaurantAddressList() {
           </div>
         </div>
         <div className="mt-8 flex flex-col gap-4">
-          {addressList.length === 0 ? (
+          {!addressList ? (
             <p className="text-app-brown/80">No addresses found.</p>
           ) : (
-            addressList.map((address) => (
-              <AddressCard key={address.id} address={address.address} />
-            ))
+            // <h1>{addressList.length}</h1>
+            <AddressCard
+              key={addressList.id}
+              address={addressList}
+              setDefault={async () => console.log("Set default called")}
+            />
           )}
         </div>
         <Button
@@ -90,7 +97,7 @@ export function RestaurantAddressList() {
               <AddAddressCard
                 type="restaurant"
                 onClose={(data: ICreateLocation) => {
-                  setAddressList((prev) => [...prev, data]);
+                  setAddressList(data);
                   hidePanel();
                 }}
               />
@@ -99,7 +106,7 @@ export function RestaurantAddressList() {
           type="submit"
           className="bg-app-dark-brown mt-16 w-full rounded-xl text-sm font-semibold text-white shadow-[0_12px_28px_rgba(64,56,49,0.18)] transition hover:bg-[#2F2721] active:bg-[#2c2621]"
         >
-          + Add New Address
+          Change New Address
         </Button>
       </div>
     </section>

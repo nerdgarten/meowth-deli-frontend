@@ -13,7 +13,7 @@ import AddReviewForm from "./AddReviewForm";
 interface ReviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  type: "driver" | "restaurant";
+  type: "driver" | "restaurant" | "report";
   id: number;
   orderId: number;
   title: string;

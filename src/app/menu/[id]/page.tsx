@@ -10,7 +10,11 @@ import {
   checkFavouriteRestaurant,
   getFavouriteDishesByRestaurant,
 } from "@/libs/favourite";
+<<<<<<< HEAD
 import { getRestaurantById } from "@/libs/restaurant";
+=======
+import { getRestaurant } from "@/queries/restaurant";
+>>>>>>> 395ec7da9f5a72d7d27ae8deb89c416d10faca98
 import type { IDish } from "@/types/dish";
 
 export default function RestaurantPage({
@@ -34,7 +38,7 @@ export default function RestaurantPage({
     queryFn: ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No id provided");
-      return getRestaurantById(restaurantId);
+      return getRestaurant(restaurantId);
     },
     enabled: !!resolvedParams?.id,
   });
@@ -73,21 +77,23 @@ export default function RestaurantPage({
     router.push(`/menu/${resolvedParams.id}/${dish.id}`);
   };
 
-  // if (!resolvedParams || favourite_restaurant === undefined) {
-  //   return (
-  //     <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
-  //   );
-  // }
+  if (!resolvedParams || favourite_restaurant === undefined) {
+    return (
+      <Spinner className="text-app-brown mx-auto my-10" variant="circle" />
+    );
+  }
 
   return (
-    <main className="w-full overflow-auto p-16">
-      <RestaurantList
-        dishes={dishes ?? []}
-        favourite_dish={favourite_dish ?? []}
-        restaurant={restaurant}
-        onDishClick={onDishClick}
-        favourite_restaurant={favourite_restaurant ?? false}
-      />
+    <main className="min-h-screen w-full overflow-x-hidden overflow-y-auto p-4 sm:p-8 lg:p-16">
+      <div className="mx-auto max-w-7xl">
+        <RestaurantList
+          dishes={dishes ?? []}
+          favourite_dish={favourite_dish ?? []}
+          restaurant={restaurant}
+          onDishClick={onDishClick}
+          favourite_restaurant={favourite_restaurant ?? false}
+        />
+      </div>
     </main>
   );
 }

@@ -1,6 +1,4 @@
 "use client";
-import { TriangleAlert, X } from "lucide-react";
-import { createContext, useContext, useState } from "react";
 
 interface UserInfo {
   id?: number;
@@ -9,6 +7,9 @@ interface UserInfo {
   role?: string;
 }
 
+import { TriangleAlert, X } from "lucide-react";
+import { createContext, useContext, useState } from "react";
+import { boolean } from "zod";
 interface WarningDialogContextProps {
   open: (userInfo: UserInfo, onConfirm?: () => void) => void;
   close: () => void;
@@ -63,7 +64,7 @@ export function WarningDialog({ children }: { children?: React.ReactNode }) {
             </div>
             <div className="flex w-full flex-col gap-2">
               <h1 className="text-3xl font-semibold">
-                Delete {userInfo.name || userInfo.email || "user"}{" "}
+                Delete {userInfo.name ?? userInfo.email ?? "user"}{" "}
                 {userInfo.role?.toLowerCase()} profile?
               </h1>
               <p className="text-app-tan font-light">
@@ -77,7 +78,7 @@ export function WarningDialog({ children }: { children?: React.ReactNode }) {
               <div className="flex flex-col gap-2">
                 <p className="text-app-tan text-sm font-medium">FOCUSED ROLE</p>
                 <h1 className="text-2xl font-semibold capitalize">
-                  {userInfo.role || "Customer"}
+                  {userInfo.role ?? "Customer"}
                 </h1>
                 <p className="text-app-tan pr-10 text-sm font-light">
                   Closed account including name and email, saved addresses, and
@@ -88,7 +89,7 @@ export function WarningDialog({ children }: { children?: React.ReactNode }) {
                     <p className="text-app-tan text-sm font-medium">
                       Acting on:{" "}
                       <span className="font-semibold text-gray-700">
-                        {userInfo.name || userInfo.email}
+                        {userInfo.name ?? userInfo.email}
                       </span>
                     </p>
                     <p className="text-sm text-gray-600">{userInfo.email}</p>
@@ -143,7 +144,7 @@ export function WarningDialog({ children }: { children?: React.ReactNode }) {
 
 export function useWarningDialog() {
   const context = useContext(WarningDialogContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error(
       "useWarningDialog must be used within a WarningDialogProvider"
     );

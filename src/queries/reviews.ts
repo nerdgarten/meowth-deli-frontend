@@ -1,5 +1,5 @@
 import { apiClient } from "@/libs/axios";
-import type { DriverReviewResponse,ReviewResponse } from "@/types/review";
+import type { DriverReviewResponse, ReviewResponse } from "@/types/review";
 
 export interface GetRestaurantReviewsParams {
   restaurantId: number;
@@ -14,17 +14,19 @@ export interface GetDriverReviewsParams {
 }
 
 export interface SubmitReviewData {
+  title: string;
   orderId: number;
   rate: number;
   reviewText?: string;
+  file?: File;
 }
 
 export async function getRestaurantReviews({
   restaurantId,
   limit = 10,
   offset = 0,
-}: GetRestaurantReviewsParams): Promise<ReviewResponse> {
-  const response = await apiClient.get<ReviewResponse>(
+}: GetRestaurantReviewsParams): Promise<ReviewResponse[]> {
+  const response = await apiClient.get<ReviewResponse[]>(
     `/review/restaurant/${restaurantId}`,
     {
       params: { limit, offset },
@@ -53,12 +55,32 @@ export async function submitDriverReview(
   driverId: number,
   reviewData: SubmitReviewData
 ): Promise<void> {
-  await apiClient.post(`/review/driver/${driverId}`, reviewData);
+  const formData = new FormData();
+  formData.append('driver_id', driverId.toString());
+  formData.append('rate', reviewData.rate.toString());
+  formData.append('title', reviewData.title);
+  if (reviewData.reviewText) {
+    formData.append('review_text', reviewData.reviewText);
+  }
+  if (reviewData.file) {
+    formData.append('files', reviewData.file);
+  }
+  await apiClient.post(`/review/driver`, formData);
 }
 
 export async function submitRestaurantReview(
   restaurantId: number,
   reviewData: SubmitReviewData
 ): Promise<void> {
-  await apiClient.post(`/review/restaurant/${restaurantId}`, reviewData);
+  const formData = new FormData();
+  formData.append('restaurant_id', restaurantId.toString());
+  formData.append('rate', reviewData.rate.toString());
+  formData.append('title', reviewData.title);
+  if (reviewData.reviewText) {
+    formData.append('review_text', reviewData.reviewText);
+  }
+  if (reviewData.file) {
+    formData.append('images', reviewData.file);
+  }
+  await apiClient.post(`/review/restaurant`, formData);
 }

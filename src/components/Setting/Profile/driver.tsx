@@ -24,6 +24,10 @@ import {
   queryDriverProfile,
   updateDriverProfileMutation,
 } from "@/libs/driver";
+<<<<<<< HEAD
+=======
+import { driverUploadFile } from "@/queries/file";
+>>>>>>> 395ec7da9f5a72d7d27ae8deb89c416d10faca98
 import { queryCustomerProfile } from "@/queries/profile";
 import type { IDriverProfile } from "@/types/user";
 import type { ICustomerProfile } from "@/types/user";
@@ -105,7 +109,6 @@ const CustomerProfileForm = () => {
 
   const onSubmit = (data: z.infer<typeof DriverProfileFormSchema>) => {
     const { profilePicture, firstname, lastname, tel } = data;
-    console.log("image", profilePicture);
     drivereMutation.mutate({
       firstname,
       lastname,
@@ -121,22 +124,10 @@ const CustomerProfileForm = () => {
   const handleFileUpload = async (file: File) => {
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch("http://localhost:3030/file/upload", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
-      }
-
+      await driverUploadFile(file);
       toast.success("File uploaded successfully!");
-    } catch (error: any) {
-      toast.error(error.message || "File upload failed!");
+    } catch {
+      toast.error( "File upload failed!");
     } finally {
       setUploading(false);
     }
@@ -291,9 +282,9 @@ const CustomerProfileForm = () => {
           <input
             type="file"
             accept="application/pdf"
-            onChange={(e) => {
+            onChange={async(e) => {
               const file = e.target.files?.[0];
-              if (file) handleFileUpload(file);
+              if (file) await handleFileUpload(file);
             }}
             className="text-app-dark-brown file:bg-app-dark-brown mt-2 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-white hover:file:bg-[#2F2721]"
             disabled={uploading}

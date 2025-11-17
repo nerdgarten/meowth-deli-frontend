@@ -92,23 +92,14 @@ export default function PaymentStatus({
                       Top up 20.00
                     </Button>
                     <Button variant="secondary" className="w-full">
+                      Top up 100.00
+                    </Button>
+                    <Button variant="secondary" className="w-full">
                       Top up 500.00
                     </Button>
                     <Button variant="secondary" className="w-full">
                       Top up 1,000.00
                     </Button>
-                    <div className="relative">
-                      <Button
-                        variant="secondary"
-                        className="w-full justify-start pr-16"
-                      >
-                        Top up...
-                      </Button>
-                      <Input
-                        placeholder="amount..."
-                        className="absolute top-1/2 right-2 h-7 w-20 -translate-y-1/2 border-none bg-transparent focus-visible:ring-0"
-                      />
-                    </div>
                   </div>
                 </div>
               )}

@@ -104,7 +104,6 @@ const CustomerProfileForm = () => {
 
   const onSubmit = (data: z.infer<typeof ProfileFormSchema>) => {
     const { profilePicture, firstname, lastname, tel } = data;
-    console.log("image", profilePicture);
     profileMutation.mutate({
       firstname,
       lastname,
@@ -118,8 +117,8 @@ const CustomerProfileForm = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-    } catch (error: any) {
-      toast.error(error.message || "File upload failed!");
+    } catch {
+      toast.error("File upload failed!");
     } finally {
       setUploading(false);
     }

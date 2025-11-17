@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { Plus, Star, Upload } from "lucide-react";
+import { Star, Upload } from "lucide-react";
 import type { FC } from "react";
 import { useState } from "react";
 
@@ -7,7 +7,7 @@ import type { SubmitReviewData } from "@/queries/reviews";
 import { submitDriverReview, submitRestaurantReview } from "@/queries/reviews";
 
 interface AddReviewFormProps {
-  type: "driver" | "restaurant";
+  type: "driver" | "restaurant" | "report";
   id: number;
   orderId: number;
   onSuccess?: () => void;
@@ -21,38 +21,30 @@ const AddReviewForm: FC<AddReviewFormProps> = ({
   onSuccess,
   onError,
 }) => {
-  // --- State for the form fields ---
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  // State for the star rating
-  const [rating, setRating] = useState(0); // 0 = no rating
-  const [hoverRating, setHoverRating] = useState(0); // For hover effect
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
 
-  // State for the file upload
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  // State for tags
-  const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState("");
-
-  // --- Mutation for submitting review ---
   const submitReviewMutation = useMutation({
     mutationFn: (reviewData: SubmitReviewData) => {
       if (type === "driver") {
         return submitDriverReview(id, reviewData);
+      } else if (type === "restaurant") {
+        return submitRestaurantReview(id, reviewData);
       } else {
+        // TODO: change this to submit report
         return submitRestaurantReview(id, reviewData);
       }
     },
     onSuccess: () => {
-      // Reset form
       setTitle("");
       setDescription("");
       setRating(0);
       setSelectedFile(null);
-      setTags([]);
-      setNewTag("");
       onSuccess?.();
     },
     onError: (error: Error) => {
@@ -82,25 +74,6 @@ const AddReviewForm: FC<AddReviewFormProps> = ({
     }
   };
 
-  const handleAddTag = () => {
-    const tag = newTag.trim();
-    if (tag && !tags.includes(tag)) {
-      setTags([...tags, tag]);
-      setNewTag("");
-    }
-  };
-
-  const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
-  };
-
-  const handleTagKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleAddTag();
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -110,9 +83,11 @@ const AddReviewForm: FC<AddReviewFormProps> = ({
     }
 
     const reviewData: SubmitReviewData = {
+      title,
       orderId,
       rate: rating,
       reviewText: description || undefined,
+      file: selectedFile ?? undefined,
     };
 
     submitReviewMutation.mutate(reviewData);
@@ -141,62 +116,22 @@ const AddReviewForm: FC<AddReviewFormProps> = ({
           />
 
           {/* Star Rating */}
-          <div className="flex items-center" onMouseLeave={handleRatingLeave}>
-            {Array.from({ length: maxStars }).map((_, index) => (
-              <Star
-                key={index}
-                size={28} // Larger stars for clicking
-                className={`cursor-pointer ${
-                  index < displayRating ? "text-yellow-400" : "text-gray-300"
-                }`}
-                fill={index < displayRating ? "currentColor" : "none"}
-                onClick={() => handleRatingClick(index)}
-                onMouseEnter={() => handleRatingHover(index)}
-              />
-            ))}
-          </div>
-
-          {/* Tags Display */}
-          {tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="flex items-center gap-1 rounded-full bg-yellow-200 px-3 py-1 text-sm font-medium text-yellow-800"
-                >
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTag(tag)}
-                    className="ml-1 text-yellow-600 hover:text-yellow-800"
-                  >
-                    ×
-                  </button>
-                </span>
+          {type !== "report" && (
+            <div className="flex items-center" onMouseLeave={handleRatingLeave}>
+              {Array.from({ length: maxStars }).map((_, index) => (
+                <Star
+                  key={index}
+                  size={28} // Larger stars for clicking
+                  className={`cursor-pointer ${
+                    index < displayRating ? "text-yellow-400" : "text-gray-300"
+                  }`}
+                  fill={index < displayRating ? "currentColor" : "none"}
+                  onClick={() => handleRatingClick(index)}
+                  onMouseEnter={() => handleRatingHover(index)}
+                />
               ))}
             </div>
           )}
-
-          {/* Add Tag Input */}
-          <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="Add a tag..."
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              onKeyPress={handleTagKeyPress}
-              className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={handleAddTag}
-              disabled={!newTag.trim()}
-              className="flex items-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <Plus size={16} />
-              Add
-            </button>
-          </div>
 
           {/* Description Textarea */}
           <textarea
@@ -250,7 +185,11 @@ const AddReviewForm: FC<AddReviewFormProps> = ({
           disabled={submitReviewMutation.isPending || rating === 0}
           className="rounded-lg bg-yellow-500 px-6 py-2 font-medium text-white transition-colors hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {submitReviewMutation.isPending ? "Submitting..." : "Submit Review"}
+          {submitReviewMutation.isPending
+            ? "Submitting..."
+            : type === "report"
+              ? "Submit Report"
+              : "Submit Review"}
         </button>
       </div>
 

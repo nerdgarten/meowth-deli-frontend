@@ -3,9 +3,8 @@ import { FileArchive } from "lucide-react";
 import React, { useEffect, useState, useCallback } from "react";
 import type {
   AdminGenericResponse,
-  AdminManageUserFile,
   AdminFileStatusFile,
-  AdminFileResponse,
+  AdminManageUserFile,
 } from "@/queries/admin";
 
 import { authenticatedAs } from "@/libs/authentication";
@@ -20,6 +19,7 @@ import {
   getAdminDriverCertificateStatus,
   getAdminRestaurantCertificateStatus,
 } from "@/queries/admin";
+import { Car, FileArchive, Flag, ForkKnifeCrossed, Users2 } from "lucide-react";
 
 interface License {
   id: number;

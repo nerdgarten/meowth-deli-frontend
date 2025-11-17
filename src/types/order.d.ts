@@ -1,13 +1,15 @@
+import type { IDish } from "@/types/dish";
+
 export interface IOrder {
   id: number;
   customer_id: number;
   driver_id?: number | null;
   restaurant_id: number;
-  delivery_location_id: 1;
   status: "pending" | "preparing" | "delivered" | "rejected" | "success";
   remark?: string | null;
   total_amount: number;
   driver_fee: number;
+  location: string;
 }
 
 export interface CartItem {

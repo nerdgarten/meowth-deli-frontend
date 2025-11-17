@@ -9,6 +9,10 @@ import {
   User,
 } from "lucide-react";
 
+<<<<<<< HEAD
+=======
+import { useAuth } from "@/components/context/AuthContext";
+>>>>>>> 395ec7da9f5a72d7d27ae8deb89c416d10faca98
 import { SettingFloatPanelProvider } from "@/components/Setting/SettingFloatPanelProvider";
 import {
   SettingNavigationMenu,
@@ -97,15 +101,10 @@ export default function CustomerSettingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { data: role, isLoading } = useQuery({
-    queryKey: ["authenticated-role"],
-    queryFn: authenticatedAs,
-    staleTime: 60_000,
-  });
+  const { role, isLoading } = useAuth();
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  console.log("role in layout:", role);
   return (
     <main className="bg-app-background flex h-full flex-col pt-[6rem]">
       <div className="flex w-full flex-col p-4">
