@@ -81,3 +81,18 @@ export const setDefaultCustomerLocation = async (
     throw error;
   }
 };
+
+export const getMap = async (
+  latitude: number,
+  longitude: number
+): Promise<string> => {
+  try {
+    const response = await apiClient.get<string>(`/map/geocode`, {
+      params: { latitude, longitude },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching map:", error);
+    throw error;
+  }
+};

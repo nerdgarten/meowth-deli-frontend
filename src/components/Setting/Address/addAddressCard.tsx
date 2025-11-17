@@ -1,7 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +29,7 @@ import {
   createRestaurantLocation,
 } from "@/libs/location";
 import type { ICreateLocation } from "@/types/location";
+import { getMapSVG } from "@/libs/map";
 type AddAddressFormValues = z.infer<typeof AddAddressSchema>;
 
 export function AddAddressCard({
@@ -48,6 +50,10 @@ export function AddAddressCard({
       address: "",
     },
   });
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [svgContent, setSvgContent] = useState<string>("");
+
   const getCurrentPosition = (
     opts?: PositionOptions
   ): Promise<GeolocationPosition> =>
@@ -58,6 +64,34 @@ export function AddAddressCard({
       }
       navigator.geolocation.getCurrentPosition(resolve, reject, opts);
     });
+
+  useEffect(() => {
+    getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 10000,
+    })
+      .then(async (pos) => {
+        setLatitude(pos.coords.latitude);
+        setLongitude(pos.coords.longitude);
+        const svg = await getMapSVG({
+          center: { lat: pos.coords.latitude, lng: pos.coords.longitude },
+          zoom: 14,
+          width: 800,
+          height: 600,
+          markers: [
+            {
+              location: { lat: pos.coords.latitude, lng: pos.coords.longitude },
+              label: "You are here",
+            },
+          ],
+        });
+        setSvgContent(svg.svg);
+        console.log("Initial position obtained:", pos);
+      })
+      .catch((err) => {
+        console.error("Error getting initial position:", err);
+      });
+  }, []);
 
   const onSubmit = async (data: z.infer<typeof AddAddressSchema>) => {
     setIsSubmitting(true);
@@ -70,15 +104,6 @@ export function AddAddressCard({
 
       try {
         console.log("Getting current position...");
-        const pos = await getCurrentPosition({
-          enableHighAccuracy: true,
-          timeout: 10000,
-        });
-        console.log("Position obtained:", pos);
-        const latitude = pos.coords.latitude;
-        const longitude = pos.coords.longitude;
-        if (latitude === undefined || longitude === undefined)
-          throw new Error("No coordinates found");
         data.latitude = latitude!;
         data.longitude = longitude!;
         let d = null;
@@ -111,6 +136,9 @@ export function AddAddressCard({
       setIsSubmitting(false);
     }
   };
+  // if (!latitude || !longitude) {
+  //   return <div>Loading map...</div>;
+  // }
 
   return (
     <Form {...addressForm}>
@@ -150,7 +178,17 @@ export function AddAddressCard({
                 {setAsDefault ? "Default ✓" : "Set as Default"}
               </Button> */}
             </div>
-            <div className="h-80 w-1/2 rounded-2xl bg-amber-200">test</div>
+            {svgContent ? (
+              <Image
+                src={svgContent}
+                alt="Map Preview"
+                width={320}
+                height={240}
+                className="h-80 w-1/2 rounded-2xl bg-amber-200"
+              />
+            ) : (
+              <div>Loading map preview...</div>
+            )}
           </div>
 
           <div className="flex w-full justify-end gap-4">
