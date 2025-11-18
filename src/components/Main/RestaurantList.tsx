@@ -1,6 +1,7 @@
 "use client";
 
 import { useDeferredValue, useMemo, useState } from "react";
+import { Heart } from "lucide-react";
 import {
   checkFavouriteRestaurant,
   createFavouriteRestaurant,
@@ -121,7 +122,7 @@ export const RestaurantList = ({
 
           <div className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4 sm:gap-6">
             {filteredDishes.map((dish) => (
-              <DishCard dish={dish} onDishClick={onDishClick} />
+              <DishCard key={dish.id} dish={dish} onDishClick={onDishClick} />
             ))}
           </div>
         </div>
@@ -134,7 +135,8 @@ export const RestaurantList = ({
           <div className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4 sm:gap-6">
             <div className="col-span-4 row-span-4 flex w-full gap-4 overflow-x-auto p-3">
               {filteredFavouriteDishes.map((dish) => (
-                <DishCard dish={dish} onDishClick={onDishClick} />
+                // <div key={dish.id}>
+                <DishCard key={dish.id} dish={dish} onDishClick={onDishClick} />
               ))}
             </div>
           </div>

@@ -8,9 +8,11 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getOrderById } from "@/libs/orders";
-import { getRestaurant } from "@/queries/restaurant";
+// import { getRestaurant } from "@/queries/restaurant";
 import type { IOrder, StoredOrder } from "@/types/order"; // ensure Restaurant type exists
 import type { IRestaurant } from "@/types/restaurant";
+import { getRestaurantById } from "@/libs/restaurant";
+import { getRestaurant } from "@/queries/restaurant";
 
 export default function OrderSuccessPage() {
   const router = useRouter();
@@ -25,7 +27,7 @@ export default function OrderSuccessPage() {
     queryFn: async ({ queryKey }): Promise<IRestaurant> => {
       const [, id] = queryKey;
       if (!id) throw new Error("No restaurant ID provided");
-      const data = await getRestaurant(id);
+      const data = await getRestaurant(Number(id));
       return data;
     },
     enabled: !!restaurantId,
@@ -128,7 +130,7 @@ export default function OrderSuccessPage() {
           </CardContent>
         </Card>
 
-        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
           <Button
             onClick={handleCheckStatus}
             variant="outline"
@@ -139,13 +141,13 @@ export default function OrderSuccessPage() {
             Check Status
           </Button>
 
-          <Button
+          {/* <Button
             onClick={handleLeaveReview}
             className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600"
           >
             <Star className="h-4 w-4" />
             Leave Review
-          </Button>
+          </Button> */}
 
           <Button onClick={handleBackToMenu} variant="outline">
             Back to Menu

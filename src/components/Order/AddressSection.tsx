@@ -36,14 +36,14 @@ export default function DeliveryDetailsCard({
 
         {/* --- Edit Button --- */}
         <div className="flex justify-center pt-2">
-          <Button
+          {/* <Button
             onClick={onEditNote}
             // Styled to match the yellow button in your image
             className="rounded-full bg-yellow-400 px-6 text-base font-semibold text-neutral-800 shadow-sm hover:bg-yellow-500"
           >
             Edit Note
             <Pencil className="ml-2 h-5 w-5" />
-          </Button>
+          </Button> */}
         </div>
       </CardContent>
     </Card>

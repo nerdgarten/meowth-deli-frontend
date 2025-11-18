@@ -1,55 +1,39 @@
 "use client";
-import { useAuth } from "@/components/context/AuthContext";
-import { getDriverReviews } from "@/queries/reviews";
-import { useQuery } from "@tanstack/react-query";
-import { ImageIcon, Star } from "lucide-react";
+
 import Image from "next/image";
-import { DriverReview, type DriverReviewResponse } from "@/types/review";
-import { use, useMemo } from "react";
-
-const DRIVER_NAME = "Mr. Suthinat Chonpaisarn";
-
-// const reviews: Review[] = [
-//   {
-//     id: 1,
-//     title: "ไม่อร่อย 2/10",
-//     rating: 4,
-//     tags: ["Fast", "Good Quality", "Good Packaging", "Fresh"],
-//     comment:
-//       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-//     date: "12/34/2098",
-//     time: "23:45",
-//   },
-//   {
-//     id: 2,
-//     title: "ไม่อร่อย 2/10",
-//     rating: 4,
-//     tags: ["Fast", "Good Quality", "Good Packaging", "Fresh"],
-//     comment:
-//       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-//     date: "12/34/2098",
-//     time: "23:45",
-//     image: "/images/meowth-eating.webp",
-//   },
-// ];
-
-const ratingColor = {
-  fill: "#F7B308",
-  empty: "#E9D7B9",
-};
+import { ImageIcon, Star } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { apiClient } from "@/libs/axios";
+import type { DriverReview } from "@/types/review";
 
 export default function DriverReviewsPage() {
-  const driverId = 81;
-  const { data } = useQuery<DriverReviewResponse | undefined>({
-    queryKey: ["restaurant-profile", [driverId]],
+  // Get the current authenticated driver's profile
+  const { data: driverProfile } = useQuery({
+    queryKey: ["driver-profile"],
     queryFn: async () => {
-      console.log("Fetching driver reviews for driverId:", driverId);
-      if (!driverId) return undefined;
-      return getDriverReviews({ driverId: driverId });
+      const response = await apiClient.get<{
+        id: number;
+        firstname: string;
+        lastname: string;
+      }>("/driver/profile");
+      return response.data;
     },
+    staleTime: Infinity,
   });
-  const reviews = useMemo(() => data?.data ?? [], [data]);
-  console.log(reviews);
+
+  const driverId = driverProfile?.id;
+
+  const { data: reviews = [], isLoading } = useQuery<DriverReview[]>({
+    queryKey: ["driver-reviews", driverId],
+    queryFn: async () => {
+      const response = await apiClient.get<DriverReview[]>(
+        `/review/driver/${driverId}`
+      );
+      return response.data;
+    },
+    enabled: !!driverId,
+  });
+
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-10 text-[#2a1a0f]">
       <section className="border-b-app-background rounded-[36px] border bg-white px-8 py-10 shadow-[0_30px_60px_rgba(93,66,17,0.08)]">
@@ -58,19 +42,32 @@ export default function DriverReviewsPage() {
             Driver Reviews
           </p>
           <h1 className="text-3xl font-semibold text-[#1d140d]">
-            {DRIVER_NAME}
+            {driverProfile
+              ? `${driverProfile.firstname} ${driverProfile.lastname}`
+              : "Loading..."}
           </h1>
         </header>
 
         <div className="mt-10 space-y-6">
-          {reviews?.map((review) => (
-            <ReviewCard key={review.id} review={review} />
-          ))}
+          {isLoading ? (
+            <p>Loading reviews...</p>
+          ) : reviews.length === 0 ? (
+            <p className="py-8 text-center text-[#8a7a70]">No reviews yet</p>
+          ) : (
+            reviews.map((review) => (
+              <ReviewCard key={review.id} review={review} />
+            ))
+          )}
         </div>
       </section>
     </div>
   );
 }
+
+const ratingColor = {
+  fill: "#F7B308",
+  empty: "#E9D7B9",
+};
 
 function ReviewCard({ review }: { review: DriverReview }) {
   // Format the date
@@ -91,7 +88,6 @@ function ReviewCard({ review }: { review: DriverReview }) {
       <div className="flex flex-1 flex-col gap-4">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-3">
-            <h2 className="text-app-black text-xl font-semibold">TEST TITLE</h2>
             <div className="flex items-center gap-1">
               {Array.from({ length: 5 }).map((_, index) => {
                 const isFilled = index < review.rate;
@@ -125,21 +121,9 @@ function ReviewCard({ review }: { review: DriverReview }) {
           <p>{formattedDate}</p>
           <p className="text-[#8a7a70]">{formattedTime}</p>
         </div>
-        {false ? (
-          <div className="relative aspect-square w-32 overflow-hidden rounded-3xl border border-[#f0e3c5] bg-[#fff8eb] shadow-inner md:w-36">
-            <Image
-              src={"TODO"}
-              alt={`TEST TITLE photo`}
-              fill
-              className="object-cover"
-              sizes="144px"
-            />
-          </div>
-        ) : (
-          <div className="relative flex aspect-square w-32 items-center justify-center overflow-hidden rounded-3xl border border-[#f0e3c5] bg-[#fff8eb] shadow-inner md:w-36">
-            <ImageIcon className="h-12 w-12 text-[#8c7254]" />
-          </div>
-        )}
+        <div className="relative flex aspect-square w-32 items-center justify-center overflow-hidden rounded-3xl border border-[#f0e3c5] bg-[#fff8eb] shadow-inner md:w-36">
+          <ImageIcon className="h-12 w-12 text-[#8c7254]" />
+        </div>
       </div>
     </div>
   );

@@ -370,7 +370,7 @@ export default function OrderPage({ params }: PageProps) {
             </div>
 
             {/* Report Section */}
-            <div className="rounded-lg border border-gray-200 bg-white p-6">
+            {/* <div className="rounded-lg border border-gray-200 bg-white p-6">
               <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                 <div className="flex-1">
                   <h2 className="mb-2 flex items-center gap-2 text-2xl font-bold text-gray-900">
@@ -390,7 +390,7 @@ export default function OrderPage({ params }: PageProps) {
                   Add Report
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
         )}
 

@@ -4,11 +4,13 @@ import { useState } from "react";
 
 import type { ICreateLocation } from "@/types/location";
 import type { CartItem } from "@/types/order";
+import { useRouter } from "next/navigation";
+import type { IRestaurant } from "@/types/restaurant";
 
 interface OrderSummaryProps {
   location: ICreateLocation[];
   cartItem: CartItem[];
-  restaurantName: string;
+  restaurant: IRestaurant | null;
   TotalPrice: number;
   onSubmit: (remark: string, id: string) => void;
 }
@@ -25,13 +27,14 @@ function isValidDish(dish: unknown): dish is { name: string; price: number } {
 
 export const OrderSummary = ({
   cartItem,
-  restaurantName,
+  restaurant,
   TotalPrice,
   location,
 
   onSubmit,
 }: OrderSummaryProps) => {
   // Safely calculate subtotal
+  const router = useRouter();
   const subtotal = cartItem.reduce((acc, item) => {
     if (!isValidDish(item.dish)) return acc;
     if (typeof item.quantity !== "number") return acc;
@@ -52,11 +55,21 @@ export const OrderSummary = ({
     <div className="flex flex-col rounded-sm bg-white p-4">
       {/* Header */}
       <div className="h-full border-b p-4">
-        <h2 className="text-4xl font-bold">{restaurantName || "Restaurant"}</h2>
+        <h2 className="text-4xl font-bold">
+          {restaurant?.name || "Restaurant"}
+        </h2>
         <div className="mx-4 mt-12 flex flex-col gap-4">
           <div className="flex justify-between">
             <h3 className="text-2xl font-bold">Order Summary</h3>
-            <h4 className="text-xl font-bold text-purple-700">Add Items</h4>
+            {/* <h4
+              className="text-xl font-bold text-purple-700"
+              onClick={() => {
+                if (!restaurant) return;
+                router.push(`/menu/${restaurant.id}/`);
+              }}
+            >
+              Add Items
+            </h4> */}
           </div>
 
           {/* Cart Items */}
@@ -78,7 +91,15 @@ export const OrderSummary = ({
                     <h4 className="text-black">
                       {item.dish.name} x {item.quantity}
                     </h4>
-                    <h4 className="text-purple-700">Edit</h4>
+                    {/* <h4
+                      className="text-purple-700"
+                      onClick={() => {
+                        if (!restaurant) return;
+                        router.push(`/menu/${restaurant.id}/${item.dish.id}`);
+                      }}
+                    >
+                      Edit
+                    </h4> */}
                   </div>
                 </div>
                 <h4 className="text-lg font-semibold">

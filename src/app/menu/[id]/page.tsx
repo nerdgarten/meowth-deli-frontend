@@ -34,7 +34,7 @@ export default function RestaurantPage({
     queryFn: ({ queryKey }) => {
       const [, restaurantId] = queryKey;
       if (!restaurantId) throw new Error("No id provided");
-      return getRestaurant(restaurantId);
+      return getRestaurant(Number(restaurantId));
     },
     enabled: !!resolvedParams?.id,
   });
