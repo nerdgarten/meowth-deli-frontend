@@ -198,7 +198,7 @@ export default function OrderPage({
       <OrderSummary
         location={locations ?? []}
         cartItem={cartItem}
-        restaurantName={restaurantQuery.data?.name ?? ""}
+        restaurant={restaurantQuery.data!}
         TotalPrice={getTotalPrice(resolvedParams.id)}
         onSubmit={onSubmit}
       />
