@@ -102,13 +102,6 @@ export const RestaurantList = ({
           </div>
         </div>
       </div>
-
-      {!filteredDishes.length && dishes.length ? (
-        <p className="text-app-brown text-center text-lg">
-          No dishes match your search.
-        </p>
-      ) : (
-        <div className="flex flex-col gap-4">
           <div className="flex items-center">
             <h3 className="text-2xl font-bold md:text-3xl">Recommend</h3>
             <div className="mb-2 grow">
@@ -119,6 +112,13 @@ export const RestaurantList = ({
               />
             </div>
           </div>
+
+      {!filteredDishes.length && dishes.length ? (
+        <p className="text-app-brown text-center text-lg">
+          No dishes match your search.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-4">
 
           <div className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4 sm:gap-6">
             {filteredDishes.map((dish) => (
