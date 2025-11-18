@@ -70,17 +70,19 @@ export function AdminDashboard() {
         }
         const drivers = await getAdminDrivers();
         const restaurants = await getAdminRestaurants();
-        setDriversCount(drivers?.data?.length ?? drivers?.length ?? 0);
+        setDriversCount(Array.isArray(drivers?.data) ? drivers.data.length : 0);
         setRestaurantsCount(
-          restaurants?.data?.length ?? restaurants?.length ?? 0
+          Array.isArray(restaurants?.data) ? restaurants.data.length : 0
         );
         const pendingDrivers = await getAdminDrivers("pending");
         const pendingRestaurants = await getAdminRestaurants("pending");
         setPendingDriversCount(
-          pendingDrivers?.data?.length ?? pendingDrivers?.length ?? 0
+          Array.isArray(pendingDrivers?.data) ? pendingDrivers.data.length : 0
         );
         setPendingRestaurantsCount(
-          pendingRestaurants?.data?.length ?? pendingRestaurants?.length ?? 0
+          Array.isArray(pendingRestaurants?.data)
+            ? pendingRestaurants.data.length
+            : 0
         );
       } catch (err: any) {
         console.error("Error fetching admin dashboard counts:", err);

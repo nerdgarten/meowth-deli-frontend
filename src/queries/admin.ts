@@ -69,9 +69,13 @@ export async function getAdminRestaurants(
   }
 }
 
-export async function getAdminDrivers(): Promise<AdminGenericResponse> {
+export async function getAdminDrivers(
+  status?: string
+): Promise<AdminGenericResponse> {
   try {
-    const response = await apiClient.get(`/admin/drivers`);
+    const response = await apiClient.get(`/admin/drivers`, {
+      params: { status },
+    });
     return response.data as AdminGenericResponse;
   } catch (error) {
     console.error("getAdminDrivers error", error);
@@ -299,6 +303,7 @@ export async function resolveAdminReport(
     return {
       success: false,
       message: "Failed to resolve report",
+      data: [],
     };
   }
 }

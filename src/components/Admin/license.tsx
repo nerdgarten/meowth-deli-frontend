@@ -136,7 +136,9 @@ export function AdminLicense() {
   const fetchDrivers = useCallback(async () => {
     try {
       const driversRes = await getAdminDrivers();
-      const entries = (driversRes ?? []) as DriverData[];
+      const entries = Array.isArray(driversRes?.data)
+        ? (driversRes.data as DriverData[])
+        : [];
       const enrichedDrivers: License[] = await Promise.all(
         entries.map(async (driver) => {
           const userId = driver.id;

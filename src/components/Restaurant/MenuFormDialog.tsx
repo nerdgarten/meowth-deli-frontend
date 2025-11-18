@@ -175,14 +175,17 @@ export function MenuFormDialog(props: { dish: IDish | null }) {
       allergy: values.allergies ?? [],
     };
 
-    const image = values.image;
+    const image = values.image ?? null;
 
     const doCreateOrUpdate = async () => {
       if (dish) {
         // update
-        await updateMenu(dish.id, { ...payload, image });
+        await updateMenu(dish.id, {
+          ...payload,
+          image: image,
+        } as any);
       } else {
-        await createMenu({ ...payload, image });
+        await createMenu({ ...payload, image: image } as any);
       }
     };
 

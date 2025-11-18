@@ -2,7 +2,6 @@
 import { Heart, Minus, Plus } from "lucide-react";
 import { useState } from "react";
 
-import type { IDish } from "@/types/dish";
 import Image from "next/image";
 
 import { createFavouriteDish, deleteFavouriteDish } from "@/libs/favourite";
@@ -90,10 +89,11 @@ export const SelectMenu = ({
     }
   };
 
-  const { data: allergy } = useQuery<Allergy[]>({
+  const { data: allergy } = useQuery({
     queryKey: ["allergy-profile"],
-    queryFn: () => {
-      return getAllergy();
+    queryFn: async () => {
+      const result = await getAllergy();
+      return result as Allergy[];
     },
   });
 
